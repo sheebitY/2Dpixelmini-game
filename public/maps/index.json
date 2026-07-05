@@ -1,0 +1,22 @@
+[
+  {
+    "id": "meadow_village",
+    "file": "maps/meadow_village.json"
+  },
+  {
+    "id": "forest_path",
+    "file": "maps/forest_path.json"
+  },
+  {
+    "id": "lakeside_camp",
+    "file": "maps/lakeside_camp.json"
+  },
+  {
+    "id": "desert_outpost",
+    "file": "maps/desert_outpost.json"
+  },
+  {
+    "id": "dungeon_lair",
+    "file": "maps/dungeon_lair.json"
+  }
+]

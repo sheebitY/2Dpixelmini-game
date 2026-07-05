@@ -1,0 +1,34 @@
+// Game constants
+export const CONFIG = {
+  // Canvas
+  CANVAS_WIDTH: 800,
+  CANVAS_HEIGHT: 600,
+
+  // Tiles
+  TILE_SIZE: 64,
+
+  // Map
+  MAP_COLS: 25,
+  MAP_ROWS: 19,
+
+  // Player
+  PLAYER_SPEED: 240,
+  PLAYER_MAX_HP: 100,
+  PLAYER_ATK: 15,
+  PLAYER_DEF: 5,
+  PLAYER_ATTACK_RANGE: 120,
+  PLAYER_ATTACK_COOLDOWN: 0.4,
+  PLAYER_INVINCIBLE_TIME: 0.5,
+
+  // Enemy
+  ENEMY_SPEED: 50,
+  ENEMY_DETECT_RANGE: 450,
+  ENEMY_ATTACK_RANGE: 90,
+  ENEMY_ATTACK_COOLDOWN: 1.0,
+
+  // Camera
+  CAMERA_FOLLOW_ENABLED: true,
+
+  // Game loop
+  FIXED_TIMESTEP: 1 / 60,
+} as const;
