@@ -1,5 +1,5 @@
 import { inventory } from "../items/inventory";
-import { getItem, rarityColor } from "../items/item-db";
+import { getItem, rarityColor, isImageIcon } from "../items/item-db";
 import { eventBus } from "../core/event-bus";
 import { input } from "../core/input-manager";
 
@@ -75,6 +75,7 @@ export class InventoryUI {
     for (let i = 0; i < inventory.size; i++) {
       const slot = document.createElement("div");
       slot.className = "inv-slot";
+      slot.draggable = true;
       slot.dataset.index = String(i);
 
       const icon = document.createElement("span");
@@ -110,12 +111,12 @@ export class InventoryUI {
       if (slot) {
         const def = getItem(slot.itemId);
         el.classList.add("has-item");
-        icon.textContent = def?.icon ?? "?";
+        setIconContent(icon, def?.icon ?? "?");
         qty.textContent  = slot.quantity > 1 ? String(slot.quantity) : "";
         rarity.style.background = def ? rarityColor(def.rarity) : "transparent";
       } else {
         el.classList.remove("has-item");
-        icon.textContent = "";
+        clearIcon(icon);
         qty.textContent  = "";
         rarity.style.background = "transparent";
       }
@@ -181,7 +182,7 @@ export class InventoryUI {
 
     const msg = document.createElement("div");
     msg.className = "pickup-msg";
-    msg.innerHTML = `${def.icon} <span style="color:${rarityColor(def.rarity)}">${def.name}</span> x${qty}`;
+    msg.innerHTML = `${iconHtml(def.icon)} <span style="color:${rarityColor(def.rarity)}">${def.name}</span> x${qty}`;
     this.pickupToast.appendChild(msg);
 
     // Fade out after 2 seconds
@@ -190,4 +191,34 @@ export class InventoryUI {
       if (msg.parentNode) msg.parentNode.removeChild(msg);
     }, 2600);
   }
+}
+
+function setIconContent(el: HTMLElement, icon: string): void {
+  if (isImageIcon(icon)) {
+    el.textContent = "";
+    let img = el.querySelector("img") as HTMLImageElement;
+    if (!img) {
+      img = document.createElement("img");
+      img.className = "item-icon-img";
+      el.appendChild(img);
+    }
+    img.src = icon;
+  } else {
+    const img = el.querySelector("img");
+    if (img) img.remove();
+    el.textContent = icon;
+  }
+}
+
+function clearIcon(el: HTMLElement): void {
+  el.textContent = "";
+  const img = el.querySelector("img");
+  if (img) img.remove();
+}
+
+function iconHtml(icon: string): string {
+  if (isImageIcon(icon)) {
+    return '<img src="' + icon + '" class="item-icon-img" style="width:20px;height:20px;vertical-align:middle;">';
+  }
+  return icon;
 }

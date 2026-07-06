@@ -9,8 +9,9 @@ class InputManager {
         this.justPressed.add(e.code);
       }
       this.keys.add(e.code);
-      // Prevent default for game keys
-      if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space","KeyZ","KeyX","KeyC","KeyE","KeyB"].includes(e.code)) {
+      // Prevent default for game keys, but allow browser shortcuts (Ctrl+R, F12, etc.)
+      const GAME_KEYS = ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space","KeyZ","KeyX","KeyC","KeyE","KeyB","Digit1","Digit2","Digit3","Digit4","Digit5"];
+      if (GAME_KEYS.includes(e.code) && !e.ctrlKey && !e.altKey && !e.metaKey) {
         e.preventDefault();
       }
     });

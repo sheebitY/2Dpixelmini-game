@@ -1,4 +1,4 @@
-﻿import mapIndex from "../../assets/maps/index.json";
+import mapIndex from "../../assets/maps/index.json";
 import { createCollisionFromTileMap } from "./collision";
 
 interface Vec2 { x: number; y: number }
@@ -17,6 +17,12 @@ export interface EnemySpawn {
   y: number;
 }
 
+export interface NPCSpawn {   // NPC生成
+  type: string;
+  x: number;
+  y: number;
+}
+
 export interface MapMeta {
   id: string;
   cols: number;
@@ -24,6 +30,7 @@ export interface MapMeta {
   player: Vec2;
   enemies: EnemySpawn[];
   portals?: Portal[];
+  npcs?: NPCSpawn[];          // <-- 新增：地图自带NPC
   grid: number[][];
 }
 

@@ -68,6 +68,7 @@ export interface AI {
   damageFrameRatio: number;     // 0-1, when damage triggers (e.g. 0.5 = halfway)
   attackDamageDealt: boolean;   // true once damage dealt this attack
   attackProgress: number;       // 0-1, current progress through attack animation
+  hurtUntil: number;            // timestamp until which hurt animation plays
 }
 
 export interface DamageFlash {
@@ -111,3 +112,4 @@ export type ComponentMap = {
 };
 
 export type ComponentType = keyof ComponentMap;
+

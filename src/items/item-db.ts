@@ -1,4 +1,4 @@
-// ©§©§ Item definitions ©§©§
+// ÔøΩÔøΩÔøΩÔøΩ Item definitions ÔøΩÔøΩÔøΩÔøΩ
 
 export type ItemRarity = "common" | "uncommon" | "rare" | "epic";
 
@@ -8,7 +8,7 @@ export interface ItemDef {
   id: string;
   name: string;
   description: string;
-  icon: string;           // emoji
+  icon: string;           // emoji or image path (e.g. "/assets/ui/xx.png")
   category: ItemCategory;
   rarity: ItemRarity;
   stackable: boolean;
@@ -34,14 +34,14 @@ export function rarityColor(r: ItemRarity): string {
   return RARITY_COLORS[r];
 }
 
-// ©§©§ Item registry ©§©§
+// ÔøΩÔøΩÔøΩÔøΩ Item registry ÔøΩÔøΩÔøΩÔøΩ
 
 const ITEMS: Record<string, ItemDef> = {
   health_potion: {
     id: "health_potion",
     name: "Health Potion",
     description: "Restores 30 HP.",
-    icon: "??",
+    icon: "/assets/ui/icon_potion.png",
     category: "consumable",
     rarity: "common",
     stackable: true,
@@ -52,7 +52,7 @@ const ITEMS: Record<string, ItemDef> = {
     id: "greater_health_potion",
     name: "Greater Health Potion",
     description: "Restores 70 HP.",
-    icon: "??",
+    icon: "/assets/ui/ËçØÂâÇÂ∞è.png",
     category: "consumable",
     rarity: "uncommon",
     stackable: true,
@@ -123,7 +123,7 @@ const ITEMS: Record<string, ItemDef> = {
   },
 };
 
-/** Enemy °˙ possible loot table (itemId, drop chance 0-1) */
+/** Enemy ÔøΩÔøΩ possible loot table (itemId, drop chance 0-1) */
 export const ENEMY_LOOT_TABLE: Record<string, { itemId: string; chance: number }[]> = {
   slime:       [{ itemId: "slime_gel", chance: 0.6 }, { itemId: "health_potion", chance: 0.2 }],
   red_slime:   [{ itemId: "slime_gel", chance: 0.7 }, { itemId: "health_potion", chance: 0.3 }],
@@ -131,6 +131,10 @@ export const ENEMY_LOOT_TABLE: Record<string, { itemId: string; chance: number }
   skeleton:    [{ itemId: "bone_fragment", chance: 0.6 }, { itemId: "def_scroll", chance: 0.15 }],
   orc:         [{ itemId: "orc_tusk", chance: 0.5 }, { itemId: "greater_health_potion", chance: 0.25 }],
 };
+
+export function isImageIcon(icon: string): boolean {
+  return /\.(png|jpg|jpeg|gif|webp|svg)$/i.test(icon);
+}
 
 export function getItem(id: string): ItemDef | undefined {
   return ITEMS[id];

@@ -1,4 +1,4 @@
-﻿import * as PIXI from "pixi.js";
+import * as PIXI from "pixi.js";
 import { CONFIG } from "../config";
 import { entities } from "../ecs/entity-manager";
 import { eventBus } from "../core/event-bus";
@@ -9,6 +9,7 @@ import { combatSystem } from "../ecs/systems/combat-system";
 import { HUD } from "../ui/hud";
 import { DialogBox } from "../ui/dialog-box";
 import { InventoryUI } from "../ui/inventory-ui";
+import { Hotbar } from "../ui/hotbar";
 import { inventory } from "../items/inventory";
 import { ENEMY_LOOT_TABLE } from "../items/item-db";
 import { mapManager, MapState, Portal } from "../world/map-manager";
@@ -51,6 +52,9 @@ interface EnemyDef {
   animFps?: Record<string, number>;
   attackDuration: number;
   damageFrameRatio: number;
+  hurtAnim?: string;
+  deathAnim?: string;
+  hurtDuration?: number;
   colliderSize?: number;
   detectRange?: number;
   attackRange?: number;
@@ -89,6 +93,7 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     animKey: "idle", size: 96,
     anims: { idle: "idle", patrol: "move", chase: "move", attack: "attack" },
     animFps: { idle: 10, move: 12, attack: 22 },
+    deathAnim: "death",
     attackDuration: 1.0, damageFrameRatio: 0.5,
     detectRange: 400, attackRange: 90, attackCooldown: 1.5,
     anchorOffsetX: 0, anchorOffsetY: 0,
@@ -111,6 +116,11 @@ interface NPCDef {
   dialog: string[];
   animKey: string;
   size: number;
+  animFps?: Record<string, number>;
+  colliderSize?: number;
+  colliderOffsetX?: number;
+  colliderOffsetY?: number;
+  interactionRange?: number;
 }
 
 const NPC_DEFS: Record<string, NPCDef> = {
@@ -123,9 +133,29 @@ const NPC_DEFS: Record<string, NPCDef> = {
       "Be careful of the eagles - they are fast and fierce!",
     ],
     animKey: "sweep",
+    animFps: { sweep: 10 },
     size: 96,
+    colliderSize: 80,        // 濮ｆ梹妯夌粈鍝勬槀鐎电鐨稉鈧悙鐧哥礉闁灝鍘ら崡鈥叉眽
+    colliderOffsetX: 0,
+    colliderOffsetY: 0,
+    interactionRange: 128,
   },
 };
+
+interface NPCSpawnConfig {
+  mapId: string;
+  npcKey: string;
+  type: string;
+  baseX: number; // tile
+  baseY: number; // tile
+  dialogOverride?: string[];
+}
+
+const NPC_SPAWN_SET: NPCSpawnConfig[] = [
+  // 閸欘亜婀?meadow_village 閸?sweeper閿涘苯鑻熺紒娆庣娑擃亝妲戠涵顔兼綏閺嶅浄绱欐稉宥堫洣閸愬秶鐣?mapCols/mapRows 娴滃棴绱?
+  { mapId: "meadow_village", npcKey: "sweeper", type: "sweeper", baseX: 15, baseY: 10 },
+  // 閸氬海鐢婚崝鐕C鐏忚京鎴风紒顓炵窔鏉╂瑩鍣锋潻钘夊閿?  // { mapId: "forest_path", npcKey: "hermit", type: "hermit", baseX: 12, baseY: 6 },
+];
 
 export class GameplayScene {
   container: PIXI.Container;
@@ -137,11 +167,13 @@ export class GameplayScene {
   private hud: HUD;
   private dialogBox: DialogBox;
   private inventoryUI: InventoryUI;
+  private hotbar: Hotbar;
   private playerTextures: Record<string, PlayerAnimSet> = {};
   private enemyTextures: Map<string, Record<string, PIXI.Texture[]>> = new Map();
   private npcTextures: Map<string, Record<string, PIXI.Texture[]>> = new Map();
   private tileTextures: Record<string, PIXI.Texture> = {};
   private spriteMap = new Map<number, PIXI.Sprite | PIXI.AnimatedSprite>();
+  private healthBarMap = new Map<number, PIXI.Graphics>();
   private entityEnemyType = new Map<number, string>();
   private npcEntities: Map<number, string> = new Map();
   private now = 0;
@@ -150,6 +182,7 @@ export class GameplayScene {
   private loaded = false;
   private dialogActive = false;
   private playerAttackUntil = 0;
+  private playerHitUntil = 0;
   private portalCooldownUntil = 0;
   private currentMap: MapState | null = null;
   // Temporary stat buffs from consumables
@@ -168,6 +201,7 @@ export class GameplayScene {
 
     this.hud = new HUD();
     this.app.stage.addChild(this.hud.container);
+    this.hud.setWorldContainer(this.entityContainer);
 
     this.dialogBox = new DialogBox(app.screen.width, app.screen.height);
     this.app.stage.addChild(this.dialogBox.container);
@@ -176,6 +210,10 @@ export class GameplayScene {
     this.inventoryUI = new InventoryUI();
     this.inventoryUI.onUse((slotIndex) => this.useInventoryItem(slotIndex));
 
+    // Hotbar
+    this.hotbar = new Hotbar();
+    this.hotbar.onUse((slotIndex) => this.useInventoryItem(slotIndex));
+
     eventBus.on("player_died", () => {
       this.gameOver = true;
     });
@@ -183,13 +221,13 @@ export class GameplayScene {
       this.playerAttackUntil = this.now + PLAYER_DEF.attackCooldown;
     });
 
-    // Listen for enemy kills 锟斤拷 roll loot
+    // Listen for enemy kills 闁跨喐鏋婚幏?roll loot
     eventBus.on("enemy_killed", (data: { enemyId: number; enemyType: string; exp: number; x: number; y: number }) => {
       this.rollLoot(data.enemyType, data.x, data.y);
     });
   }
 
-  // 锟斤拷锟斤拷 Item usage (called by InventoryUI) 锟斤拷锟斤拷
+  // 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚?Item usage (called by InventoryUI) 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚?
 
   private useInventoryItem(slotIndex: number): void {
     const playerIds = entities.query("health", "stats").filter((id) => !entities.hasComponent(id, "ai"));
@@ -216,7 +254,7 @@ export class GameplayScene {
     });
   }
 
-  // 锟斤拷锟斤拷 Loot rolling on enemy kill 锟斤拷锟斤拷
+  // 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚?Loot rolling on enemy kill 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚?
 
   private rollLoot(enemyType: string, x: number, y: number): void {
     const table = ENEMY_LOOT_TABLE[enemyType];
@@ -232,7 +270,7 @@ export class GameplayScene {
     }
   }
 
-  // 锟斤拷锟斤拷 Buff tick 锟斤拷锟斤拷
+  // 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚?Buff tick 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚?
 
   private tickBuffs(): void {
     const playerIds = entities.query("stats").filter((id) => !entities.hasComponent(id, "ai"));
@@ -285,6 +323,8 @@ export class GameplayScene {
     this.tileContainer.removeChildren();
     this.entityContainer.removeChildren();
     this.spriteMap.clear();
+    this.healthBarMap.forEach((bar) => bar.destroy());
+    this.healthBarMap.clear();
     this.entityEnemyType.clear();
     this.npcEntities.clear();
     entities.clear();
@@ -300,6 +340,7 @@ export class GameplayScene {
     this.dialogActive = false;
     this.now = 0;
     this.playerAttackUntil = 0;
+      this.playerHitUntil = 0;
     this.portalCooldownUntil = this.now + 0.5;
     this.buffAtk = 0;
     this.buffAtkUntil = 0;
@@ -317,6 +358,7 @@ export class GameplayScene {
 
     // Inventory toggle (always processed, even in game-over)
     this.inventoryUI.update();
+    this.hotbar.update();
 
     if (this.gameOver) {
       if (!this.gameOverText) {
@@ -510,6 +552,7 @@ export class GameplayScene {
         damageFrameRatio: def.damageFrameRatio,
         attackDamageDealt: false,
         attackProgress: 0,
+        hurtUntil: 0,
       });
       entities.addComponent(id, "collider", {
         offsetX: 0, offsetY: 0,
@@ -534,14 +577,22 @@ export class GameplayScene {
 
   private spawnNPCs(): void {
     const ts = CONFIG.TILE_SIZE;
-    const mapCols = this.tileMap[0]?.length ?? 1;
-    const mapRows = this.tileMap.length ?? 1;
+    const mapId = this.currentMap?.id;
 
-    const npcSpawns = [
-      { npcKey: "sweeper", type: "sweeper", x: Math.min(mapCols - 2, Math.max(1, Math.floor(mapCols / 2) + 3)), y: Math.min(mapRows - 2, Math.max(1, Math.floor(mapRows / 2) + 2)) },
-    ];
+    const metaNPCs = this.currentMap?.meta.npcs ?? [];
 
-    for (const s of npcSpawns) {
+    // 闁瀚ㄩ弶銉︾爱閿涙艾婀撮崶绶坋ta娴兼ê鍘涢敍娑樻儊閸掓瑧鏁ゆ禒锝囩垳闁插瞼娈?NPC_SPAWN_SET 閹?mapId 鏉╁洦鎶?
+    const spawns = metaNPCs.length > 0
+      ? metaNPCs.map((n) => ({ npcKey: n.type, type: n.type, x: n.x, y: n.y }))
+      : NPC_SPAWN_SET.filter((s) => s.mapId === mapId).map((s) => ({
+          npcKey: s.npcKey,
+          type: s.type,
+          x: s.baseX,
+          y: s.baseY,
+          dialogOverride: s.dialogOverride,
+        }));
+
+    for (const s of spawns) {
       const def = NPC_DEFS[s.type];
       if (!def) continue;
 
@@ -553,21 +604,27 @@ export class GameplayScene {
       entities.addComponent(id, "transform", {
         x, y, width: size, height: size, facing: "down",
       });
-      entities.addComponent(id, "velocity", { vx: 0, vy: 0 });
-      entities.addComponent(id, "health", { current: 9999, max: 9999, invincibleUntil: Infinity });
+      // NPC 娑撳秹娓剁憰浣盒╅崝顭掔窗娑撳秴濮?velocity閿涘矂浼╅崗宥堫潶 movementSystem 婢跺嫮鎮婇崥搴樷偓婊嗙闂?濠曞倻些閳?      entities.addComponent(id, "health", { current: 9999, max: 9999, invincibleUntil: Infinity });
       entities.addComponent(id, "stats", { atk: 0, def: 0, speed: 0, exp: 0 });
       entities.addComponent(id, "npc", { npcKey: s.npcKey });
+
+      const cW = def.colliderSize ?? size;
+      const cH = def.colliderSize ?? size;
       entities.addComponent(id, "collider", {
-        offsetX: 0, offsetY: 0,
-        width: size, height: size,
-        isStatic: true, layer: "item", useForMovement: false,
+        offsetX: def.colliderOffsetX ?? 0,
+        offsetY: def.colliderOffsetY ?? 0,
+        width: cW,
+        height: cH,
+        isStatic: true,
+        layer: "item",           // 鐠佲晝甯虹€硅泛褰叉禒銉潶閹糕槄绱濇担鍡曠瑝娴兼艾寮稉搴㈠灛閺傛閮寸紒?        useForMovement: false,
       });
 
-      const textures = this.npcTextures.get(s.type)?.["sweep"] ?? [];
+      const animKey = def.animKey;
+      const textures = this.npcTextures.get(s.type)?.[animKey] ?? [];
       const sprite = new PIXI.AnimatedSprite(textures);
       sprite.anchor.set(0.5);
       sprite.loop = true;
-      sprite.animationSpeed = 10 / 60;
+      sprite.animationSpeed = (def.animFps?.[animKey] ?? 10) / 60;
       sprite.play();
       sprite.x = x + size / 2;
       sprite.y = y + size / 2;
@@ -631,36 +688,38 @@ export class GameplayScene {
     }
   }
 
-  private handleInteractions(): void {
-    if (input.isKeyJustPressed("KeyE")) {
-      const playerIds = entities.query("collider").filter((id) => {
-        const c = entities.getComponent(id, "collider");
-        return c && c.layer === "player" && c.useForMovement;
-      });
-      if (playerIds.length === 0) return;
+private handleInteractions(): void {
+  if (input.isKeyJustPressed("KeyE")) {
+    const playerIds = entities.query("collider").filter((id) => {
+      const c = entities.getComponent(id, "collider");
+      return c && c.layer === "player" && c.useForMovement;
+    });
+    if (playerIds.length === 0) return;
 
-      const pT = entities.getComponent(playerIds[0], "transform");
-      if (!pT) return;
+    const pT = entities.getComponent(playerIds[0], "transform");
+    if (!pT) return;
 
-      const allNPC = entities.query("npc");
-      for (const id of allNPC) {
-        const npc = entities.getComponent(id, "npc");
-        const t = entities.getComponent(id, "transform");
-        if (!npc || !t) continue;
+    const allNPC = entities.query("npc");
+    for (const id of allNPC) {
+      const npc = entities.getComponent(id, "npc");
+      const t = entities.getComponent(id, "transform");
+      if (!npc || !t) continue;
 
-        const dx = Math.abs((pT.x + pT.width / 2) - (t.x + t.width / 2));
-        const dy = Math.abs((pT.y + pT.height / 2) - (t.y + t.height / 2));
-        if (dx < 120 && dy < 120) {
-          const def = NPC_DEFS[npc.npcKey];
-          if (def) {
-            this.dialogActive = true;
-            this.dialogBox.open(def.name, def.dialog);
-            return;
-          }
+      const def = NPC_DEFS[npc.npcKey];
+      const range = def?.interactionRange ?? 120;
+
+      const dx = Math.abs((pT.x + pT.width / 2) - (t.x + t.width / 2));
+      const dy = Math.abs((pT.y + pT.height / 2) - (t.y + t.height / 2));
+      if (dx < range && dy < range) {
+        if (def) {
+          this.dialogActive = true;
+          this.dialogBox.open(def.name, def.dialog);
+          return;
         }
       }
     }
   }
+}
 
   private updateSprites(dt: number): void {
     const allIds = entities.query("transform");
@@ -671,37 +730,71 @@ export class GameplayScene {
       const ai = entities.getComponent(id, "ai");
       const sprite = this.spriteMap.get(id);
       if (!sprite) continue;
+      // Guard against destroyed sprites (e.g. from previous frame cleanup)
+      if ((sprite as any).destroyed) {
+        this.spriteMap.delete(id);
+        const staleHpBar = this.healthBarMap.get(id);
+        if (staleHpBar) { this.entityContainer.removeChild(staleHpBar); staleHpBar.destroy(); this.healthBarMap.delete(id); }
+        continue;
+      }
 
-      if (health) {
-        sprite.alpha = this.now < health.invincibleUntil
-          ? (Math.sin(this.now * 20) > 0 ? 1 : 0.3)
-          : 1;
+      // 閳光偓閳光偓 Enemy (AI entity) 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
+      if (ai && this.entityEnemyType.has(id)) {
+        const enemyType = this.entityEnemyType.get(id)!;
+        const def = ENEMY_DEFS[enemyType];
+        const texSet = this.enemyTextures.get(enemyType);
 
-        if (health.current <= 0) {
-          sprite.alpha -= dt * 2;
+        // --- Death ---
+        if (health && health.current <= 0) {
+          const deathKey = def?.deathAnim;
+          const deathTextures = deathKey ? texSet?.[deathKey] : undefined;
+
+          if (deathTextures && (sprite as PIXI.AnimatedSprite).textures !== deathTextures) {
+            (sprite as PIXI.AnimatedSprite).textures = deathTextures;
+            (sprite as PIXI.AnimatedSprite).loop = false;
+            (sprite as PIXI.AnimatedSprite).animationSpeed =
+              (def?.animFps?.[deathKey!] ?? 10) / 60;
+            (sprite as PIXI.AnimatedSprite).play();
+          }
+
+          const playing = (sprite as PIXI.AnimatedSprite).playing;
+          if (!playing || !deathTextures) {
+            sprite.alpha -= dt * 2;
+          }
+          sprite.x = transform.x + transform.width / 2;
+          sprite.y = transform.y + transform.height / 2;
           if (sprite.alpha <= 0) {
             this.entityContainer.removeChild(sprite);
             sprite.destroy();
             this.spriteMap.delete(id);
+            const hpBar = this.healthBarMap.get(id);
+            if (hpBar) {
+              this.entityContainer.removeChild(hpBar);
+              hpBar.destroy();
+              this.healthBarMap.delete(id);
+            }
             entities.destroyEntity(id);
             this.entityEnemyType.delete(id);
-            this.npcEntities.delete(id);
           }
           continue;
         }
-      }
 
-      if (ai && this.entityEnemyType.has(id)) {
-        const enemyType = this.entityEnemyType.get(id)!;
-        const def = ENEMY_DEFS[enemyType];
-        if (def?.anims) {
-          const animKey = def.anims[ai.state] ?? def.animKey;
-          const texSet = this.enemyTextures.get(enemyType);
-          const textures = texSet?.[animKey];
+        // --- Hurt (recently damaged) ---
+        const isHurt = ai.hurtUntil > 0 && this.now < ai.hurtUntil;
+        let animKey: string;
+        if (isHurt && def?.hurtAnim) {
+          animKey = def.hurtAnim;
+        } else {
+          animKey = def?.anims?.[ai.state] ?? def?.animKey ?? "idle";
+        }
+
+        if (texSet) {
+          const textures = texSet[animKey];
           if (textures && (sprite as PIXI.AnimatedSprite).textures !== textures) {
             (sprite as PIXI.AnimatedSprite).textures = textures;
-            const switchFps = def.animFps?.[animKey] ?? 6;
-            (sprite as PIXI.AnimatedSprite).animationSpeed = switchFps / 60;
+            (sprite as PIXI.AnimatedSprite).loop = true;
+            (sprite as PIXI.AnimatedSprite).animationSpeed =
+              (def?.animFps?.[animKey] ?? 6) / 60;
             (sprite as PIXI.AnimatedSprite).play();
           }
         }
@@ -711,9 +804,37 @@ export class GameplayScene {
         const eNatW = sprite.texture?.orig?.width || transform.width;
         const eNatH = sprite.texture?.orig?.height || transform.height;
         sprite.scale.set(transform.width / eNatW, transform.height / eNatH);
+
+        if (isHurt) {
+          sprite.alpha = Math.sin(this.now * 25) > 0 ? 1 : 0.4;
+        } else {
+          sprite.alpha = 1;
+        }
+
+        let hpBar = this.healthBarMap.get(id);
+        if (!hpBar) {
+          hpBar = new PIXI.Graphics();
+          this.entityContainer.addChild(hpBar);
+          this.healthBarMap.set(id, hpBar);
+        }
+        hpBar.clear();
+        const barW = transform.width * 0.8;
+        const barH = 6;
+        const barX = transform.x + transform.width * 0.1;
+        const barY = transform.y - 10;
+        const hpRatio = Math.max(0, health!.current / health!.max);
+        hpBar.beginFill(0x000000, 0.6);
+        hpBar.drawRoundedRect(barX - 1, barY - 1, barW + 2, barH + 2, 2);
+        hpBar.endFill();
+        const hpColor = hpRatio > 0.5 ? 0x44dd44 : hpRatio > 0.25 ? 0xddaa22 : 0xdd2222;
+        hpBar.beginFill(hpColor);
+        hpBar.drawRoundedRect(barX, barY, barW * hpRatio, barH, 2);
+        hpBar.endFill();
+        hpBar.alpha = sprite.alpha;
         continue;
       }
 
+      // 閳光偓閳光偓 NPC 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
       if (this.npcEntities.has(id)) {
         sprite.x = transform.x + transform.width / 2;
         sprite.y = transform.y + transform.height / 2;
@@ -723,19 +844,31 @@ export class GameplayScene {
         continue;
       }
 
+      // 閳光偓閳光偓 Player 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
       const vel = entities.getComponent(id, "velocity");
       const isMoving = vel && (Math.abs(vel.vx) > 1 || Math.abs(vel.vy) > 1);
 
-      const animKey = this.now < this.playerAttackUntil
-        ? `attack_${transform.facing}`
-        : `${isMoving ? "run" : "idle"}_${transform.facing}`;
+      let animKey: string;
+      if (health && health.current <= 0) {
+        animKey = "die";
+      } else if (this.now < this.playerHitUntil) {
+        animKey = "hit";
+      } else if (this.now < this.playerAttackUntil) {
+        animKey = `attack_${transform.facing}`;
+      } else {
+        animKey = `${isMoving ? "run" : "idle"}_${transform.facing}`;
+      }
 
       const anim = this.playerTextures[animKey];
-      if (anim && (sprite as PIXI.AnimatedSprite).textures !== anim.textures) {
-        (sprite as PIXI.AnimatedSprite).textures = anim.textures;
-        (sprite as PIXI.AnimatedSprite).animationSpeed = anim.fps / 60;
-        (sprite as PIXI.AnimatedSprite).loop = anim.loop;
-        (sprite as PIXI.AnimatedSprite).play();
+      if (anim) {
+        if ((sprite as PIXI.AnimatedSprite).textures !== anim.textures) {
+          (sprite as PIXI.AnimatedSprite).textures = anim.textures;
+          (sprite as PIXI.AnimatedSprite).animationSpeed = anim.fps / 60;
+          (sprite as PIXI.AnimatedSprite).loop = anim.loop;
+        }
+        if (!(sprite as PIXI.AnimatedSprite).playing) {
+          (sprite as PIXI.AnimatedSprite).gotoAndPlay(0);
+        }
       }
 
       const firstFrame = anim?.textures?.[0];
@@ -775,4 +908,16 @@ export class GameplayScene {
     this.dialogBox.resize(width, height);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
 

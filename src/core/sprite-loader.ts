@@ -12,6 +12,7 @@ interface AnimDef {
   frames?: number;
   framesPerDirection?: number;
   directions?: string[];
+  nonDirectional?: boolean;
   directionMap?: Record<string, { folder: string; prefix: string; frameCount: number; mirrorX?: boolean; startFrame?: number }>;
   fps: number;
   loop: boolean;
@@ -116,7 +117,15 @@ export async function loadPlayerTextures(): Promise<Record<string, PlayerAnimSet
     const fps = def.fps;
     const loop = def.loop;
 
-    if (def.directionMap) {
+    if (def.nonDirectional) {
+      // Non-directional animations (e.g. die, hit) use all frames as a single entry
+      result[action] = {
+        textures: await resolveFrames(def),
+        fps,
+        loop,
+        mirrorX: false,
+      };
+    } else if (def.directionMap) {
       for (const dir of dirs) {
         const dm = def.directionMap[dir];
         if (dm) {
@@ -198,3 +207,6 @@ export async function loadTileset(): Promise<Record<string, PIXI.Texture>> {
 
   return result;
 }
+
+
+

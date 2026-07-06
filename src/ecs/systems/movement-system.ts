@@ -5,28 +5,28 @@ import { CONFIG } from "../../config";
 import { eventBus } from "../../core/event-bus";
 
 export function movementSystem(dt: number, collisionMap: number[][]): void {
-  const playerIds = entities.query("transform", "velocity", "health");
+  // Process all moving entities (player + enemies), but skip static NPCs.
+  const ids = entities
+    .query("transform", "velocity", "health")
+    .filter((id) => !entities.hasComponent(id, "npc"));
 
-  for (const id of playerIds) {
+  for (const id of ids) {
     const transform = entities.getComponent(id, "transform")!;
     const velocity = entities.getComponent(id, "velocity")!;
-    const health = entities.getComponent(id, "health")!;
-    const ai = entities.getComponent(id, "ai");
+    const isPlayer = !entities.hasComponent(id, "ai");
 
-    // Player movement
-    if (!ai) {
+    // Player velocity comes from input; enemy velocity is set by aiSystem.
+    if (isPlayer) {
       const dir = input.getDirection();
       velocity.vx = dir.dx * CONFIG.PLAYER_SPEED;
       velocity.vy = dir.dy * CONFIG.PLAYER_SPEED;
 
-      // Update facing
       if (dir.dx < 0) transform.facing = "left";
       else if (dir.dx > 0) transform.facing = "right";
       if (dir.dy < 0) transform.facing = "up";
       else if (dir.dy > 0) transform.facing = "down";
     }
 
-    // Apply velocity with collision
     const collider = entities.getComponent(id, "collider");
     const cw = collider?.useForMovement ? collider.width : transform.width;
     const ch = collider?.useForMovement ? collider.height : transform.height;
@@ -35,20 +35,34 @@ export function movementSystem(dt: number, collisionMap: number[][]): void {
     const newX = transform.x + velocity.vx * dt;
     const newY = transform.y + velocity.vy * dt;
 
-    // Try X movement
-    if (canMoveTo(collisionMap, newX + cxOff, transform.y + cyOff, cw, ch)) {
+    const blockedByEntity = (rx: number, ry: number, rw: number, rh: number) => {
+      const all = entities.query("transform", "collider");
+      for (const oid of all) {
+        if (oid === id) continue;
+        const oc = entities.getComponent(oid, "collider")!;
+        if (!oc.isStatic) continue;
+        const ot = entities.getComponent(oid, "transform")!;
+        const ox = ot.x + (oc.offsetX ?? 0);
+        const oy = ot.y + (oc.offsetY ?? 0);
+        if (rx < ox + oc.width && rx + rw > ox && ry < oy + oc.height && ry + rh > oy) return true;
+      }
+      return false;
+    };
+
+    if (canMoveTo(collisionMap, newX + cxOff, transform.y + cyOff, cw, ch) && !blockedByEntity(newX + cxOff, transform.y + cyOff, cw, ch)) {
       transform.x = newX;
     } else {
       velocity.vx = 0;
     }
 
-    // Try Y movement
-    if (canMoveTo(collisionMap, transform.x + cxOff, newY + cyOff, cw, ch)) {
+    if (canMoveTo(collisionMap, transform.x + cxOff, newY + cyOff, cw, ch) && !blockedByEntity(transform.x + cxOff, newY + cyOff, cw, ch)) {
       transform.y = newY;
     } else {
       velocity.vy = 0;
     }
 
-    eventBus.emit("player_moved", { x: transform.x, y: transform.y });
+    if (isPlayer) {
+      eventBus.emit("player_moved", { x: transform.x, y: transform.y });
+    }
   }
 }

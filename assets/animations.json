@@ -1,242 +1,335 @@
 {
-    "_comment": "Player uses per-direction frame folders; enemies and tileset unchanged",
-    "player": {
-        "idle": {
-            "directions": [
-                "down",
-                "up",
-                "left",
-                "right"
-            ],
-            "fps": 6,
-            "loop": true,
-            "directionMap": {
-                "down": {
-                    "folder": "assets/sprites/warrior/idle/down/",
-                    "prefix": "down",
-                    "frameCount": 5
-                },
-                "up": {
-                    "folder": "assets/sprites/warrior/idle/up/",
-                    "prefix": "up",
-                    "frameCount": 5
-                },
-                "left": {
-                    "folder": "assets/sprites/warrior/idle/down/",
-                    "prefix": "down",
-                    "frameCount": 5,
-                    "startFrame": 6
-                },
-                "right": {
-                    "folder": "assets/sprites/warrior/idle/down/",
-                    "prefix": "down",
-                    "frameCount": 5
-                }
-            }
+  "_comment": "鏀寔涓ょ妯″紡: sprite sheet (file) 鎴?鍗曞抚鏂囦欢 (folder+prefix+frameCount)",
+  "player": {
+    "idle": {
+      "directionMap": {
+        "down": {
+          "folder": "assets/sprites/warrior/idle/down/",
+          "prefix": "down",
+          "frameCount": 10
         },
-        "run": {
-            "directions": [
-                "down",
-                "up",
-                "left",
-                "right"
-            ],
-            "fps": 10,
-            "loop": true,
-            "directionMap": {
-                "down": {
-                    "folder": "assets/sprites/warrior/walk/down/",
-                    "prefix": "down",
-                    "frameCount": 4
-                },
-                "up": {
-                    "folder": "assets/sprites/warrior/walk/up/",
-                    "prefix": "up",
-                    "frameCount": 4
-                },
-                "left": {
-                    "folder": "assets/sprites/warrior/walk/left/",
-                    "prefix": "left",
-                    "frameCount": 4
-                },
-                "right": {
-                    "folder": "assets/sprites/warrior/walk/right/",
-                    "prefix": "right",
-                    "frameCount": 4
-                }
-            }
+        "up": {
+          "folder": "assets/sprites/warrior/idle/up/",
+          "prefix": "up",
+          "frameCount": 5
         },
-        "attack": {
-            "directions": [
-                "down",
-                "up",
-                "left",
-                "right"
-            ],
-            "fps": 12,
-            "loop": false,
-            "directionMap": {
-                "down": {
-                    "folder": "assets/sprites/warrior/attack_down/",
-                    "prefix": "attack_down",
-                    "frameCount": 20
-                },
-                "up": {
-                    "folder": "assets/sprites/warrior/attack_up/",
-                    "prefix": "attack_up",
-                    "frameCount": 20
-                },
-                "left": {
-                    "folder": "assets/sprites/warrior/attack_right/",
-                    "prefix": "attack_right",
-                    "frameCount": 18
-                },
-                "right": {
-                    "folder": "assets/sprites/warrior/attack_left/",
-                    "prefix": "attack_left",
-                    "frameCount": 18
-                }
-            }
+        "left": {
+          "folder": "assets/sprites/warrior/idle/left/",
+          "prefix": "left",
+          "frameCount": 5
+        },
+        "right": {
+          "folder": "assets/sprites/warrior/idle/left/",
+          "prefix": "left",
+          "frameCount": 5,
+          "mirrorX": true
         }
+      },
+      "fps": 6,
+      "loop": true
     },
-    "slime": {
-        "idle": {
-            "file": "assets/sprites/enemies/slime_idle.png",
-            "frameWidth": 32,
-            "frameHeight": 32,
-            "frames": 4,
-            "fps": 6,
-            "loop": true
+    "run": {
+      "directionMap": {
+        "down": {
+          "folder": "assets/sprites/warrior/walk/down/",
+          "prefix": "down",
+          "frameCount": 4
         },
-        "hurt": {
-            "file": "assets/sprites/enemies/slime_hurt.png",
-            "frameWidth": 32,
-            "frameHeight": 32,
-            "frames": 2,
-            "fps": 8,
-            "loop": false
+        "up": {
+          "folder": "assets/sprites/warrior/walk/up/",
+          "prefix": "up",
+          "frameCount": 4
+        },
+        "left": {
+          "folder": "assets/sprites/warrior/walk/left/",
+          "prefix": "left",
+          "frameCount": 4
+        },
+        "right": {
+          "folder": "assets/sprites/warrior/walk/right/",
+          "prefix": "right",
+          "frameCount": 4
         }
+      },
+      "fps": 10,
+      "loop": true
     },
-    "red_slime": {
-        "idle": {
-            "file": "assets/sprites/enemies/red_slime_idle.png",
-            "frameWidth": 32,
-            "frameHeight": 32,
-            "frames": 4,
-            "fps": 6,
-            "loop": true
+    "attack": {
+      "directionMap": {
+        "down": {
+          "folder": "assets/sprites/warrior/attack_down/",
+          "prefix": "attack_down",
+          "frameCount": 20
         },
-        "hurt": {
-            "file": "assets/sprites/enemies/red_slime_hurt.png",
-            "frameWidth": 32,
-            "frameHeight": 32,
-            "frames": 2,
-            "fps": 8,
-            "loop": false
+        "up": {
+          "folder": "assets/sprites/warrior/attack_up/",
+          "prefix": "attack_up",
+          "frameCount": 20
+        },
+        "left": {
+          "folder": "assets/sprites/warrior/attack_left/",
+          "prefix": "attack_left",
+          "frameCount": 18,
+          "mirrorX": true
+        },
+        "right": {
+          "folder": "assets/sprites/warrior/attack_right/",
+          "prefix": "attack_right",
+          "frameCount": 18,
+          "mirrorX": true
         }
+      },
+      "fps": 12,
+      "loop": false
     },
-    "eagle": {
-        "fly": {
-            "folder": "assets/sprites/enemies/eagle/",
-            "prefix": "eagle_",
-            "frameCount": 17,
-            "frameWidth": 64,
-            "frameHeight": 64,
-            "fps": 12,
-            "loop": true
-        }
+    "die": {
+      "folder": "assets/sprites/warrior/die/",
+      "prefix": "die",
+      "frameCount": 10,
+      "fps": 10,
+      "loop": false,
+      "nonDirectional": true
     },
-    "skeleton": {
-        "idle": {
-            "folder": "assets/sprites/enemies/skeleton/",
-            "prefix": "idle_",
-            "frameCount": 61,
-            "frameWidth": 64,
-            "frameHeight": 64,
-            "fps": 10,
-            "loop": true
-        },
-        "move": {
-            "folder": "assets/sprites/enemies/skeleton/",
-            "prefix": "move_",
-            "frameCount": 61,
-            "frameWidth": 64,
-            "frameHeight": 64,
-            "fps": 12,
-            "loop": true
-        },
-        "attack": {
-            "folder": "assets/sprites/enemies/skeleton/",
-            "prefix": "attack_",
-            "frameCount": 20,
-            "frameWidth": 64,
-            "frameHeight": 64,
-            "fps": 22,
-            "loop": false
-        }
-    },
-    "sweeper": {
-        "sweep": {
-            "folder": "assets/sprites/npcs/sweeper/",
-            "prefix": "sweeper_",
-            "frameCount": 61,
-            "frameWidth": 64,
-            "frameHeight": 64,
-            "fps": 10,
-            "loop": true
-        }
-    },
-    "tileset": {
-        "folder": "assets/tilesets/tiles/",
-        "tiles": {
-            "grass": 0,
-            "dirt": 1,
-            "wall": 2,
-            "water": 3,
-            "flowers": 4,
-            "tree": 5
-        }
-    },
-    "orc": {
-        "attack": {
-            "fps": 12,
-            "frames": 6,
-            "frameWidth": 100,
-            "frameHeight": 100,
-            "loop": false,
-            "file": "assets/sprites/enemies/orc/orc_attack01.png"
-        },
-        "hurt": {
-            "fps": 8,
-            "frames": 4,
-            "frameWidth": 100,
-            "frameHeight": 100,
-            "loop": false,
-            "file": "assets/sprites/enemies/orc/orc_hurt.png"
-        },
-        "move": {
-            "fps": 10,
-            "frames": 8,
-            "frameWidth": 100,
-            "frameHeight": 100,
-            "loop": true,
-            "file": "assets/sprites/enemies/orc/orc_walk.png"
-        },
-        "idle": {
-            "fps": 6,
-            "frames": 6,
-            "frameWidth": 100,
-            "frameHeight": 100,
-            "loop": true,
-            "file": "assets/sprites/enemies/orc/orc_idle.png"
-        },
-        "death": {
-            "fps": 8,
-            "frames": 4,
-            "frameWidth": 100,
-            "frameHeight": 100,
-            "loop": false,
-            "file": "assets/sprites/enemies/orc/orc_death.png"
-        }
+    "hit": {
+      "folder": "assets/sprites/warrior/hit/",
+      "prefix": "hit",
+      "frameCount": 2,
+      "fps": 12,
+      "loop": false,
+      "nonDirectional": true
     }
+  },
+  "slime": {
+    "idle": {
+      "file": "assets/sprites/enemies/slime_idle.png",
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "frames": 4,
+      "fps": 6,
+      "loop": true
+    },
+    "hurt": {
+      "file": "assets/sprites/enemies/slime_hurt.png",
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "frames": 2,
+      "fps": 8,
+      "loop": false
+    }
+  },
+  "red_slime": {
+    "idle": {
+      "file": "assets/sprites/enemies/red_slime_idle.png",
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "frames": 4,
+      "fps": 6,
+      "loop": true
+    },
+    "hurt": {
+      "file": "assets/sprites/enemies/red_slime_hurt.png",
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "frames": 2,
+      "fps": 8,
+      "loop": false
+    }
+  },
+  "eagle": {
+    "fly": {
+      "folder": "assets/sprites/enemies/eagle/",
+      "prefix": "eagle_",
+      "frameCount": 17,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 12,
+      "loop": true
+    }
+  },
+  "skeleton": {
+    "idle": {
+      "folder": "assets/sprites/enemies/skeleton/",
+      "prefix": "idle_",
+      "frameCount": 61,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 10,
+      "loop": true
+    },
+    "move": {
+      "folder": "assets/sprites/enemies/skeleton/",
+      "prefix": "move_",
+      "frameCount": 61,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 12,
+      "loop": true
+    },
+    "attack": {
+      "folder": "assets/sprites/enemies/skeleton/",
+      "prefix": "attack_",
+      "frameCount": 20,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 22,
+      "loop": false
+    }
+  },
+  "goblin1": {
+    "idle": {
+      "folder": "assets/sprites/enemies/goblin1/idle/",
+      "prefix": "idle_",
+      "frameCount": 12,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 8,
+      "loop": true
+    },
+    "walk": {
+      "folder": "assets/sprites/enemies/goblin1/walk/",
+      "prefix": "walk_",
+      "frameCount": 12,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 10,
+      "loop": true
+    },
+    "attack": {
+      "folder": "assets/sprites/enemies/goblin1/attack2/",
+      "prefix": "attack2_",
+      "frameCount": 16,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 16,
+      "loop": false
+    },
+    "hurt": {
+      "folder": "assets/sprites/enemies/goblin1/hurt/",
+      "prefix": "hurt_",
+      "frameCount": 4,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 8,
+      "loop": false
+    }
+  },
+  "goblin2": {
+    "idle": {
+      "folder": "assets/sprites/enemies/goblin2/idle/",
+      "prefix": "idle_",
+      "frameCount": 15,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 8,
+      "loop": true
+    },
+    "walk": {
+      "folder": "assets/sprites/enemies/goblin2/walk/",
+      "prefix": "walk_",
+      "frameCount": 12,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 10,
+      "loop": true
+    },
+    "attack": {
+      "folder": "assets/sprites/enemies/goblin2/smash/",
+      "prefix": "smash_",
+      "frameCount": 24,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 20,
+      "loop": false
+    }
+  },
+  "goblin3": {
+    "idle": {
+      "folder": "assets/sprites/enemies/goblin3/idle/",
+      "prefix": "idle_",
+      "frameCount": 9,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 8,
+      "loop": true
+    },
+    "walk": {
+      "folder": "assets/sprites/enemies/goblin3/walk/",
+      "prefix": "walk_",
+      "frameCount": 9,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 10,
+      "loop": true
+    },
+    "run": {
+      "folder": "assets/sprites/enemies/goblin3/run/",
+      "prefix": "run_",
+      "frameCount": 9,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 12,
+      "loop": true
+    },
+    "attack": {
+      "folder": "assets/sprites/enemies/goblin3/attack1/",
+      "prefix": "attack1_",
+      "frameCount": 12,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 14,
+      "loop": false
+    }
+  },
+  "goblin4": {
+    "idle": {
+      "folder": "assets/sprites/enemies/goblin4/idle/",
+      "prefix": "idle_",
+      "frameCount": 6,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 6,
+      "loop": true
+    },
+    "walk": {
+      "folder": "assets/sprites/enemies/goblin4/walk1/",
+      "prefix": "walk1_",
+      "frameCount": 12,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 10,
+      "loop": true
+    },
+    "attack": {
+      "folder": "assets/sprites/enemies/goblin4/attack1/",
+      "prefix": "attack1_",
+      "frameCount": 20,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 16,
+      "loop": false
+    }
+  },
+  "sweeper": {
+    "sweep": {
+      "folder": "assets/sprites/npcs/sweeper/",
+      "prefix": "sweeper_",
+      "frameCount": 61,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 10,
+      "loop": true
+    }
+  },
+  "tileset": {
+    "file": "assets/tilesets/overworld.png",
+    "tileSize": 32,
+    "tiles": {
+      "grass": 0,
+      "dirt": 1,
+      "wall": 2,
+      "water": 3,
+      "flowers": 4,
+      "tree": 5
+    }
+  }
 }

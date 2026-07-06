@@ -20,7 +20,7 @@ export function combatSystem(now: number): void {
       if (now >= cooldownUntil) {
         let ax = pTransform.x + pTransform.width / 2;
         let ay = pTransform.y + pTransform.height / 2;
-        const range = pHealth.attackRange;
+        const range = pHealth.attackRange ?? 0;
         if (pTransform.facing === "right") ax += range;
         else if (pTransform.facing === "left") ax -= range;
         else if (pTransform.facing === "down") ay += range;
@@ -42,6 +42,8 @@ export function combatSystem(now: number): void {
             const { damage, isCrit } = calculateDamage(pStats.atk, eStats.def);
             eHealth.current -= damage;
             eHealth.invincibleUntil = now + 0.3;
+            const eAI = entities.getComponent(enemyId, "ai");
+            if (eAI) eAI.hurtUntil = now + 0.3;
 
             eventBus.emit("damage_dealt", {
               sourceId: playerId, targetId: enemyId,
@@ -60,7 +62,7 @@ export function combatSystem(now: number): void {
             }
           }
         }
-        (pHealth as any).attackCooldownUntil = now + pHealth.attackCooldown;
+        (pHealth as any).attackCooldownUntil = now + (pHealth.attackCooldown ?? 1);
         eventBus.emit("player_attacked");
       }
     }
@@ -86,7 +88,8 @@ export function combatSystem(now: number): void {
           if (now >= pHealth.invincibleUntil) {
             const { damage, isCrit } = calculateDamage(eStats.atk, pStats.def);
             pHealth.current -= damage;
-            pHealth.invincibleUntil = now + pHealth.invincibleTime;
+            pHealth.invincibleUntil = now + (pHealth.invincibleTime ?? 0.5);
+            eventBus.emit("player_hit");
 
             eventBus.emit("damage_dealt", {
               sourceId: enemyId, targetId: playerId,
@@ -106,3 +109,7 @@ export function combatSystem(now: number): void {
     }
   }
 }
+
+
+
+

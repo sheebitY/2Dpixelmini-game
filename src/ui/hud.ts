@@ -9,16 +9,16 @@ interface DamageNumber {
 }
 
 export class HUD {
-  /** PIXI container only holds floating damage numbers */
+  /** PIXI container for HUD-level elements */
   container: PIXI.Container;
 
-  // HTML HUD elements (managed outside PIXI)
   private hpBar: HTMLElement;
   private hpText: HTMLElement;
   private expBar: HTMLElement;
   private expText: HTMLElement;
   private levelText: HTMLElement;
 
+  private worldContainer: PIXI.Container | null = null;
   private damageNumbers: DamageNumber[] = [];
   private level = 1;
   private exp = 0;
@@ -28,14 +28,12 @@ export class HUD {
     this.container = new PIXI.Container();
     this.container.zIndex = 1000;
 
-    // Grab references to the HTML overlay elements
     this.hpBar   = document.getElementById("hp-bar")!;
     this.hpText  = document.getElementById("hp-text")!;
     this.expBar  = document.getElementById("exp-bar")!;
     this.expText = document.getElementById("exp-text")!;
     this.levelText = document.getElementById("level-text")!;
 
-    // Listen for damage events to show floating numbers (still PIXI-based)
     eventBus.on("damage_dealt", (data: any) => {
       this.spawnDamageNumber(data.amount, data.isCrit, data.x, data.y);
     });
@@ -45,7 +43,10 @@ export class HUD {
     });
   }
 
-  /* ©¤©¤ Floating damage numbers (PIXI, world-space) ©¤©¤ */
+  /** Set the world container where damage numbers should be rendered */
+  setWorldContainer(container: PIXI.Container): void {
+    this.worldContainer = container;
+  }
 
   private spawnDamageNumber(amount: number, isCrit: boolean, x: number, y: number): void {
     const color = isCrit ? 0xffd700 : 0xff4444;
@@ -61,11 +62,10 @@ export class HUD {
     });
     text.anchor.set(0.5, 1);
     text.position.set(x, y);
-    this.container.addChild(text);
+    const parent = this.worldContainer ?? this.container;
+    parent.addChild(text);
     this.damageNumbers.push({ text, vy: -60, life: 1.0 });
   }
-
-  /* ©¤©¤ EXP & leveling ©¤©¤ */
 
   private addExp(amount: number): void {
     this.exp += amount;
@@ -73,7 +73,6 @@ export class HUD {
       this.exp -= this.expToLevel;
       this.level++;
       this.expToLevel = Math.floor(this.expToLevel * 1.5);
-      // Heal on level up
       const playerIds = entities.query("health").filter((id) => !entities.hasComponent(id, "ai"));
       if (playerIds.length > 0) {
         const hp = entities.getComponent(playerIds[0], "health")!;
@@ -83,10 +82,7 @@ export class HUD {
     }
   }
 
-  /* ©¤©¤ Frame update ©¤©¤ */
-
   update(dt: number, _canvasWidth: number, _canvasHeight: number): void {
-    // ©¤©¤ Update HP bar (HTML) ©¤©¤
     const playerIds = entities.query("health").filter((id) => !entities.hasComponent(id, "ai"));
     if (playerIds.length > 0) {
       const hp = entities.getComponent(playerIds[0], "health")!;
@@ -94,7 +90,6 @@ export class HUD {
       const percent = (ratio * 100).toFixed(1) + "%";
 
       this.hpBar.style.width = percent;
-      // Color tier classes
       this.hpBar.classList.remove("hp-medium", "hp-low");
       if (ratio <= 0.25)      this.hpBar.classList.add("hp-low");
       else if (ratio <= 0.50) this.hpBar.classList.add("hp-medium");
@@ -102,7 +97,6 @@ export class HUD {
       this.hpText.textContent = `${Math.max(0, Math.ceil(hp.current))} / ${hp.max}`;
     }
 
-    // ©¤©¤ Update Level & EXP (HTML) ©¤©¤
     this.levelText.textContent = `Lv.${this.level}`;
     const expPercent = this.expToLevel > 0
       ? ((this.exp / this.expToLevel) * 100).toFixed(1) + "%"
@@ -110,17 +104,17 @@ export class HUD {
     this.expBar.style.width = expPercent;
     this.expText.textContent = `${this.exp} / ${this.expToLevel}`;
 
-    // ©¤©¤ Update floating damage numbers (PIXI) ©¤©¤
     for (let i = this.damageNumbers.length - 1; i >= 0; i--) {
       const dn = this.damageNumbers[i];
       dn.life -= dt;
       dn.text.y += dn.vy * dt;
       dn.text.alpha = Math.max(0, dn.life);
       if (dn.life <= 0) {
-        this.container.removeChild(dn.text);
+        dn.text.parent?.removeChild(dn.text);
         dn.text.destroy();
         this.damageNumbers.splice(i, 1);
       }
     }
   }
 }
+
