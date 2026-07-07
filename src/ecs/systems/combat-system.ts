@@ -18,8 +18,8 @@ export function combatSystem(now: number): void {
     if (input.isKeyJustPressed("Space") || input.isKeyJustPressed("KeyZ")) {
       const cooldownUntil = (pHealth as any).attackCooldownUntil ?? 0;
       if (now >= cooldownUntil) {
-        let ax = pTransform.x + pTransform.width / 2;
-        let ay = pTransform.y + pTransform.height / 2;
+        let ax = pTransform.x + pTransform.width / 2 + (pHealth.anchorOffsetX ?? 0);
+        let ay = pTransform.y + pTransform.height / 2 + (pHealth.anchorOffsetY ?? 0);
         const range = pHealth.attackRange ?? 0;
         if (pTransform.facing === "right") ax += range;
         else if (pTransform.facing === "left") ax -= range;
@@ -80,8 +80,8 @@ export function combatSystem(now: number): void {
       if (eAI.attackDamageDealt) continue;
 
       if (eAI.attackProgress >= eAI.damageFrameRatio) {
-        const dx = (pTransform.x + pTransform.width / 2) - (eTransform.x + eTransform.width / 2);
-        const dy = (pTransform.y + pTransform.height / 2) - (eTransform.y + eTransform.height / 2);
+        const dx = (pTransform.x + pTransform.width / 2 + (pHealth.anchorOffsetX ?? 0)) - (eTransform.x + eTransform.width / 2);
+        const dy = (pTransform.y + pTransform.height / 2 + (pHealth.anchorOffsetY ?? 0)) - (eTransform.y + eTransform.height / 2);
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist < eAI.attackRange + pTransform.width / 2) {
@@ -94,7 +94,7 @@ export function combatSystem(now: number): void {
             eventBus.emit("damage_dealt", {
               sourceId: enemyId, targetId: playerId,
               amount: damage, isCrit,
-              x: pTransform.x + pTransform.width / 2, y: pTransform.y,
+              x: pTransform.x + pTransform.width / 2 + (pHealth.anchorOffsetX ?? 0), y: pTransform.y,
             });
 
             if (pHealth.current <= 0) {

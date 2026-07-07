@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import { CONFIG } from "./config";
 import { GameplayScene } from "./scenes/gameplay-scene";
+import { TitleScreen } from "./ui/title-screen";
 
 async function main() {
   const app = new PIXI.Application({
@@ -17,24 +18,44 @@ async function main() {
   // Pixel art mode
   PIXI.BaseTexture.defaultOptions.scaleMode = PIXI.SCALE_MODES.NEAREST;
 
-  // Show loading text
-  const loadingText = new PIXI.Text("Loading...", {
-    fontSize: 24, fill: 0xffffff, fontFamily: "monospace",
-  });
-  loadingText.anchor.set(0.5, 0.5);
-  loadingText.position.set(app.screen.width / 2, app.screen.height / 2);
-  app.stage.addChild(loadingText);
-
-  // Create scene and load assets from files
+  // Create scene (assets load separately below)
   const scene = new GameplayScene(app);
-  await scene.loadAssets();
 
-  // Remove loading text, start game
-  app.stage.removeChild(loadingText);
-  loadingText.destroy();
+  // Show title screen immediately
+  const titleScreen = new TitleScreen();
+  titleScreen.show();
+
+  // Start preloading assets in the background with fake progress
+  let fakeProgress = 0;
+  const progressInterval = setInterval(() => {
+    if (fakeProgress < 0.85) {
+      fakeProgress += 0.015 + Math.random() * 0.025;
+      titleScreen.setLoadProgress(Math.min(fakeProgress, 0.85));
+    }
+  }, 100);
+
+  scene.loadAssets().then(() => {
+    clearInterval(progressInterval);
+    titleScreen.setLoadDone();
+  });
+
+  // When user clicks start (and assets are ready), begin the game
+  titleScreen.setOnStart(() => {
+    startGame(app, scene);
+  });
+}
+
+function startGame(app: PIXI.Application, scene: GameplayScene) {
+  // Hide title elements
+  const titleEl = document.getElementById("title-screen");
+  const loadEl = document.getElementById("title-loading-overlay");
+  if (titleEl) titleEl.style.display = "none";
+  if (loadEl) loadEl.style.display = "none";
+
+  // Add scene to stage
   app.stage.addChild(scene.container);
 
-  // Resize
+  // Resize handler
   function onResize() {
     const w = window.innerWidth;
     const h = window.innerHeight;

@@ -32,12 +32,21 @@ interface PlayerDef {
   attackRange: number;
   attackCooldown: number;
   invincibleTime: number;
+  anchorOffsetX: number;
+  anchorOffsetY: number;
+  colliderOffsetX: number;
+  colliderOffsetY: number;
+  colliderWidth: number;
+  colliderHeight: number;
 }
 
 const PLAYER_DEF: PlayerDef = {
   hp: 100, atk: 15, def: 5, speed: 240,
   size: 128,
   attackRange: 120, attackCooldown: 0.4, invincibleTime: 0.5,
+  anchorOffsetX: 0, anchorOffsetY: 0,
+  colliderOffsetX: 34, colliderOffsetY: 54,
+  colliderWidth: 55, colliderHeight: 55,
 };
 
 // Enemy type definitions
@@ -108,6 +117,45 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     colliderSize: 100,
     detectRange: 450, attackRange: 70, attackCooldown: 1.2,
     anchorOffsetX: 0, anchorOffsetY: -20,
+  },
+  goblin1: {
+    hp: 40, atk: 10, def: 3, speed: 70, exp: 20,
+    animKey: "idle", size: 80,
+    anims: { idle: "idle", patrol: "walk", chase: "walk", attack: "attack" },
+    animFps: { idle: 8, walk: 10, attack: 16 },
+    hurtAnim: "hurt",
+    attackDuration: 0.5, damageFrameRatio: 0.4,
+    detectRange: 350, attackRange: 60, attackCooldown: 1.0,
+    anchorOffsetX: 0, anchorOffsetY: 0,
+  },
+  goblin2: {
+    hp: 65, atk: 14, def: 5, speed: 55, exp: 35,
+    animKey: "idle", size: 96,
+    anims: { idle: "idle", patrol: "walk", chase: "walk", attack: "attack" },
+    animFps: { idle: 8, walk: 10, attack: 20 },
+    attackDuration: 0.7, damageFrameRatio: 0.5,
+    detectRange: 400, attackRange: 70, attackCooldown: 1.3,
+    anchorOffsetX: 0, anchorOffsetY: 0,
+  },
+  goblin3: {
+    hp: 50, atk: 12, def: 4, speed: 90, exp: 30,
+    animKey: "idle", size: 80,
+    anims: { idle: "idle", patrol: "run", chase: "run", attack: "attack" },
+    animFps: { idle: 8, run: 12, attack: 14 },
+    hurtAnim: "hurt",
+    attackDuration: 0.4, damageFrameRatio: 0.4,
+    detectRange: 450, attackRange: 65, attackCooldown: 0.9,
+    anchorOffsetX: 0, anchorOffsetY: 0,
+  },
+  goblin4: {
+    hp: 90, atk: 16, def: 7, speed: 40, exp: 45,
+    animKey: "idle", size: 96,
+    anims: { idle: "idle", patrol: "walk", chase: "walk", attack: "attack" },
+    animFps: { idle: 6, walk: 10, attack: 16 },
+    attackDuration: 0.9, damageFrameRatio: 0.5,
+    colliderSize: 80,
+    detectRange: 400, attackRange: 75, attackCooldown: 1.4,
+    anchorOffsetX: 0, anchorOffsetY: 0,
   },
 };
 
@@ -367,6 +415,7 @@ export class GameplayScene {
     this.buffDefUntil = 0;
 
     this.drawMap();
+    this.hud.setMapName(mapId);
     this.spawnPlayer(spawnOverride, entryDirection);
     this.spawnEnemies();
     this.spawnNPCs();
@@ -519,6 +568,8 @@ export class GameplayScene {
       attackRange: PLAYER_DEF.attackRange,
       attackCooldown: PLAYER_DEF.attackCooldown,
       invincibleTime: PLAYER_DEF.invincibleTime,
+      anchorOffsetX: PLAYER_DEF.anchorOffsetX,
+      anchorOffsetY: PLAYER_DEF.anchorOffsetY,
     });
     entities.addComponent(id, "stats", {
       atk: PLAYER_DEF.atk,
@@ -527,9 +578,9 @@ export class GameplayScene {
       exp: 0,
     });
     entities.addComponent(id, "collider", {
-      offsetX: 34, offsetY: 44,
-      width: 60, height: 60,
-      isStatic: false, layer: "player", useForMovement: true,
+      offsetX: PLAYER_DEF.colliderOffsetX, offsetY: PLAYER_DEF.colliderOffsetY,
+width: PLAYER_DEF.colliderWidth, height: PLAYER_DEF.colliderHeight,
+isStatic: false, layer: "player", useForMovement: true,
     });
 
     const anim = this.playerTextures["idle_down"];
@@ -604,7 +655,8 @@ export class GameplayScene {
       entities.addComponent(id, "lootDrop", { exp: def.exp, enemyType: s.type });
 
       const animKey = def.anims?.idle ?? def.animKey;
-      const textures = this.enemyTextures.get(s.type)?.[animKey] ?? [];
+      const textures = this.enemyTextures.get(s.type)?.[animKey];
+      if (!textures || textures.length === 0) continue;
       const sprite = new PIXI.AnimatedSprite(textures);
       sprite.anchor.set(0.5);
       sprite.loop = true;

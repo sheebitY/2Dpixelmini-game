@@ -174,6 +174,48 @@
       "loop": false
     }
   },
+  "orc": {
+    "idle": {
+      "file": "assets/sprites/enemies/orc/orc_idle.png",
+      "frameWidth": 100,
+      "frameHeight": 100,
+      "frames": 6,
+      "fps": 6,
+      "loop": true
+    },
+    "move": {
+      "file": "assets/sprites/enemies/orc/orc_walk.png",
+      "frameWidth": 100,
+      "frameHeight": 100,
+      "frames": 8,
+      "fps": 10,
+      "loop": true
+    },
+    "attack": {
+      "file": "assets/sprites/enemies/orc/orc_attack01.png",
+      "frameWidth": 100,
+      "frameHeight": 100,
+      "frames": 6,
+      "fps": 12,
+      "loop": false
+    },
+    "hurt": {
+      "file": "assets/sprites/enemies/orc/orc_hurt.png",
+      "frameWidth": 100,
+      "frameHeight": 100,
+      "frames": 4,
+      "fps": 8,
+      "loop": false
+    },
+    "death": {
+      "file": "assets/sprites/enemies/orc/orc_death.png",
+      "frameWidth": 100,
+      "frameHeight": 100,
+      "frames": 4,
+      "fps": 8,
+      "loop": false
+    }
+  },
   "goblin1": {
     "idle": {
       "folder": "assets/sprites/enemies/goblin1/idle/",
@@ -182,7 +224,8 @@
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 8,
-      "loop": true
+      "loop": true,
+      "startFrame": 0
     },
     "walk": {
       "folder": "assets/sprites/enemies/goblin1/walk/",
@@ -191,7 +234,8 @@
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 10,
-      "loop": true
+      "loop": true,
+      "startFrame": 0
     },
     "attack": {
       "folder": "assets/sprites/enemies/goblin1/attack2/",
@@ -200,7 +244,8 @@
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 16,
-      "loop": false
+      "loop": false,
+      "startFrame": 0
     },
     "hurt": {
       "folder": "assets/sprites/enemies/goblin1/hurt/",
@@ -209,7 +254,8 @@
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 8,
-      "loop": false
+      "loop": false,
+      "startFrame": 0
     }
   },
   "goblin2": {
@@ -220,7 +266,8 @@
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 8,
-      "loop": true
+      "loop": true,
+      "startFrame": 0
     },
     "walk": {
       "folder": "assets/sprites/enemies/goblin2/walk/",
@@ -229,7 +276,8 @@
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 10,
-      "loop": true
+      "loop": true,
+      "startFrame": 0
     },
     "attack": {
       "folder": "assets/sprites/enemies/goblin2/smash/",
@@ -238,7 +286,8 @@
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 20,
-      "loop": false
+      "loop": false,
+      "startFrame": 0
     }
   },
   "goblin3": {
@@ -249,7 +298,8 @@
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 8,
-      "loop": true
+      "loop": true,
+      "startFrame": 0
     },
     "walk": {
       "folder": "assets/sprites/enemies/goblin3/walk/",
@@ -258,7 +308,8 @@
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 10,
-      "loop": true
+      "loop": true,
+      "startFrame": 0
     },
     "run": {
       "folder": "assets/sprites/enemies/goblin3/run/",
@@ -267,7 +318,8 @@
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 12,
-      "loop": true
+      "loop": true,
+      "startFrame": 0
     },
     "attack": {
       "folder": "assets/sprites/enemies/goblin3/attack1/",
@@ -276,7 +328,8 @@
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 14,
-      "loop": false
+      "loop": false,
+      "startFrame": 0
     }
   },
   "goblin4": {
@@ -287,7 +340,8 @@
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 6,
-      "loop": true
+      "loop": true,
+      "startFrame": 0
     },
     "walk": {
       "folder": "assets/sprites/enemies/goblin4/walk1/",
@@ -296,7 +350,8 @@
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 10,
-      "loop": true
+      "loop": true,
+      "startFrame": 0
     },
     "attack": {
       "folder": "assets/sprites/enemies/goblin4/attack1/",
@@ -305,7 +360,8 @@
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 16,
-      "loop": false
+      "loop": false,
+      "startFrame": 0
     }
   },
   "sweeper": {

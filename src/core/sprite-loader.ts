@@ -7,6 +7,7 @@ interface AnimDef {
   folder?: string;
   prefix?: string;
   frameCount?: number;
+  startFrame?: number;
   frameWidth?: number;
   frameHeight?: number;
   frames?: number;
@@ -71,19 +72,22 @@ async function loadIndividualFrames(
   const frames: PIXI.Texture[] = [];
   for (let i = 0; i < count; i++) {
     const n = startFrame + i;
-    const rawPath = `${folder}${prefix}${n}.png`;
-    const padPath = `${folder}${prefix}${String(n).padStart(2, "0")}.png`;
-    try {
-      const base = await PIXI.Assets.load({ alias: rawPath, src: rawPath });
-      frames.push(new PIXI.Texture(base as PIXI.BaseTexture));
-    } catch (_) {
+    const raw = folder + prefix + n + ".png";
+    const pad2 = folder + prefix + String(n).padStart(2, "0") + ".png";
+    const pad4 = folder + prefix + String(n).padStart(4, "0") + ".png";
+    const candidates = [raw, pad2, pad4];
+    let loaded = false;
+    for (const tryPath of candidates) {
       try {
-        const base2 = await PIXI.Assets.load({ alias: padPath, src: padPath });
-        frames.push(new PIXI.Texture(base2 as PIXI.BaseTexture));
-      } catch (err) {
-        console.warn("Frame missing, using fallback:", rawPath, err);
-        frames.push(PIXI.Texture.WHITE);
-      }
+        const base = await PIXI.Assets.load({ alias: tryPath, src: tryPath });
+        frames.push(new PIXI.Texture(base as PIXI.BaseTexture));
+        loaded = true;
+        break;
+      } catch (_) { /* try next */ }
+    }
+    if (!loaded) {
+      console.warn("Frame missing:", candidates[0]);
+      frames.push(PIXI.Texture.WHITE);
     }
   }
   return frames;
@@ -102,7 +106,7 @@ async function resolveFrames(def: AnimDef): Promise<PIXI.Texture[]> {
     return frames;
   }
   if (def.folder && def.prefix && def.frameCount) {
-    return loadIndividualFrames(def.folder, def.prefix, def.frameCount);
+    return loadIndividualFrames(def.folder, def.prefix, def.frameCount, def.startFrame ?? 1);
   }
   console.warn("AnimDef has no valid source:", def);
   return [PIXI.Texture.WHITE];

@@ -17,6 +17,7 @@ export class HUD {
   private expBar: HTMLElement;
   private expText: HTMLElement;
   private levelText: HTMLElement;
+  private mapNameEl: HTMLElement;
 
   private worldContainer: PIXI.Container | null = null;
   private damageNumbers: DamageNumber[] = [];
@@ -33,6 +34,7 @@ export class HUD {
     this.expBar  = document.getElementById("exp-bar")!;
     this.expText = document.getElementById("exp-text")!;
     this.levelText = document.getElementById("level-text")!;
+    this.mapNameEl = document.getElementById("map-name")!;
 
     eventBus.on("damage_dealt", (data: any) => {
       this.spawnDamageNumber(data.amount, data.isCrit, data.x, data.y);
@@ -80,6 +82,12 @@ export class HUD {
       }
       eventBus.emit("player_leveled_up", { newLevel: this.level });
     }
+  }
+
+  setMapName(id: string): void {
+    const label = id.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    this.mapNameEl.textContent = label;
+    this.mapNameEl.classList.add("show");
   }
 
   update(dt: number, _canvasWidth: number, _canvasHeight: number): void {

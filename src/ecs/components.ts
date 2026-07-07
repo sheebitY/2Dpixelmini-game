@@ -40,6 +40,8 @@ export interface Health {
   max: number;
   invincibleUntil: number;
   attackRange?: number;
+  anchorOffsetX?: number;
+  anchorOffsetY?: number;
   attackCooldown?: number;
   invincibleTime?: number;
 }

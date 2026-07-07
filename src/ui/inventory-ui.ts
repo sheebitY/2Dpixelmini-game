@@ -80,44 +80,61 @@ export class InventoryUI {
   // ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
 
   private buildEquipSlots(): void {
-    this.equipPanel.innerHTML = '<div class="equip-title">Equipment</div>';
-    for (const slotDef of EQUIP_SLOTS) {
-      const el = document.createElement("div");
-      el.className = "equip-slot";
-      el.dataset.slot = slotDef.key;
+    this.equipPanel.innerHTML = '<div class="equip-title">Equipment</div><div class="equip-body"></div>';
+    const body = this.equipPanel.querySelector(".equip-body") as HTMLElement;
 
-      const icon = document.createElement("span");
-      icon.className = "equip-slot-icon";
-      el.appendChild(icon);
+    // Build character-body layout: rows of slots
+    // Row 1: helmet (centered)
+    // Row 2: weapon + chestplate
+    // Row 3: leggings (centered)
+    // Row 4: boots (centered)
+    const layout: EquipSlot[][] = [
+      ["helmet"],
+      ["weapon", "chestplate"],
+      ["leggings"],
+      ["boots"],
+    ];
 
-      const label = document.createElement("span");
-      label.className = "equip-slot-label";
-      label.textContent = slotDef.label;
-      el.appendChild(label);
+    for (const rowSlots of layout) {
+      const row = document.createElement("div");
+      row.className = "equip-row";
+      for (const slotKey of rowSlots) {
+        const slotDef = EQUIP_SLOTS.find(s => s.key === slotKey)!;
+        const el = document.createElement("div");
+        el.className = "equip-slot";
+        el.dataset.slot = slotDef.key;
 
-      const rarity = document.createElement("div");
-      rarity.className = "equip-slot-rarity";
-      el.appendChild(rarity);
+        const icon = document.createElement("span");
+        icon.className = "equip-slot-icon";
+        el.appendChild(icon);
 
-      // Click to unequip
-      el.addEventListener("click", () => this.onEquipClick(slotDef.key));
+        const label = document.createElement("span");
+        label.className = "equip-slot-label";
+        label.textContent = slotDef.label;
+        el.appendChild(label);
 
-      // Drag-drop: accept items from inventory
-      el.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        e.dataTransfer!.dropEffect = "copy";
-        el.classList.add("drag-over");
-      });
-      el.addEventListener("dragleave", () => el.classList.remove("drag-over"));
-      el.addEventListener("drop", (e) => {
-        e.preventDefault();
-        el.classList.remove("drag-over");
-        const invIdx = parseInt(e.dataTransfer!.getData("text/plain"), 10);
-        if (isNaN(invIdx)) return;
-        this.handleEquipDrop(slotDef.key, invIdx);
-      });
+        const rarity = document.createElement("div");
+        rarity.className = "equip-slot-rarity";
+        el.appendChild(rarity);
 
-      this.equipPanel.appendChild(el);
+        el.addEventListener("click", () => this.onEquipClick(slotDef.key));
+        el.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          e.dataTransfer!.dropEffect = "copy";
+          el.classList.add("drag-over");
+        });
+        el.addEventListener("dragleave", () => el.classList.remove("drag-over"));
+        el.addEventListener("drop", (e) => {
+          e.preventDefault();
+          el.classList.remove("drag-over");
+          const invIdx = parseInt(e.dataTransfer!.getData("text/plain"), 10);
+          if (isNaN(invIdx)) return;
+          this.handleEquipDrop(slotDef.key, invIdx);
+        });
+
+        row.appendChild(el);
+      }
+      body.appendChild(row);
     }
   }
 
@@ -153,9 +170,9 @@ export class InventoryUI {
   }
 
   private renderEquipSlots(): void {
-    const children = this.equipPanel.children;
-    for (let i = 1; i < children.length; i++) { // skip title
-      const el = children[i] as HTMLElement;
+    const slots = this.equipPanel.querySelectorAll(".equip-slot");
+    for (let i = 0; i < slots.length; i++) {
+      const el = slots[i] as HTMLElement;
       const slotKey = el.dataset.slot as EquipSlot;
       const itemId = equipment.get(slotKey);
       const icon = el.querySelector(".equip-slot-icon") as HTMLElement;
