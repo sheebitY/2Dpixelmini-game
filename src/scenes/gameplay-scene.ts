@@ -474,7 +474,7 @@ export class GameplayScene {
   }
 
   async loadAssets(): Promise<void> {
-    const [playerTex, slimeTex, redSlimeTex, eagleTex, skeletonTex, orcTex, sweeperTex, blacksmithTex, merchantTex, tiles] =
+    const [playerTex, slimeTex, redSlimeTex, eagleTex, skeletonTex, orcTex, goblin1Tex, goblin2Tex, goblin3Tex, goblin4Tex, sweeperTex, blacksmithTex, merchantTex, tiles] =
       await Promise.all([
         loadPlayerTextures(),
         loadEnemyTextures("slime"),
@@ -482,6 +482,10 @@ export class GameplayScene {
         loadEnemyTextures("eagle"),
         loadEnemyTextures("skeleton"),
         loadEnemyTextures("orc"),
+                loadEnemyTextures("goblin1"),
+                loadEnemyTextures("goblin2"),
+                loadEnemyTextures("goblin3"),
+                loadEnemyTextures("goblin4"),
         loadNPCTextures("sweeper"),
         loadNPCTextures("blacksmith"),
         loadNPCTextures("merchant"),
@@ -494,6 +498,10 @@ export class GameplayScene {
     this.enemyTextures.set("eagle", eagleTex);
     this.enemyTextures.set("skeleton", skeletonTex);
     this.enemyTextures.set("orc", orcTex);
+        this.enemyTextures.set("goblin1", goblin1Tex);
+        this.enemyTextures.set("goblin2", goblin2Tex);
+        this.enemyTextures.set("goblin3", goblin3Tex);
+        this.enemyTextures.set("goblin4", goblin4Tex);
     this.npcTextures.set("sweeper", sweeperTex);
     this.npcTextures.set("blacksmith", blacksmithTex);
     this.npcTextures.set("merchant", merchantTex);
@@ -781,7 +789,9 @@ isStatic: false, layer: "player", useForMovement: true,
 
       const animKey = def.anims?.idle ?? def.animKey;
       const textures = this.enemyTextures.get(s.type)?.[animKey];
-      if (!textures || textures.length === 0) continue;
+      if (!textures || textures.length === 0) {
+        continue;
+      }
       const sprite = new PIXI.AnimatedSprite(textures);
       sprite.anchor.set(0.5);
       sprite.loop = true;
@@ -1079,13 +1089,14 @@ private handleInteractions(): void {
 
       const anim = this.playerTextures[animKey];
       if (anim) {
-        if ((sprite as PIXI.AnimatedSprite).textures !== anim.textures) {
-          (sprite as PIXI.AnimatedSprite).textures = anim.textures;
-          (sprite as PIXI.AnimatedSprite).animationSpeed = anim.fps / 60;
-          (sprite as PIXI.AnimatedSprite).loop = anim.loop;
-        }
-        if (!(sprite as PIXI.AnimatedSprite).playing) {
-          (sprite as PIXI.AnimatedSprite).gotoAndPlay(0);
+        const as = sprite as PIXI.AnimatedSprite;
+        if (as.textures !== anim.textures) {
+          as.textures = anim.textures;
+          as.animationSpeed = anim.fps / 60;
+          as.loop = anim.loop;
+          as.gotoAndPlay(0);
+        } else if (!as.playing) {
+          as.gotoAndPlay(0);
         }
       }
 
@@ -1126,6 +1137,7 @@ private handleInteractions(): void {
     this.dialogBox.resize(width, height);
   }
 }
+
 
 
 

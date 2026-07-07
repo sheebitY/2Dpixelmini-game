@@ -98,7 +98,10 @@ async function resolveFrames(def: AnimDef): Promise<PIXI.Texture[]> {
   const fh = def.frameHeight ?? 0;
 
   if (def.file) {
-    return loadSheet(def.file, fw, fh);
+    let frames = await loadSheet(def.file, fw, fh);
+    const sf = def.startFrame ?? 0;
+    const fc = def.frameCount ?? frames.length;
+    return frames.slice(sf, sf + fc);
   }
   if (def.files && def.files.length > 0) {
     const frames: PIXI.Texture[] = [];

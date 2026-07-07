@@ -16,12 +16,12 @@
         "left": {
           "folder": "assets/sprites/warrior/walk/left/",
           "prefix": "left",
-          "frameCount": 4
+          "frameCount": 1
         },
         "right": {
           "folder": "assets/sprites/warrior/walk/right/",
           "prefix": "right",
-          "frameCount": 4
+          "frameCount": 1
         }
       },
       "fps": 6,
@@ -399,9 +399,10 @@
   "merchant": {
     "idle": {
       "file": "assets/sprites/npcs/merchant/character.png",
-      "frameWidth": 224,
+      "frameWidth": 56,
       "frameHeight": 32,
-      "frames": 17,
+      "startFrame": 4,
+      "frameCount": 4,
       "fps": 6,
       "loop": true
     }
