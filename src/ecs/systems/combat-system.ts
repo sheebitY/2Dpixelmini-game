@@ -32,6 +32,7 @@ export function combatSystem(now: number): void {
           const eStats = entities.getComponent(enemyId, "stats")!;
 
           if (now < eHealth.invincibleUntil) continue;
+          if (eHealth.current <= 0) continue;  // already dead
 
           const ecx = eTransform.x + eTransform.width / 2;
           const ecy = eTransform.y + eTransform.height / 2;

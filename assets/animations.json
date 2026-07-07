@@ -220,7 +220,7 @@
     "idle": {
       "folder": "assets/sprites/enemies/goblin1/idle/",
       "prefix": "idle_",
-      "frameCount": 12,
+      "frameCount": 11,
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 8,
@@ -230,7 +230,7 @@
     "walk": {
       "folder": "assets/sprites/enemies/goblin1/walk/",
       "prefix": "walk_",
-      "frameCount": 12,
+      "frameCount": 11,
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 10,
@@ -257,6 +257,17 @@
       "loop": false,
       "startFrame": 0
     }
+    ,
+    "die": {
+      "folder": "assets/sprites/enemies/goblin1/die/",
+      "prefix": "die_",
+      "frameCount": 14,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 10,
+      "loop": false,
+      "startFrame": 0
+    }
   },
   "goblin2": {
     "idle": {
@@ -272,7 +283,7 @@
     "walk": {
       "folder": "assets/sprites/enemies/goblin2/walk/",
       "prefix": "walk_",
-      "frameCount": 12,
+      "frameCount": 11,
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 10,
@@ -282,10 +293,31 @@
     "attack": {
       "folder": "assets/sprites/enemies/goblin2/smash/",
       "prefix": "smash_",
-      "frameCount": 24,
+      "frameCount": 21,
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 20,
+      "loop": false,
+      "startFrame": 0
+    }
+    ,
+    "die": {
+      "folder": "assets/sprites/enemies/goblin2/die/",
+      "prefix": "die_",
+      "frameCount": 21,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 10,
+      "loop": false,
+      "startFrame": 0
+    },
+    "hurt": {
+      "folder": "assets/sprites/enemies/goblin2/hurt/",
+      "prefix": "hurt_",
+      "frameCount": 18,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 8,
       "loop": false,
       "startFrame": 0
     }
@@ -324,10 +356,21 @@
     "attack": {
       "folder": "assets/sprites/enemies/goblin3/attack1/",
       "prefix": "attack1_",
-      "frameCount": 12,
+      "frameCount": 11,
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 14,
+      "loop": false,
+      "startFrame": 0
+    }
+    ,
+    "die": {
+      "folder": "assets/sprites/enemies/goblin3/die/",
+      "prefix": "die_",
+      "frameCount": 11,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 10,
       "loop": false,
       "startFrame": 0
     }
@@ -346,7 +389,7 @@
     "walk": {
       "folder": "assets/sprites/enemies/goblin4/walk1/",
       "prefix": "walk1_",
-      "frameCount": 12,
+      "frameCount": 10,
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 10,
@@ -360,6 +403,16 @@
       "frameWidth": 64,
       "frameHeight": 64,
       "fps": 16,
+      "loop": false,
+      "startFrame": 0
+    },
+    "die": {
+      "folder": "assets/sprites/enemies/goblin4/die/",
+      "prefix": "die_",
+      "frameCount": 11,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 10,
       "loop": false,
       "startFrame": 0
     }

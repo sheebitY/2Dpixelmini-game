@@ -125,6 +125,7 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     anims: { idle: "idle", patrol: "walk", chase: "walk", attack: "attack" },
     animFps: { idle: 8, walk: 10, attack: 16 },
     hurtAnim: "hurt",
+    deathAnim: "die",
     attackDuration: 0.5, damageFrameRatio: 0.4,
     detectRange: 350, attackRange: 60, attackCooldown: 1.0,
     anchorOffsetX: 0, anchorOffsetY: 0,
@@ -134,6 +135,7 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     animKey: "idle", size: 96,
     anims: { idle: "idle", patrol: "walk", chase: "walk", attack: "attack" },
     animFps: { idle: 8, walk: 10, attack: 20 },
+    hurtAnim: "hurt", deathAnim: "die",
     attackDuration: 0.7, damageFrameRatio: 0.5,
     detectRange: 400, attackRange: 70, attackCooldown: 1.3,
     anchorOffsetX: 0, anchorOffsetY: 0,
@@ -143,9 +145,8 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     animKey: "idle", size: 80,
     anims: { idle: "idle", patrol: "run", chase: "run", attack: "attack" },
     animFps: { idle: 8, run: 12, attack: 14 },
-    hurtAnim: "hurt",
+    hurtAnim: "hurt", deathAnim: "die",
     attackDuration: 0.4, damageFrameRatio: 0.4,
-    detectRange: 450, attackRange: 65, attackCooldown: 0.9,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
   goblin4: {
@@ -154,6 +155,7 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     anims: { idle: "idle", patrol: "walk", chase: "walk", attack: "attack" },
     animFps: { idle: 6, walk: 10, attack: 16 },
     attackDuration: 0.9, damageFrameRatio: 0.5,
+    deathAnim: "die",
     colliderSize: 80,
     detectRange: 400, attackRange: 75, attackCooldown: 1.4,
     anchorOffsetX: 0, anchorOffsetY: 0,
@@ -258,6 +260,7 @@ export class GameplayScene {
   private healthBarMap = new Map<number, PIXI.Graphics>();
   private entityEnemyType = new Map<number, string>();
   private npcEntities: Map<number, string> = new Map();
+  private enemyBaseSize = new Map<string, {w: number; h: number}>();
   private now = 0;
   private gameOver = false;
   private gameOverText: PIXI.Text | null = null;
@@ -502,6 +505,16 @@ export class GameplayScene {
         this.enemyTextures.set("goblin2", goblin2Tex);
         this.enemyTextures.set("goblin3", goblin3Tex);
         this.enemyTextures.set("goblin4", goblin4Tex);
+    for (const [key, texSet] of this.enemyTextures) {
+      const def = ENEMY_DEFS[key];
+      const animKey = def?.anims?.idle ?? def?.animKey ?? "idle";
+      const frames = texSet[animKey];
+      if (frames && frames.length > 0) {
+        const ow = frames[0].orig?.width ?? def?.size ?? 96;
+        const oh = frames[0].orig?.height ?? def?.size ?? 96;
+        this.enemyBaseSize.set(key, { w: ow, h: oh });
+      }
+    }
     this.npcTextures.set("sweeper", sweeperTex);
     this.npcTextures.set("blacksmith", blacksmithTex);
     this.npcTextures.set("merchant", merchantTex);
@@ -991,6 +1004,10 @@ private handleInteractions(): void {
           }
           sprite.x = transform.x + transform.width / 2;
           sprite.y = transform.y + transform.height / 2;
+          const bs = this.enemyBaseSize.get(enemyType);
+          const dNatW = bs?.w || transform.width;
+          const dNatH = bs?.h || transform.height;
+          sprite.scale.set(transform.width / dNatW, transform.height / dNatH);
           if (sprite.alpha <= 0) {
             this.entityContainer.removeChild(sprite);
             sprite.destroy();
@@ -1029,8 +1046,9 @@ private handleInteractions(): void {
 
         sprite.x = transform.x + transform.width / 2;
         sprite.y = transform.y + transform.height / 2;
-        const eNatW = sprite.texture?.orig?.width || transform.width;
-        const eNatH = sprite.texture?.orig?.height || transform.height;
+        const bs2 = this.enemyBaseSize.get(enemyType);
+        const eNatW = bs2?.w || transform.width;
+        const eNatH = bs2?.h || transform.height;
         sprite.scale.set(transform.width / eNatW, transform.height / eNatH);
 
         if (isHurt) {

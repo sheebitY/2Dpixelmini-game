@@ -75,7 +75,7 @@ async function loadIndividualFrames(
     const raw = folder + prefix + n + ".png";
     const pad2 = folder + prefix + String(n).padStart(2, "0") + ".png";
     const pad4 = folder + prefix + String(n).padStart(4, "0") + ".png";
-    const candidates = [raw, pad2, pad4];
+    const candidates = [pad4, pad2, raw];
     let loaded = false;
     for (const tryPath of candidates) {
       try {
