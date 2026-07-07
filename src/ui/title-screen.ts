@@ -1,3 +1,5 @@
+import { exportSaveToFile, importSaveFromFile, deleteSave } from "../core/save-manager";
+
 export type LoadStatus = "idle" | "loading" | "done";
 
 export class TitleScreen {
@@ -103,18 +105,18 @@ export class TitleScreen {
     }
   }
 
-  // ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
+  // ï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½T
   //  Settings
-  // ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
+  // ï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½Tï¿½T
 
-  private openSettings(): void {
+  openSettings(): void {
     this.settingsOverlay.style.display = "flex";
     requestAnimationFrame(() => {
       this.settingsOverlay.classList.add("visible");
     });
   }
 
-  private closeSettings(): void {
+  closeSettings(): void {
     this.settingsOverlay.classList.remove("visible");
     setTimeout(() => {
       this.settingsOverlay.style.display = "none";
@@ -129,78 +131,32 @@ export class TitleScreen {
 
     // Export save
     this.settingsExport.addEventListener("click", () => {
-      const data = this.collectSaveData();
-      if (!data) return;
-      const encoded = encodeSave(data);
-      const blob = new Blob([encoded], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "pixel-rpg-save.json";
-      a.click();
-      URL.revokeObjectURL(url);
+      if (!exportSaveToFile()) { alert("Failed to export save."); }
     });
 
     // Import save
     this.settingsImport.addEventListener("click", () => {
       this.settingsImportFile.click();
     });
-    this.settingsImportFile.addEventListener("change", () => {
+    this.settingsImportFile.addEventListener("change", async () => {
       const file = this.settingsImportFile.files?.[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const raw = reader.result as string;
-          const decoded = decodeSave(raw);
-          const data = JSON.parse(decoded);
-          this.applySaveData(data);
-          alert("Save imported successfully!");
-        } catch {
-          alert("Invalid save file.");
-        }
-      };
-      reader.readAsText(file);
+      const ok = await importSaveFromFile(file);
       this.settingsImportFile.value = "";
+      if (ok) {
+        // Reload so loadAssets() picks up the imported save
+        location.reload();
+      } else {
+        alert("Invalid save file.");
+      }
     });
 
     // Delete save
     this.settingsDelete.addEventListener("click", () => {
       if (confirm("Delete all saved data? This cannot be undone.")) {
-        localStorage.removeItem("pixel-rpg-save");
+        deleteSave();
         alert("Save data deleted.");
       }
     });
   }
-
-  private collectSaveData(): Record<string, unknown> | null {
-    try {
-      const raw = localStorage.getItem("pixel-rpg-save");
-      if (!raw) { alert("No save data found."); return null; }
-      return JSON.parse(raw);
-    } catch {
-      alert("Failed to read save data.");
-      return null;
-    }
-  }
-
-  private applySaveData(data: Record<string, unknown>): void {
-    localStorage.setItem("pixel-rpg-save", JSON.stringify(data));
-  }
-}
-
-// ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
-//  Simple save encoding
-//  Base64 + char shift (not real encryption, just obfuscation)
-// ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
-
-function encodeSave(data: Record<string, unknown>): string {
-  const json = JSON.stringify(data);
-  const shifted = json.split("").map(c => String.fromCharCode(c.charCodeAt(0) + 3)).join("");
-  return btoa(shifted);
-}
-
-function decodeSave(encoded: string): string {
-  const shifted = atob(encoded);
-  return shifted.split("").map(c => String.fromCharCode(c.charCodeAt(0) - 3)).join("");
 }

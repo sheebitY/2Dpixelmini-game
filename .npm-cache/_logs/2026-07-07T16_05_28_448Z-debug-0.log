@@ -1,0 +1,192 @@
+0 verbose cli D:\nodejs\node.exe D:\nodejs\node_modules\npm\bin\npm-cli.js
+1 info using npm@11.13.0
+2 info using node@v24.16.0
+3 silly config load:file:D:\nodejs\node_modules\npm\npmrc
+4 silly config load:file:C:\Users\23711\Desktop\game\.npmrc
+5 silly config load:file:C:\Users\23711\.npmrc
+6 silly config load:file:D:\nodejs\node_global\etc\npmrc
+7 verbose title npm install pngjs
+8 verbose argv "install" "pngjs" "--no-save"
+9 verbose logfile logs-max:10 dir:C:\Users\23711\Desktop\game\.npm-cache\_logs\2026-07-07T16_05_28_448Z-
+10 verbose logfile C:\Users\23711\Desktop\game\.npm-cache\_logs\2026-07-07T16_05_28_448Z-debug-0.log
+11 silly logfile start cleaning logs, removing 1 files
+12 silly packumentCache heap:4496293888 maxSize:1124073472 maxEntrySize:562036736
+13 silly logfile done cleaning log files
+14 silly idealTree buildDeps
+15 silly fetch manifest pngjs@*
+16 silly packumentCache full:https://registry.npmmirror.com/pngjs cache-miss
+17 http fetch GET 200 https://registry.npmmirror.com/pngjs 102ms (cache miss)
+18 silly packumentCache full:https://registry.npmmirror.com/pngjs set size:14987 disposed:false
+19 silly placeDep ROOT pngjs@7.0.0 OK for: pixel-rpg@0.1.0 want: *
+20 silly reify moves {}
+21 silly audit bulk request {
+21 silly audit   '@esbuild/aix-ppc64': [ '0.25.12' ],
+21 silly audit   '@esbuild/android-arm': [ '0.25.12' ],
+21 silly audit   '@esbuild/android-arm64': [ '0.25.12' ],
+21 silly audit   '@esbuild/android-x64': [ '0.25.12' ],
+21 silly audit   '@esbuild/darwin-arm64': [ '0.25.12' ],
+21 silly audit   '@esbuild/darwin-x64': [ '0.25.12' ],
+21 silly audit   '@esbuild/freebsd-arm64': [ '0.25.12' ],
+21 silly audit   '@esbuild/freebsd-x64': [ '0.25.12' ],
+21 silly audit   '@esbuild/linux-arm': [ '0.25.12' ],
+21 silly audit   '@esbuild/linux-arm64': [ '0.25.12' ],
+21 silly audit   '@esbuild/linux-ia32': [ '0.25.12' ],
+21 silly audit   '@esbuild/linux-loong64': [ '0.25.12' ],
+21 silly audit   '@esbuild/linux-mips64el': [ '0.25.12' ],
+21 silly audit   '@esbuild/linux-ppc64': [ '0.25.12' ],
+21 silly audit   '@esbuild/linux-riscv64': [ '0.25.12' ],
+21 silly audit   '@esbuild/linux-s390x': [ '0.25.12' ],
+21 silly audit   '@esbuild/linux-x64': [ '0.25.12' ],
+21 silly audit   '@esbuild/netbsd-arm64': [ '0.25.12' ],
+21 silly audit   '@esbuild/netbsd-x64': [ '0.25.12' ],
+21 silly audit   '@esbuild/openbsd-arm64': [ '0.25.12' ],
+21 silly audit   '@esbuild/openbsd-x64': [ '0.25.12' ],
+21 silly audit   '@esbuild/openharmony-arm64': [ '0.25.12' ],
+21 silly audit   '@esbuild/sunos-x64': [ '0.25.12' ],
+21 silly audit   '@esbuild/win32-arm64': [ '0.25.12' ],
+21 silly audit   '@esbuild/win32-ia32': [ '0.25.12' ],
+21 silly audit   '@esbuild/win32-x64': [ '0.25.12' ],
+21 silly audit   '@pixi/accessibility': [ '7.4.3' ],
+21 silly audit   '@pixi/app': [ '7.4.3' ],
+21 silly audit   '@pixi/assets': [ '7.4.3' ],
+21 silly audit   '@pixi/color': [ '7.4.3' ],
+21 silly audit   '@pixi/colord': [ '2.9.6' ],
+21 silly audit   '@pixi/compressed-textures': [ '7.4.3' ],
+21 silly audit   '@pixi/constants': [ '7.4.3' ],
+21 silly audit   '@pixi/core': [ '7.4.3' ],
+21 silly audit   '@pixi/display': [ '7.4.3' ],
+21 silly audit   '@pixi/events': [ '7.4.3' ],
+21 silly audit   '@pixi/extensions': [ '7.4.3' ],
+21 silly audit   '@pixi/extract': [ '7.4.3' ],
+21 silly audit   '@pixi/filter-alpha': [ '7.4.3' ],
+21 silly audit   '@pixi/filter-blur': [ '7.4.3' ],
+21 silly audit   '@pixi/filter-color-matrix': [ '7.4.3' ],
+21 silly audit   '@pixi/filter-displacement': [ '7.4.3' ],
+21 silly audit   '@pixi/filter-fxaa': [ '7.4.3' ],
+21 silly audit   '@pixi/filter-noise': [ '7.4.3' ],
+21 silly audit   '@pixi/graphics': [ '7.4.3' ],
+21 silly audit   '@pixi/math': [ '7.4.3' ],
+21 silly audit   '@pixi/mesh': [ '7.4.3' ],
+21 silly audit   '@pixi/mesh-extras': [ '7.4.3' ],
+21 silly audit   '@pixi/mixin-cache-as-bitmap': [ '7.4.3' ],
+21 silly audit   '@pixi/mixin-get-child-by-name': [ '7.4.3' ],
+21 silly audit   '@pixi/mixin-get-global-position': [ '7.4.3' ],
+21 silly audit   '@pixi/particle-container': [ '7.4.3' ],
+21 silly audit   '@pixi/prepare': [ '7.4.3' ],
+21 silly audit   '@pixi/runner': [ '7.4.3' ],
+21 silly audit   '@pixi/settings': [ '7.4.3' ],
+21 silly audit   '@pixi/sprite': [ '7.4.3' ],
+21 silly audit   '@pixi/sprite-animated': [ '7.4.3' ],
+21 silly audit   '@pixi/sprite-tiling': [ '7.4.3' ],
+21 silly audit   '@pixi/spritesheet': [ '7.4.3' ],
+21 silly audit   '@pixi/text': [ '7.4.3' ],
+21 silly audit   '@pixi/text-bitmap': [ '7.4.3' ],
+21 silly audit   '@pixi/text-html': [ '7.4.3' ],
+21 silly audit   '@pixi/ticker': [ '7.4.3' ],
+21 silly audit   '@pixi/utils': [ '7.4.3' ],
+21 silly audit   '@rollup/rollup-android-arm-eabi': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-android-arm64': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-darwin-arm64': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-darwin-x64': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-freebsd-arm64': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-freebsd-x64': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-linux-arm-gnueabihf': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-linux-arm-musleabihf': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-linux-arm64-gnu': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-linux-arm64-musl': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-linux-loong64-gnu': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-linux-loong64-musl': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-linux-ppc64-gnu': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-linux-ppc64-musl': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-linux-riscv64-gnu': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-linux-riscv64-musl': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-linux-s390x-gnu': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-linux-x64-gnu': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-linux-x64-musl': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-openbsd-x64': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-openharmony-arm64': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-win32-arm64-msvc': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-win32-ia32-msvc': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-win32-x64-gnu': [ '4.62.2' ],
+21 silly audit   '@rollup/rollup-win32-x64-msvc': [ '4.62.2' ],
+21 silly audit   '@types/css-font-loading-module': [ '0.0.12' ],
+21 silly audit   '@types/earcut': [ '2.1.4' ],
+21 silly audit   '@types/estree': [ '1.0.9' ],
+21 silly audit   'call-bind-apply-helpers': [ '1.0.2' ],
+21 silly audit   'call-bound': [ '1.0.4' ],
+21 silly audit   'dunder-proto': [ '1.0.1' ],
+21 silly audit   earcut: [ '2.2.4' ],
+21 silly audit   'es-define-property': [ '1.0.1' ],
+21 silly audit   'es-errors': [ '1.3.0' ],
+21 silly audit   'es-object-atoms': [ '1.1.2' ],
+21 silly audit   esbuild: [ '0.25.12' ],
+21 silly audit   eventemitter3: [ '4.0.7' ],
+21 silly audit   fdir: [ '6.5.0' ],
+21 silly audit   fsevents: [ '2.3.3' ],
+21 silly audit   'function-bind': [ '1.1.2' ],
+21 silly audit   'get-intrinsic': [ '1.3.0' ],
+21 silly audit   'get-proto': [ '1.0.1' ],
+21 silly audit   gopd: [ '1.2.0' ],
+21 silly audit   'has-symbols': [ '1.1.0' ],
+21 silly audit   hasown: [ '2.0.4' ],
+21 silly audit   ismobilejs: [ '1.1.1' ],
+21 silly audit   'math-intrinsics': [ '1.1.0' ],
+21 silly audit   nanoid: [ '3.3.15' ],
+21 silly audit   'object-inspect': [ '1.13.4' ],
+21 silly audit   picocolors: [ '1.1.1' ],
+21 silly audit   picomatch: [ '4.0.5' ],
+21 silly audit   'pixi.js': [ '7.4.3' ],
+21 silly audit   postcss: [ '8.5.16' ],
+21 silly audit   punycode: [ '1.4.1' ],
+21 silly audit   qs: [ '6.15.3' ],
+21 silly audit   rollup: [ '4.62.2' ],
+21 silly audit   'side-channel': [ '1.1.1' ],
+21 silly audit   'side-channel-list': [ '1.0.1' ],
+21 silly audit   'side-channel-map': [ '1.0.1' ],
+21 silly audit   'side-channel-weakmap': [ '1.0.2' ],
+21 silly audit   'source-map-js': [ '1.2.1' ],
+21 silly audit   tinyglobby: [ '0.2.17' ],
+21 silly audit   typescript: [ '5.9.3' ],
+21 silly audit   url: [ '0.11.4' ],
+21 silly audit   vite: [ '6.4.3' ],
+21 silly audit   pngjs: [ '7.0.0' ]
+21 silly audit }
+22 http cache pngjs@https://registry.npmmirror.com/pngjs/-/pngjs-7.0.0.tgz 1ms (cache hit)
+23 silly tarball no local data for pngjs@https://registry.npmmirror.com/pngjs/-/pngjs-7.0.0.tgz. Extracting by manifest.
+24 http fetch POST 404 https://registry.npmmirror.com/-/npm/v1/security/advisories/bulk 17ms
+25 verbose audit error HttpErrorGeneral: 404 Not Found - POST https://registry.npmmirror.com/-/npm/v1/security/advisories/bulk - [NOT_IMPLEMENTED] /-/npm/v1/security/* not implemented yet
+25 verbose audit error     at D:\nodejs\node_modules\npm\node_modules\npm-registry-fetch\lib\check-response.js:103:15
+25 verbose audit error     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+25 verbose audit error     at async #getReport (D:\nodejs\node_modules\npm\node_modules\@npmcli\arborist\lib\audit-report.js:275:19)
+25 verbose audit error     at async AuditReport.run (D:\nodejs\node_modules\npm\node_modules\@npmcli\arborist\lib\audit-report.js:100:19) {
+25 verbose audit error   headers: [Object: null prototype] {
+25 verbose audit error     server: [ 'Tengine' ],
+25 verbose audit error     date: [ 'Tue, 07 Jul 2026 16:05:30 GMT' ],
+25 verbose audit error     'content-type': [ 'application/json' ],
+25 verbose audit error     'transfer-encoding': [ 'chunked' ],
+25 verbose audit error     connection: [ 'keep-alive' ],
+25 verbose audit error     'strict-transport-security': [ 'max-age=5184000' ],
+25 verbose audit error     via: [ 'kunlun7.cn9041[,404666]' ],
+25 verbose audit error     'timing-allow-origin': [ '*' ],
+25 verbose audit error     eagleid: [ '7171640c17834403303366978e' ],
+25 verbose audit error     'x-fetch-attempts': [ '1' ]
+25 verbose audit error   },
+25 verbose audit error   statusCode: 404,
+25 verbose audit error   code: 'E404',
+25 verbose audit error   method: 'POST',
+25 verbose audit error   uri: 'https://registry.npmmirror.com/-/npm/v1/security/advisories/bulk',
+25 verbose audit error   body: {
+25 verbose audit error     error: '[NOT_IMPLEMENTED] /-/npm/v1/security/* not implemented yet'
+25 verbose audit error   },
+25 verbose audit error   pkgid: undefined
+25 verbose audit error }
+26 silly audit error [object Object]
+27 silly audit report null
+28 http fetch GET 200 https://cdn.npmmirror.com/packages/pngjs/7.0.0/pngjs-7.0.0.tgz 266ms (cache miss)
+29 silly ADD node_modules/pngjs
+30 verbose cwd C:\Users\23711\Desktop\game
+31 verbose os Windows_NT 10.0.26200
+32 verbose node v24.16.0
+33 verbose npm  v11.13.0
+34 verbose exit 0
+35 info ok

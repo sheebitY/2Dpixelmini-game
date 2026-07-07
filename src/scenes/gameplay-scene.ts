@@ -1,4 +1,4 @@
-﻿import * as PIXI from "pixi.js";
+import * as PIXI from "pixi.js";
 import { CONFIG } from "../config";
 import { entities } from "../ecs/entity-manager";
 import { eventBus } from "../core/event-bus";
@@ -13,6 +13,7 @@ import { Hotbar } from "../ui/hotbar";
 import { inventory } from "../items/inventory";
 import { ENEMY_LOOT_TABLE } from "../items/item-db";
 import { equipment } from "../items/equipment";
+import { loadGame, setPlayerStateGetter, saveGame, initAutoSave, type SaveData } from "../core/save-manager";
 import { mapManager, MapState, Portal } from "../world/map-manager";
 import {
   loadPlayerTextures,
@@ -184,7 +185,37 @@ const NPC_DEFS: Record<string, NPCDef> = {
     animKey: "sweep",
     animFps: { sweep: 10 },
     size: 96,
-    colliderSize: 80,        // 濮ｆ梹妯夌粈鍝勬槀鐎电鐨稉鈧悙鐧哥礉闁灝鍘ら崡鈥叉眽
+    colliderSize: 80,        // 姣旀樉绀哄昂瀵稿皬涓€鐐癸紝閬垮厤鍗′汉
+    colliderOffsetX: 0,
+    colliderOffsetY: 0,
+    interactionRange: 128,
+  },
+  blacksmith: {
+    name: "Blacksmith",
+    dialog: [
+      "Welcome! I forge the finest weapons in the village.",
+      "Need something sharpened? I can help with that.",
+      "Be careful out there - the dungeon is dangerous.",
+    ],
+    animKey: "idle",
+    animFps: { idle: 6 },
+    size: 96,
+    colliderSize: 80,
+    colliderOffsetX: 0,
+    colliderOffsetY: 0,
+    interactionRange: 128,
+  },
+  merchant: {
+    name: "Merchant",
+    dialog: [
+      "Welcome! I have all sorts of goods for sale.",
+      "Potions, scrolls, equipment... take your pick!",
+      "Come back anytime you need supplies.",
+    ],
+    animKey: "idle",
+    animFps: { idle: 6 },
+    size: 96,
+    colliderSize: 80,
     colliderOffsetX: 0,
     colliderOffsetY: 0,
     interactionRange: 128,
@@ -201,9 +232,11 @@ interface NPCSpawnConfig {
 }
 
 const NPC_SPAWN_SET: NPCSpawnConfig[] = [
-  // 閸欘亜婀?meadow_village 閸?sweeper閿涘苯鑻熺紒娆庣娑擃亝妲戠涵顔兼綏閺嶅浄绱欐稉宥堫洣閸愬秶鐣?mapCols/mapRows 娴滃棴绱?
+  // 鍙�?meadow_village �?sweeper锛屽苟缁欎竴涓槑纭潗鏍囷紙涓嶈鍐嶇�?mapCols/mapRows 浜嗭�?
   { mapId: "meadow_village", npcKey: "sweeper", type: "sweeper", baseX: 15, baseY: 10 },
-  // 閸氬海鐢婚崝鐕C鐏忚京鎴风紒顓炵窔鏉╂瑩鍣锋潻钘夊閿?  // { mapId: "forest_path", npcKey: "hermit", type: "hermit", baseX: 12, baseY: 6 },
+  { mapId: "meadow_village", npcKey: "blacksmith", type: "blacksmith", baseX: 8, baseY: 6 },
+  { mapId: "meadow_village", npcKey: "merchant", type: "merchant", baseX: 16, baseY: 6 },
+  // 鍚庣画鍔燦PC灏辩户缁線杩欓噷杩藉姞�?  // { mapId: "forest_path", npcKey: "hermit", type: "hermit", baseX: 12, baseY: 6 },
 ];
 
 export class GameplayScene {
@@ -239,8 +272,8 @@ export class GameplayScene {
   private buffAtkUntil = 0;
   private buffDef = 0;
   private buffDefUntil = 0;
-  private baseAtk = 0;
-  private baseDef = 0;
+  private baseAtk = PLAYER_DEF.atk;
+  private baseDef = PLAYER_DEF.def;
 
   constructor(app: PIXI.Application) {
     this.app = app;
@@ -265,7 +298,20 @@ export class GameplayScene {
     this.hotbar = new Hotbar();
     this.hotbar.onUse((slotIndex) => this.useInventoryItem(slotIndex));
 
+    // In-game settings button
+    const settingsBtn = document.getElementById("settings-btn-ingame");
+    if (settingsBtn) {
+      settingsBtn.addEventListener("click", () => {
+        const overlay = document.getElementById("settings-overlay")!;
+        overlay.style.display = "flex";
+        requestAnimationFrame(() => overlay.classList.add("visible"));
+      });
+    }
+
     eventBus.on("equipment_changed", () => this.applyEquipmentBonus());
+
+    // Expose player state to save manager
+    setPlayerStateGetter(() => this.getPlayerState());
 
     eventBus.on("player_died", () => {
       this.gameOver = true;
@@ -274,13 +320,13 @@ export class GameplayScene {
       this.playerAttackUntil = this.now + PLAYER_DEF.attackCooldown;
     });
 
-    // Listen for enemy kills 闁跨喐鏋婚幏?roll loot
+    // Listen for enemy kills 閿熸枻鎷?roll loot
     eventBus.on("enemy_killed", (data: { enemyId: number; enemyType: string; exp: number; x: number; y: number }) => {
       this.rollLoot(data.enemyType, data.x, data.y);
     });
   }
 
-  // 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚?Item usage (called by InventoryUI) 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚?
+  // 閿熸枻鎷烽敓鏂ゆ�?Item usage (called by InventoryUI) 閿熸枻鎷烽敓鏂ゆ�?
 
   private useInventoryItem(slotIndex: number): void {
     const playerIds = entities.query("health", "stats").filter((id) => !entities.hasComponent(id, "ai"));
@@ -307,7 +353,7 @@ export class GameplayScene {
     });
   }
 
-  // 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚?Loot rolling on enemy kill 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚?
+  // 閿熸枻鎷烽敓鏂ゆ�?Loot rolling on enemy kill 閿熸枻鎷烽敓鏂ゆ�?
 
   private applyEquipmentBonus(): void {
     const playerIds = entities.query("stats").filter((id) => !entities.hasComponent(id, "ai"));
@@ -321,6 +367,78 @@ export class GameplayScene {
       hp.max = PLAYER_DEF.hp + bonus.hp;
       hp.current = Math.min(hp.current, hp.max);
     }
+  }
+
+  /** Collect current player state for the save manager. */
+  private getPlayerState(): SaveData["player"] | null {
+    const playerIds = entities.query("health", "stats").filter((id) => !entities.hasComponent(id, "ai"));
+    if (playerIds.length === 0) return null;
+    const pid = playerIds[0];
+    const hp = entities.getComponent(pid, "health")!;
+    const stats = entities.getComponent(pid, "stats")!;
+    const tf = entities.getComponent(pid, "transform")!;
+    const ts = CONFIG.TILE_SIZE;
+
+    return {
+      level: this.hud.level,
+      exp: this.hud.exp,
+      expToLevel: this.hud.expToLevel,
+      hp: hp.current,
+      maxHp: hp.max,
+      baseAtk: this.baseAtk,
+      baseDef: this.baseDef,
+      mapId: this.currentMap?.id ?? "meadow_village",
+      x: Math.round(tf.x / ts),
+      y: Math.round(tf.y / ts),
+    };
+  }
+
+  /** Apply loaded save data after initial map load. */
+  private async applySave(): Promise<void> {
+    const save = loadGame();
+    if (!save) {
+      initAutoSave();
+      saveGame();
+      return;
+    }
+
+    // If saved map differs from current, load it
+    if (save.player.mapId && save.player.mapId !== this.currentMap?.id) {
+      await this.loadMap(save.player.mapId, { x: save.player.x, y: save.player.y });
+    }
+
+    // Restore inventory
+    inventory.clear();
+    for (let i = 0; i < save.inventory.length; i++) {
+      const slot = save.inventory[i];
+      if (slot) inventory.setSlot(i, slot.itemId, slot.quantity);
+    }
+
+    // Restore equipment
+    equipment.clear();
+    const eq = save.equipment;
+    for (const key of Object.keys(eq) as (keyof typeof eq)[]) {
+      const itemId = eq[key];
+      if (itemId) equipment.equip(key, itemId);
+    }
+
+    // Restore HUD level/exp
+    this.hud.restoreLevel(save.player.level, save.player.exp, save.player.expToLevel);
+
+    // Restore player stats (fallback to PLAYER_DEF if save has 0)
+    this.baseAtk = save.player.baseAtk || PLAYER_DEF.atk;
+    this.baseDef = save.player.baseDef || PLAYER_DEF.def;
+    this.applyEquipmentBonus();
+
+    // Restore HP
+    const playerIds = entities.query("health").filter((id) => !entities.hasComponent(id, "ai"));
+    if (playerIds.length > 0) {
+      const hp = entities.getComponent(playerIds[0], "health")!;
+      hp.max = save.player.maxHp;
+      hp.current = Math.min(save.player.hp, hp.max);
+    }
+
+    initAutoSave();
   }
 
   private rollLoot(enemyType: string, x: number, y: number): void {
@@ -337,7 +455,7 @@ export class GameplayScene {
     }
   }
 
-  // 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚?Buff tick 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚?
+  // 閿熸枻鎷烽敓鏂ゆ�?Buff tick 閿熸枻鎷烽敓鏂ゆ�?
 
   private tickBuffs(): void {
     const playerIds = entities.query("stats").filter((id) => !entities.hasComponent(id, "ai"));
@@ -356,7 +474,7 @@ export class GameplayScene {
   }
 
   async loadAssets(): Promise<void> {
-    const [playerTex, slimeTex, redSlimeTex, eagleTex, skeletonTex, orcTex, sweeperTex, tiles] =
+    const [playerTex, slimeTex, redSlimeTex, eagleTex, skeletonTex, orcTex, sweeperTex, blacksmithTex, merchantTex, tiles] =
       await Promise.all([
         loadPlayerTextures(),
         loadEnemyTextures("slime"),
@@ -365,6 +483,8 @@ export class GameplayScene {
         loadEnemyTextures("skeleton"),
         loadEnemyTextures("orc"),
         loadNPCTextures("sweeper"),
+        loadNPCTextures("blacksmith"),
+        loadNPCTextures("merchant"),
         loadTileset(),
       ]);
 
@@ -375,10 +495,15 @@ export class GameplayScene {
     this.enemyTextures.set("skeleton", skeletonTex);
     this.enemyTextures.set("orc", orcTex);
     this.npcTextures.set("sweeper", sweeperTex);
+    this.npcTextures.set("blacksmith", blacksmithTex);
+    this.npcTextures.set("merchant", merchantTex);
     this.tileTextures = tiles;
 
     await this.loadMap(mapManager.currentId ?? mapManager.mapIds[0] ?? "meadow_village");
     this.loaded = true;
+
+    // Apply save data if available
+    await this.applySave();
   }
 
   private async loadMap(mapId: string, spawnOverride?: {x: number, y: number}, entryDirection?: string): Promise<void> {
@@ -674,7 +799,7 @@ isStatic: false, layer: "player", useForMovement: true,
 
     const metaNPCs = this.currentMap?.meta.npcs ?? [];
 
-    // 闁瀚ㄩ弶銉︾爱閿涙艾婀撮崶绶坋ta娴兼ê鍘涢敍娑樻儊閸掓瑧鏁ゆ禒锝囩垳闁插瞼娈?NPC_SPAWN_SET 閹?mapId 鏉╁洦鎶?
+    // 閫夋嫨鏉ユ簮锛氬湴鍥緈eta浼樺厛锛涘惁鍒欑敤浠ｇ爜閲岀�?NPC_SPAWN_SET �?mapId 杩囨�?
     const spawns = metaNPCs.length > 0
       ? metaNPCs.map((n) => ({ npcKey: n.type, type: n.type, x: n.x, y: n.y }))
       : NPC_SPAWN_SET.filter((s) => s.mapId === mapId).map((s) => ({
@@ -697,7 +822,7 @@ isStatic: false, layer: "player", useForMovement: true,
       entities.addComponent(id, "transform", {
         x, y, width: size, height: size, facing: "down",
       });
-      // NPC 娑撳秹娓剁憰浣盒╅崝顭掔窗娑撳秴濮?velocity閿涘矂浼╅崗宥堫潶 movementSystem 婢跺嫮鎮婇崥搴樷偓婊嗙闂?濠曞倻些閳?      entities.addComponent(id, "health", { current: 9999, max: 9999, invincibleUntil: Infinity });
+      // NPC 涓嶉渶瑕佺Щ鍔細涓嶅�?velocity锛岄伩鍏嶈 movementSystem 澶勭悊鍚庘€滆窡�?婕傜Щ�?      entities.addComponent(id, "health", { current: 9999, max: 9999, invincibleUntil: Infinity });
       entities.addComponent(id, "stats", { atk: 0, def: 0, speed: 0, exp: 0 });
       entities.addComponent(id, "npc", { npcKey: s.npcKey });
 
@@ -709,7 +834,7 @@ isStatic: false, layer: "player", useForMovement: true,
         width: cW,
         height: cH,
         isStatic: true,
-        layer: "item",           // 鐠佲晝甯虹€硅泛褰叉禒銉潶閹糕槄绱濇担鍡曠瑝娴兼艾寮稉搴㈠灛閺傛閮寸紒?        useForMovement: false,
+        layer: "item",           // 璁╃帺瀹跺彲浠ヨ鎸★紝浣嗕笉浼氬弬涓庢垬鏂楃郴缁?        useForMovement: false,
       });
 
       const animKey = def.animKey;
@@ -831,7 +956,7 @@ private handleInteractions(): void {
         continue;
       }
 
-      // 閳光偓閳光偓 Enemy (AI entity) 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
+      // 鈹€鈹€ Enemy (AI entity) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
       if (ai && this.entityEnemyType.has(id)) {
         const enemyType = this.entityEnemyType.get(id)!;
         const def = ENEMY_DEFS[enemyType];
@@ -927,7 +1052,7 @@ private handleInteractions(): void {
         continue;
       }
 
-      // 閳光偓閳光偓 NPC 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
+      // 鈹€鈹€ NPC 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
       if (this.npcEntities.has(id)) {
         sprite.x = transform.x + transform.width / 2;
         sprite.y = transform.y + transform.height / 2;
@@ -937,7 +1062,7 @@ private handleInteractions(): void {
         continue;
       }
 
-      // 閳光偓閳光偓 Player 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
+      // 鈹€鈹€ Player 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
       const vel = entities.getComponent(id, "velocity");
       const isMoving = vel && (Math.abs(vel.vx) > 1 || Math.abs(vel.vy) > 1);
 

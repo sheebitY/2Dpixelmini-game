@@ -98,6 +98,12 @@ class Inventory {
     return total;
   }
 
+  /** Directly set a slot (used by save loader). */
+  setSlot(index: number, itemId: string, quantity: number): void {
+    if (index < 0 || index >= MAX_SLOTS) return;
+    this.slots[index] = { itemId, quantity };
+  }
+
   clear(): void {
     for (let i = 0; i < MAX_SLOTS; i++) this.slots[i] = null;
     eventBus.emit("inventory_changed");

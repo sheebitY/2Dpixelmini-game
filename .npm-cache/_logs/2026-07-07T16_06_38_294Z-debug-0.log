@@ -7,13 +7,13 @@
 6 silly config load:file:D:\nodejs\node_global\etc\npmrc
 7 verbose title npm exec tsc --noEmit
 8 verbose argv "exec" "--" "tsc" "--noEmit"
-9 verbose logfile logs-max:10 dir:C:\Users\23711\Desktop\game\.npm-cache\_logs\2026-07-07T05_18_08_889Z-
-10 verbose logfile C:\Users\23711\Desktop\game\.npm-cache\_logs\2026-07-07T05_18_08_889Z-debug-0.log
+9 verbose logfile logs-max:10 dir:C:\Users\23711\Desktop\game\.npm-cache\_logs\2026-07-07T16_06_38_294Z-
+10 verbose logfile C:\Users\23711\Desktop\game\.npm-cache\_logs\2026-07-07T16_06_38_294Z-debug-0.log
 11 silly logfile start cleaning logs, removing 1 files
 12 silly logfile done cleaning log files
 13 verbose cwd C:\Users\23711\Desktop\game
 14 verbose os Windows_NT 10.0.26200
 15 verbose node v24.16.0
 16 verbose npm  v11.13.0
-17 verbose exit 2
-18 verbose code 2
+17 verbose exit 0
+18 info ok

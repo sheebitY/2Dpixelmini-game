@@ -412,8 +412,24 @@
       transform: translateY(-10px);
     }
   
-    #map-name {
+    #settings-btn-ingame {
       position: fixed; top: 12px; right: 16px;
+      z-index: 210; cursor: pointer;
+      width: 32px; height: 32px;
+      opacity: 0.6;
+      transition: opacity 0.2s, transform 0.2s;
+      image-rendering: auto;
+    }
+    #settings-btn-ingame:hover {
+      opacity: 1; transform: rotate(30deg);
+    }
+    #settings-btn-ingame img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.7));
+    }
+    #map-name {
+      position: fixed; bottom: 16px; right: 16px;
       font-size: 16px; font-weight: bold; color: #fff;
       text-shadow: 0 0 8px rgba(0,0,0,0.9), 1px 1px 3px rgba(0,0,0,0.8);
       pointer-events: none; z-index: 200;
@@ -709,6 +725,7 @@
     </div>
   </div>
 
+  <div id="settings-btn-ingame"><img src="/assets/ui/settings.png" alt="Settings"></div>
   <div id="map-name"></div>
   <div id="game-container">
     <!-- HUD (always visible) -->

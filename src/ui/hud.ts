@@ -21,9 +21,20 @@ export class HUD {
 
   private worldContainer: PIXI.Container | null = null;
   private damageNumbers: DamageNumber[] = [];
-  private level = 1;
-  private exp = 0;
-  private expToLevel = 50;
+  private _level = 1;
+  private _exp = 0;
+  private _expToLevel = 50;
+
+  get level(): number { return this._level; }
+  get exp(): number { return this._exp; }
+  get expToLevel(): number { return this._expToLevel; }
+
+  /** Restore level/exp from save data. */
+  restoreLevel(level: number, exp: number, expToLevel: number): void {
+    this._level = level;
+    this._exp = exp;
+    this._expToLevel = expToLevel;
+  }
 
   constructor() {
     this.container = new PIXI.Container();
@@ -70,17 +81,17 @@ export class HUD {
   }
 
   private addExp(amount: number): void {
-    this.exp += amount;
-    while (this.exp >= this.expToLevel) {
-      this.exp -= this.expToLevel;
-      this.level++;
-      this.expToLevel = Math.floor(this.expToLevel * 1.5);
+    this._exp += amount;
+    while (this._exp >= this._expToLevel) {
+      this._exp -= this._expToLevel;
+      this._level++;
+      this._expToLevel = Math.floor(this._expToLevel * 1.5);
       const playerIds = entities.query("health").filter((id) => !entities.hasComponent(id, "ai"));
       if (playerIds.length > 0) {
         const hp = entities.getComponent(playerIds[0], "health")!;
         hp.current = hp.max;
       }
-      eventBus.emit("player_leveled_up", { newLevel: this.level });
+      eventBus.emit("player_leveled_up", { newLevel: this._level });
     }
   }
 
@@ -105,12 +116,12 @@ export class HUD {
       this.hpText.textContent = `${Math.max(0, Math.ceil(hp.current))} / ${hp.max}`;
     }
 
-    this.levelText.textContent = `Lv.${this.level}`;
-    const expPercent = this.expToLevel > 0
-      ? ((this.exp / this.expToLevel) * 100).toFixed(1) + "%"
+    this.levelText.textContent = `Lv.${this._level}`;
+    const expPercent = this._expToLevel > 0
+      ? ((this._exp / this._expToLevel) * 100).toFixed(1) + "%"
       : "0%";
     this.expBar.style.width = expPercent;
-    this.expText.textContent = `${this.exp} / ${this.expToLevel}`;
+    this.expText.textContent = `${this._exp} / ${this._expToLevel}`;
 
     for (let i = this.damageNumbers.length - 1; i >= 0; i--) {
       const dn = this.damageNumbers[i];
