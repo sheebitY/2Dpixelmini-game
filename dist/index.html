@@ -412,8 +412,43 @@
       transform: translateY(-10px);
     }
   
-    #map-name {
+    .top-right-bar {
       position: fixed; top: 12px; right: 16px;
+      z-index: 210; display: flex; gap: 10px; align-items: center;
+    }
+    #settings-btn-ingame {
+      cursor: pointer;
+      width: 32px; height: 32px;
+      opacity: 0.6;
+      transition: opacity 0.2s, transform 0.2s;
+      image-rendering: auto;
+    }
+    #blog-link {
+      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px;
+      opacity: 0.5;
+      transition: opacity 0.2s, transform 0.2s;
+      text-decoration: none;
+    }
+    #blog-link:hover {
+      opacity: 1; transform: scale(1.1);
+    }
+    #blog-link img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      border-radius: 4px;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.7));
+    }
+    #settings-btn-ingame:hover {
+      opacity: 1; transform: rotate(30deg);
+    }
+    #settings-btn-ingame img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.7));
+    }
+    #map-name {
+      position: fixed; bottom: 16px; right: 16px;
       font-size: 16px; font-weight: bold; color: #fff;
       text-shadow: 0 0 8px rgba(0,0,0,0.9), 1px 1px 3px rgba(0,0,0,0.8);
       pointer-events: none; z-index: 200;
@@ -421,10 +456,299 @@
       font-family: 'Courier New', monospace;
     }
     #map-name.show { opacity: 1; }
+
+    /* Title Screen */
+    #title-screen {
+      position: fixed; inset: 0;
+      z-index: 9999;
+      display: none;
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      background: #0a0a1a;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      font-family: Courier New, monospace;
+    }
+    #title-screen.visible { opacity: 1; }
+
+    #title-cover {
+      position: absolute; inset: 0;
+      background: url(/assets/ui/cover.png) center center / cover no-repeat;
+      filter: brightness(0.45);
+    }
+    #title-cover-fallback {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+      z-index: -1;
+    }
+    #title-content {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 24px;
+    }
+    #title-game-name {
+      font-size: 48px; font-weight: bold;
+      color: #ffd700;
+      text-shadow: 0 0 20px rgba(255,215,0,0.4), 0 4px 8px rgba(0,0,0,0.8);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+    #title-subtitle {
+      font-size: 14px; color: rgba(255,255,255,0.4);
+      letter-spacing: 6px; text-transform: uppercase; margin-top: -12px;
+    }
+    .title-btn {
+      display: block; width: 220px; padding: 14px 0; text-align: center;
+      font-family: Courier New, monospace; font-size: 16px; font-weight: bold;
+      letter-spacing: 2px; text-transform: uppercase; color: #fff;
+      background: rgba(255,215,0,0.1);
+      border: 2px solid rgba(255,215,0,0.4); border-radius: 8px;
+      cursor: pointer; transition: all 0.25s ease;
+    }
+    .title-btn:hover {
+      background: rgba(255,215,0,0.2); border-color: rgba(255,215,0,0.8);
+      box-shadow: 0 0 20px rgba(255,215,0,0.2); transform: translateY(-2px);
+    }
+    .title-btn:active { transform: translateY(0); background: rgba(255,215,0,0.3); }
+    .title-btn.ready { border-color: #ffd700; box-shadow: 0 0 15px rgba(255,215,0,0.15); }
+    .title-btn.secondary {
+      border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.5); font-size: 13px; width: 180px; padding: 10px 0;
+    }
+    .title-btn.secondary:hover {
+      border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.8); box-shadow: none;
+    }
+    #title-hint { font-size: 11px; color: rgba(255,255,255,0.25); margin-top: 20px; }
+
+    #title-loading-overlay {
+      position: fixed; inset: 0; z-index: 10000;
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: #0a0a1a; opacity: 0;
+      transition: opacity 0.4s ease;
+      font-family: Courier New, monospace;
+    }
+    #title-loading-overlay.visible { opacity: 1; }
+    #title-loading-text {
+      font-size: 16px; color: rgba(255,255,255,0.7);
+      margin-bottom: 20px; letter-spacing: 2px;
+    }
+    #title-loading-bar-wrap {
+      width: 300px; height: 6px;
+      background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;
+    }
+    #title-loading-bar {
+      width: 0%; height: 100%;
+      background: linear-gradient(90deg, #ffd700, #ffaa00);
+      border-radius: 3px; transition: width 0.3s ease;
+    }
+    #title-loading-hint {
+      font-size: 11px; color: rgba(255,255,255,0.2); margin-top: 16px;
+    }
+
+    /* Settings Panel */
+    #settings-overlay {
+      position: fixed; inset: 0;
+      z-index: 10001;
+      display: none;
+      align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.7);
+      font-family: Courier New, monospace;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #settings-overlay.visible { opacity: 1; }
+
+    #settings-panel {
+      width: 480px; max-height: 80vh;
+      background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+      border: 2px solid rgba(255,215,0,0.3);
+      border-radius: 14px;
+      padding: 24px 28px;
+      box-shadow: 0 0 50px rgba(0,0,0,0.7);
+      overflow-y: auto;
+    }
+
+    #settings-title {
+      font-size: 20px; font-weight: bold; color: #ffd700;
+      text-align: center; letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255,215,0,0.15);
+    }
+
+    .settings-section {
+      margin-bottom: 20px;
+    }
+    .settings-section-title {
+      font-size: 12px; color: #ffd700;
+      letter-spacing: 1px; text-transform: uppercase;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .settings-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0;
+    }
+    .settings-label {
+      font-size: 13px; color: rgba(255,255,255,0.7);
+    }
+    .settings-value {
+      font-size: 13px; color: rgba(255,255,255,0.4);
+    }
+
+    .settings-slider-wrap {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .settings-slider {
+      -webkit-appearance: none; width: 160px; height: 4px;
+      background: rgba(255,255,255,0.15); border-radius: 2px; outline: none;
+    }
+    .settings-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 14px; height: 14px;
+      background: #ffd700; border-radius: 50%; cursor: pointer;
+    }
+    .settings-slider-val {
+      font-size: 12px; color: rgba(255,255,255,0.5); min-width: 32px; text-align: right;
+    }
+
+    .settings-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      font-family: Courier New, monospace;
+      font-size: 12px; font-weight: bold;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: #fff; cursor: pointer;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    .settings-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,215,0,0.5);
+    }
+    .settings-btn.danger {
+      border-color: rgba(244,67,54,0.4); color: #ef5350;
+    }
+    .settings-btn.danger:hover {
+      background: rgba(244,67,54,0.1); border-color: rgba(244,67,54,0.7);
+    }
+
+    .settings-btn-row {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+
+    #settings-close {
+      display: block; margin: 20px auto 0;
+      padding: 10px 40px;
+      font-family: Courier New, monospace;
+      font-size: 14px; font-weight: bold;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: #ffd700; cursor: pointer;
+      background: rgba(255,215,0,0.08);
+      border: 2px solid rgba(255,215,0,0.3);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    #settings-close:hover {
+      background: rgba(255,215,0,0.15);
+      border-color: rgba(255,215,0,0.7);
+    }
+
+    .settings-keybind {
+      display: inline-block;
+      padding: 2px 8px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px;
+      font-size: 11px; color: rgba(255,255,255,0.6);
+    }
   </style>
-  <script type="module" crossorigin src="/assets/index-C9eM3432.js"></script>
+  <script type="module" crossorigin src="/assets/index-DEzlpiV0.js"></script>
 </head>
 <body>
+
+  <!-- Title Screen -->
+  <div id="title-screen">
+    <div id="title-cover-fallback"></div>
+    <div id="title-cover"></div>
+    <div id="title-content">
+      <div id="title-game-name">Pixel RPG</div>
+      <div id="title-subtitle">Adventure Awaits</div>
+      <button class="title-btn" id="title-start-btn">Start Game</button>
+      <button class="title-btn secondary" id="title-settings-btn">Settings</button>
+      <div id="title-hint">Cover image: assets/ui/cover.png</div>
+    </div>
+  </div>
+
+  <!-- Loading overlay -->
+  <div id="title-loading-overlay">
+    <div id="title-loading-text">Loading assets...</div>
+    <div id="title-loading-bar-wrap">
+      <div id="title-loading-bar"></div>
+    </div>
+    <div id="title-loading-hint">Preparing game world...</div>
+  </div>
+
+  <!-- Settings Panel -->
+  <div id="settings-overlay">
+    <div id="settings-panel">
+      <div id="settings-title">Settings</div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Audio</div>
+        <div class="settings-row">
+          <span class="settings-label">Master Volume</span>
+          <div class="settings-slider-wrap">
+            <input type="range" class="settings-slider" id="settings-volume" min="0" max="100" value="80">
+            <span class="settings-slider-val" id="settings-volume-val">80%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Controls</div>
+        <div class="settings-row">
+          <span class="settings-label">Move</span>
+          <span class="settings-value"><span class="settings-keybind">W</span> <span class="settings-keybind">A</span> <span class="settings-keybind">S</span> <span class="settings-keybind">D</span> / Arrow Keys</span>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Attack</span>
+          <span class="settings-value"><span class="settings-keybind">Space</span> / <span class="settings-keybind">Z</span></span>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Inventory</span>
+          <span class="settings-value"><span class="settings-keybind">B</span></span>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Use Hotbar Item</span>
+          <span class="settings-value"><span class="settings-keybind">1</span> - <span class="settings-keybind">5</span></span>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Save Data</div>
+        <div class="settings-btn-row">
+          <button class="settings-btn" id="settings-export">Export Save</button>
+          <button class="settings-btn" id="settings-import">Import Save</button>
+          <button class="settings-btn danger" id="settings-delete">Delete Save</button>
+        </div>
+        <input type="file" id="settings-import-file" accept=".json,.sav" style="display:none">
+      </div>
+
+      <button id="settings-close">Back</button>
+    </div>
+  </div>
+
+  <div class="top-right-bar">
+    <a id="blog-link" href="https://blog-ehl.pages.dev/" target="_blank" rel="noopener noreferrer" title="Author Blog"><img src="/assets/blog-icon-yrcqEXdi.ico" alt="Blog"></a>
+    <div id="settings-btn-ingame"><img src="data:image/png;base64,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" alt="Settings"></div>
+  </div>
   <div id="map-name"></div>
   <div id="game-container">
     <!-- HUD (always visible) -->

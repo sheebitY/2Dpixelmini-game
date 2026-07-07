@@ -540,8 +540,26 @@ export class GameplayScene {
     this.healthBarMap.clear();
     this.entityEnemyType.clear();
     this.npcEntities.clear();
+    // Save player state before clearing entities
+    const prevPlayerIds = entities.query("health", "stats").filter((id) => !entities.hasComponent(id, "ai"));
+    let savedHp = 0;
+    let savedMaxHp = 0;
+    let savedExp = 0;
+    let savedLevel = 1;
+    let savedExpToLevel = 100;
+    if (prevPlayerIds.length > 0) {
+      const hp = entities.getComponent(prevPlayerIds[0], "health")!;
+      const stats = entities.getComponent(prevPlayerIds[0], "stats")!;
+      savedHp = hp.current;
+      savedMaxHp = hp.max;
+      savedExp = this.hud.exp;
+      savedLevel = this.hud.level;
+      savedExpToLevel = this.hud.expToLevel;
+      this.baseAtk = stats.atk - this.buffAtk - equipment.getBonus().atk;
+      this.baseDef = stats.def - this.buffDef - equipment.getBonus().def;
+    }
     entities.clear();
-    inventory.clear();
+    // Note: inventory is NOT cleared on map change
 
     if (this.gameOverText) {
       this.app.stage.removeChild(this.gameOverText);
@@ -555,14 +573,27 @@ export class GameplayScene {
     this.playerAttackUntil = 0;
       this.playerHitUntil = 0;
     this.portalCooldownUntil = this.now + 0.5;
-    this.buffAtk = 0;
-    this.buffAtkUntil = 0;
-    this.buffDef = 0;
-    this.buffDefUntil = 0;
+    // Note: buffs are NOT reset on map change
 
     this.drawMap();
     this.hud.setMapName(mapId);
     this.spawnPlayer(spawnOverride, entryDirection);
+
+    // Restore player HP and apply equipment bonus after spawn
+    const newPlayerIds = entities.query("health", "stats").filter((id) => !entities.hasComponent(id, "ai"));
+    if (newPlayerIds.length > 0) {
+      const hp = entities.getComponent(newPlayerIds[0], "health")!;
+      const bonus = equipment.getBonus();
+      hp.max = PLAYER_DEF.hp + bonus.hp;
+      if (savedMaxHp > 0) {
+        hp.current = Math.min(savedHp, hp.max);
+      } else {
+        hp.current = hp.max;
+      }
+      this.applyEquipmentBonus();
+      this.hud.restoreLevel(savedLevel, savedExp, savedExpToLevel);
+    }
+
     this.spawnEnemies();
     this.spawnNPCs();
   }
