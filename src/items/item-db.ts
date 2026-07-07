@@ -2,7 +2,7 @@
 
 export type ItemRarity = "common" | "uncommon" | "rare" | "epic";
 
-export type ItemCategory = "consumable" | "material";
+export type ItemCategory = "consumable" | "material" | "equipment";
 
 export interface ItemDef {
   id: string;
@@ -15,6 +15,8 @@ export interface ItemDef {
   maxStack: number;
   /** Effect applied when the player uses this item. Return true if consumed. */
   onUse?: (ctx: UseContext) => boolean;
+  equipSlot?: string;
+  equipStats?: { atk?: number; def?: number; hp?: number };
 }
 
 export interface UseContext {
@@ -52,7 +54,7 @@ const ITEMS: Record<string, ItemDef> = {
     id: "greater_health_potion",
     name: "Greater Health Potion",
     description: "Restores 70 HP.",
-    icon: "/assets/ui/药剂小.png",
+    icon: "/assets/ui/药剂�?png",
     category: "consumable",
     rarity: "uncommon",
     stackable: true,
@@ -120,6 +122,66 @@ const ITEMS: Record<string, ItemDef> = {
     rarity: "uncommon",
     stackable: true,
     maxStack: 50,
+  },
+  bone_helmet: {
+    id: "bone_helmet",
+    name: "Bone Helmet",
+    description: "A sturdy helmet crafted from bone fragments. DEF +3, HP +10.",
+    icon: "??",
+    category: "equipment",
+    rarity: "uncommon",
+    stackable: false,
+    maxStack: 1,
+    equipSlot: "helmet",
+    equipStats: { def: 3, hp: 10 },
+  },
+  slime_chestplate: {
+    id: "slime_chestplate",
+    name: "Slime Chestplate",
+    description: "A gooey chestplate made from slime gel. DEF +5, HP +15.",
+    icon: "??",
+    category: "equipment",
+    rarity: "uncommon",
+    stackable: false,
+    maxStack: 1,
+    equipSlot: "chestplate",
+    equipStats: { def: 5, hp: 15 },
+  },
+  bone_leggings: {
+    id: "bone_leggings",
+    name: "Bone Leggings",
+    description: "Leg armor reinforced with bones and orc tusks. DEF +4, HP +8.",
+    icon: "??",
+    category: "equipment",
+    rarity: "uncommon",
+    stackable: false,
+    maxStack: 1,
+    equipSlot: "leggings",
+    equipStats: { def: 4, hp: 8 },
+  },
+  eagle_boots: {
+    id: "eagle_boots",
+    name: "Eagle Boots",
+    description: "Lightweight boots crafted from eagle feathers. DEF +2, SPD +20.",
+    icon: "??",
+    category: "equipment",
+    rarity: "uncommon",
+    stackable: false,
+    maxStack: 1,
+    equipSlot: "boots",
+    equipStats: { def: 2 },
+  },
+  tusk_sword: {
+    id: "tusk_sword",
+    name: "Tusk Sword",
+    description: "A crude but powerful sword forged from orc tusks. ATK +6.",
+    icon: "??",
+    category: "equipment",
+    rarity: "rare",
+    stackable: false,
+    maxStack: 1,
+    equipSlot: "weapon",
+    equipStats: { atk: 6 },
   },
 };
 

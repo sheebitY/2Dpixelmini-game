@@ -1,11 +1,15 @@
 import { inventory } from "../items/inventory";
 import { getItem, rarityColor, isImageIcon } from "../items/item-db";
+import { equipment, EQUIP_SLOTS, type EquipSlot } from "../items/equipment";
+import { crafting, RECIPES } from "../items/crafting";
 import { eventBus } from "../core/event-bus";
 import { input } from "../core/input-manager";
 
 export class InventoryUI {
   private overlay: HTMLElement;
   private grid: HTMLElement;
+  private equipPanel: HTMLElement;
+  private craftPanel: HTMLElement;
   private tooltip: HTMLElement;
   private tooltipName: HTMLElement;
   private tooltipDesc: HTMLElement;
@@ -19,37 +23,38 @@ export class InventoryUI {
   constructor() {
     this.overlay     = document.getElementById("inventory-overlay")!;
     this.grid        = document.getElementById("inventory-grid")!;
+    this.equipPanel  = document.getElementById("equip-panel")!;
+    this.craftPanel  = document.getElementById("craft-panel")!;
     this.tooltip     = document.getElementById("inv-tooltip")!;
     this.tooltipName = document.getElementById("inv-tooltip-name")!;
     this.tooltipDesc = document.getElementById("inv-tooltip-desc")!;
     this.tooltipAction = document.getElementById("inv-tooltip-action")!;
     this.pickupToast = document.getElementById("pickup-toast")!;
 
+    this.buildEquipSlots();
     this.buildSlots();
+    this.buildCraftPanel();
 
-    // Listen for pickups
     eventBus.on("item_picked_up", (data: { itemId: string; quantity: number }) => {
       this.showPickupToast(data.itemId, data.quantity);
     });
 
-    // Re-render when inventory changes
     eventBus.on("inventory_changed", () => {
-      if (this.isOpen) this.renderSlots();
+      if (this.isOpen) { this.renderSlots(); this.renderCraftPanel(); }
+    });
+
+    eventBus.on("equipment_changed", () => {
+      if (this.isOpen) this.renderEquipSlots();
     });
   }
 
-  /** Register a callback so the scene can handle item usage (healing, buffs etc.) */
   onUse(cb: (slotIndex: number) => void): void {
     this.useCallback = cb;
   }
 
-  get visible(): boolean {
-    return this.isOpen;
-  }
+  get visible(): boolean { return this.isOpen; }
 
-  /** Call every frame from the scene update loop. */
   update(): void {
-    // Toggle with B
     if (input.isKeyJustPressed("KeyB")) {
       if (this.isOpen) this.close();
       else this.open();
@@ -60,6 +65,8 @@ export class InventoryUI {
     this.isOpen = true;
     this.overlay.classList.add("open");
     this.renderSlots();
+    this.renderEquipSlots();
+    this.renderCraftPanel();
   }
 
   close(): void {
@@ -68,7 +75,109 @@ export class InventoryUI {
     this.hideTooltip();
   }
 
-  // ï¿½ï¿½ï¿½ï¿½ Slot grid ï¿½ï¿½ï¿½ï¿½
+  // ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
+  //  Equipment panel (left side)
+  // ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
+
+  private buildEquipSlots(): void {
+    this.equipPanel.innerHTML = '<div class="equip-title">Equipment</div>';
+    for (const slotDef of EQUIP_SLOTS) {
+      const el = document.createElement("div");
+      el.className = "equip-slot";
+      el.dataset.slot = slotDef.key;
+
+      const icon = document.createElement("span");
+      icon.className = "equip-slot-icon";
+      el.appendChild(icon);
+
+      const label = document.createElement("span");
+      label.className = "equip-slot-label";
+      label.textContent = slotDef.label;
+      el.appendChild(label);
+
+      const rarity = document.createElement("div");
+      rarity.className = "equip-slot-rarity";
+      el.appendChild(rarity);
+
+      // Click to unequip
+      el.addEventListener("click", () => this.onEquipClick(slotDef.key));
+
+      // Drag-drop: accept items from inventory
+      el.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        e.dataTransfer!.dropEffect = "copy";
+        el.classList.add("drag-over");
+      });
+      el.addEventListener("dragleave", () => el.classList.remove("drag-over"));
+      el.addEventListener("drop", (e) => {
+        e.preventDefault();
+        el.classList.remove("drag-over");
+        const invIdx = parseInt(e.dataTransfer!.getData("text/plain"), 10);
+        if (isNaN(invIdx)) return;
+        this.handleEquipDrop(slotDef.key, invIdx);
+      });
+
+      this.equipPanel.appendChild(el);
+    }
+  }
+
+  private handleEquipDrop(slot: EquipSlot, invIdx: number): void {
+    const invSlot = inventory.getSlot(invIdx);
+    if (!invSlot) return;
+    const def = getItem(invSlot.itemId);
+    if (!def || def.category !== "equipment" || def.equipSlot !== slot) return;
+
+    // Unequip current if any
+    const prev = equipment.unequip(slot);
+    if (prev) inventory.addItem(prev, 1);
+
+    // Equip new (remove from inventory)
+    inventory.removeFromSlot(invIdx, 1);
+    equipment.equip(slot, invSlot.itemId);
+
+    this.renderSlots();
+    this.renderEquipSlots();
+    this.renderCraftPanel();
+  }
+
+  private onEquipClick(slot: EquipSlot): void {
+    const itemId = equipment.get(slot);
+    if (!itemId) return;
+    // Unequip back to inventory
+    const overflow = inventory.addItem(itemId, 1);
+    if (overflow > 0) return; // inventory full
+    equipment.unequip(slot);
+    this.renderSlots();
+    this.renderEquipSlots();
+    this.renderCraftPanel();
+  }
+
+  private renderEquipSlots(): void {
+    const children = this.equipPanel.children;
+    for (let i = 1; i < children.length; i++) { // skip title
+      const el = children[i] as HTMLElement;
+      const slotKey = el.dataset.slot as EquipSlot;
+      const itemId = equipment.get(slotKey);
+      const icon = el.querySelector(".equip-slot-icon") as HTMLElement;
+      const rarity = el.querySelector(".equip-slot-rarity") as HTMLElement;
+
+      if (itemId) {
+        const def = getItem(itemId);
+        el.classList.add("has-item");
+        setIconContent(icon, def?.icon ?? "?");
+        rarity.style.background = def ? rarityColor(def.rarity) : "transparent";
+      } else {
+        el.classList.remove("has-item");
+        const slotDef = EQUIP_SLOTS.find(s => s.key === slotKey);
+        setIconContent(icon, slotDef?.icon ?? "");
+        rarity.style.background = "transparent";
+      }
+    }
+  }
+
+  // ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
+  //  Inventory grid (center)
+  // ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
 
   private buildSlots(): void {
     this.grid.innerHTML = "";
@@ -90,7 +199,6 @@ export class InventoryUI {
       rarity.className = "inv-slot-rarity";
       slot.appendChild(rarity);
 
-      // Hover events
       slot.addEventListener("mouseenter", () => this.onSlotHover(i));
       slot.addEventListener("mouseleave", () => this.onSlotLeave());
       slot.addEventListener("click", () => this.onSlotClick(i));
@@ -123,8 +231,6 @@ export class InventoryUI {
     }
   }
 
-  // ï¿½ï¿½ï¿½ï¿½ Tooltip ï¿½ï¿½ï¿½ï¿½
-
   private onSlotHover(index: number): void {
     const slot = inventory.getSlot(index);
     if (!slot) return;
@@ -135,9 +241,8 @@ export class InventoryUI {
     this.tooltipName.textContent = def.name;
     this.tooltipName.style.color = rarityColor(def.rarity);
     this.tooltipDesc.textContent = def.description;
-    this.tooltipAction.textContent = def.onUse ? "[Click] Use" : "Material";
+    this.tooltipAction.textContent = def.onUse ? "[Click] Use" : def.category === "equipment" ? "[Drag] Equip" : "Material";
 
-    // Position tooltip near the slot
     const slotEl = this.grid.children[index] as HTMLElement;
     const rect = slotEl.getBoundingClientRect();
     this.tooltip.style.left = (rect.right + 8) + "px";
@@ -154,8 +259,6 @@ export class InventoryUI {
     this.tooltip.classList.remove("show");
   }
 
-  // ï¿½ï¿½ï¿½ï¿½ Click to use ï¿½ï¿½ï¿½ï¿½
-
   private onSlotClick(index: number): void {
     if (!this.isOpen) return;
     const slot = inventory.getSlot(index);
@@ -163,18 +266,81 @@ export class InventoryUI {
     const def = getItem(slot.itemId);
     if (!def?.onUse) return;
 
-    // Tell the scene to apply the effect
-    if (this.useCallback) {
-      this.useCallback(index);
-    }
-
-    // Re-render in case item was consumed
+    if (this.useCallback) this.useCallback(index);
     this.renderSlots();
-    // Refresh tooltip
     if (this.hoveredSlot === index) this.onSlotHover(index);
   }
 
-  // ï¿½ï¿½ï¿½ï¿½ Pickup toast ï¿½ï¿½ï¿½ï¿½
+  // ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
+  //  Crafting panel (right side)
+  // ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
+
+  private buildCraftPanel(): void {
+    this.craftPanel.innerHTML = '<div class="craft-title">Crafting</div>';
+    for (const recipe of RECIPES) {
+      const el = document.createElement("div");
+      el.className = "craft-recipe";
+      el.dataset.recipeId = recipe.id;
+
+      const name = document.createElement("div");
+      name.className = "craft-recipe-name";
+      const resultDef = getItem(recipe.result.itemId);
+      name.textContent = (resultDef?.icon ?? "") + " " + recipe.name;
+      el.appendChild(name);
+
+      for (const ing of recipe.ingredients) {
+        const ingEl = document.createElement("div");
+        ingEl.className = "craft-recipe-ing";
+        ingEl.dataset.itemId = ing.itemId;
+        const ingDef = getItem(ing.itemId);
+        ingEl.textContent = (ingDef?.icon ?? "?") + " " + (ingDef?.name ?? ing.itemId) + " x" + ing.quantity;
+        el.appendChild(ingEl);
+      }
+
+      const arrow = document.createElement("div");
+      arrow.className = "craft-arrow";
+      arrow.textContent = "?? Craft";
+      el.appendChild(arrow);
+
+      el.addEventListener("click", () => this.onCraftClick(recipe.id));
+      this.craftPanel.appendChild(el);
+    }
+  }
+
+  private renderCraftPanel(): void {
+    const children = this.craftPanel.children;
+    for (let i = 1; i < children.length; i++) { // skip title
+      const el = children[i] as HTMLElement;
+      const recipeId = el.dataset.recipeId;
+      const recipe = RECIPES.find(r => r.id === recipeId);
+      if (!recipe) continue;
+
+      const canCraft = crafting.canCraft(recipe);
+      el.classList.toggle("cannot-craft", !canCraft);
+
+      // Update ingredient colors
+      const ingEls = el.querySelectorAll(".craft-recipe-ing");
+      ingEls.forEach((ingEl) => {
+        const itemId = (ingEl as HTMLElement).dataset.itemId;
+        const ing = recipe.ingredients.find(x => x.itemId === itemId);
+        if (!ing || !itemId) return;
+        const have = inventory.countItems(itemId);
+        ingEl.classList.toggle("has-enough", have >= ing.quantity);
+        ingEl.classList.toggle("not-enough", have < ing.quantity);
+      });
+    }
+  }
+
+  private onCraftClick(recipeId: string): void {
+    const success = crafting.craft(recipeId);
+    if (!success) return;
+    this.renderSlots();
+    this.renderCraftPanel();
+  }
+
+  // ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
+  //  Pickup toast
+  // ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
 
   private showPickupToast(itemId: string, qty: number): void {
     const def = getItem(itemId);
@@ -182,16 +348,17 @@ export class InventoryUI {
 
     const msg = document.createElement("div");
     msg.className = "pickup-msg";
-    msg.innerHTML = `${iconHtml(def.icon)} <span style="color:${rarityColor(def.rarity)}">${def.name}</span> x${qty}`;
+    msg.innerHTML = iconHtml(def.icon) + ' <span style="color:' + rarityColor(def.rarity) + '">' + def.name + '</span> x' + qty;
     this.pickupToast.appendChild(msg);
 
-    // Fade out after 2 seconds
     setTimeout(() => msg.classList.add("fade-out"), 2000);
-    setTimeout(() => {
-      if (msg.parentNode) msg.parentNode.removeChild(msg);
-    }, 2600);
+    setTimeout(() => { if (msg.parentNode) msg.parentNode.removeChild(msg); }, 2600);
   }
 }
+
+// ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
+//  Icon helpers
+// ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
 
 function setIconContent(el: HTMLElement, icon: string): void {
   if (isImageIcon(icon)) {

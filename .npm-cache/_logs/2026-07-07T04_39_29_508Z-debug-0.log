@@ -5,10 +5,10 @@
 4 silly config load:file:C:\Users\23711\Desktop\game\.npmrc
 5 silly config load:file:C:\Users\23711\.npmrc
 6 silly config load:file:D:\nodejs\node_global\etc\npmrc
-7 verbose title npm exec vite build
-8 verbose argv "exec" "--" "vite" "build"
-9 verbose logfile logs-max:10 dir:C:\Users\23711\Desktop\game\.npm-cache\_logs\2026-07-06T15_50_39_027Z-
-10 verbose logfile C:\Users\23711\Desktop\game\.npm-cache\_logs\2026-07-06T15_50_39_027Z-debug-0.log
+7 verbose title npm exec tsc --noEmit
+8 verbose argv "exec" "--" "tsc" "--noEmit"
+9 verbose logfile logs-max:10 dir:C:\Users\23711\Desktop\game\.npm-cache\_logs\2026-07-07T04_39_29_508Z-
+10 verbose logfile C:\Users\23711\Desktop\game\.npm-cache\_logs\2026-07-07T04_39_29_508Z-debug-0.log
 11 silly logfile start cleaning logs, removing 1 files
 12 silly logfile done cleaning log files
 13 verbose cwd C:\Users\23711\Desktop\game

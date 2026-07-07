@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+﻿import * as PIXI from "pixi.js";
 import { CONFIG } from "../config";
 import { entities } from "../ecs/entity-manager";
 import { eventBus } from "../core/event-bus";
@@ -12,6 +12,7 @@ import { InventoryUI } from "../ui/inventory-ui";
 import { Hotbar } from "../ui/hotbar";
 import { inventory } from "../items/inventory";
 import { ENEMY_LOOT_TABLE } from "../items/item-db";
+import { equipment } from "../items/equipment";
 import { mapManager, MapState, Portal } from "../world/map-manager";
 import {
   loadPlayerTextures,
@@ -190,6 +191,8 @@ export class GameplayScene {
   private buffAtkUntil = 0;
   private buffDef = 0;
   private buffDefUntil = 0;
+  private baseAtk = 0;
+  private baseDef = 0;
 
   constructor(app: PIXI.Application) {
     this.app = app;
@@ -213,6 +216,8 @@ export class GameplayScene {
     // Hotbar
     this.hotbar = new Hotbar();
     this.hotbar.onUse((slotIndex) => this.useInventoryItem(slotIndex));
+
+    eventBus.on("equipment_changed", () => this.applyEquipmentBonus());
 
     eventBus.on("player_died", () => {
       this.gameOver = true;
@@ -255,6 +260,20 @@ export class GameplayScene {
   }
 
   // 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚?Loot rolling on enemy kill 闁跨喐鏋婚幏鐑芥晸閺傘倖瀚?
+
+  private applyEquipmentBonus(): void {
+    const playerIds = entities.query("stats").filter((id) => !entities.hasComponent(id, "ai"));
+    if (playerIds.length === 0) return;
+    const stats = entities.getComponent(playerIds[0], "stats")!;
+    const hp = entities.getComponent(playerIds[0], "health")!;
+    const bonus = equipment.getBonus();
+    stats.atk = this.baseAtk + bonus.atk + this.buffAtk;
+    stats.def = this.baseDef + bonus.def + this.buffDef;
+    if (hp) {
+      hp.max = PLAYER_DEF.hp + bonus.hp;
+      hp.current = Math.min(hp.current, hp.max);
+    }
+  }
 
   private rollLoot(enemyType: string, x: number, y: number): void {
     const table = ENEMY_LOOT_TABLE[enemyType];
@@ -314,7 +333,7 @@ export class GameplayScene {
     this.loaded = true;
   }
 
-  private async loadMap(mapId: string, spawnOverride?: {x: number, y: number}): Promise<void> {
+  private async loadMap(mapId: string, spawnOverride?: {x: number, y: number}, entryDirection?: string): Promise<void> {
     const mapState = await mapManager.loadMap(mapId);
     this.currentMap = mapState;
     this.tileMap = mapState.tileMap;
@@ -348,7 +367,7 @@ export class GameplayScene {
     this.buffDefUntil = 0;
 
     this.drawMap();
-    this.spawnPlayer(spawnOverride);
+    this.spawnPlayer(spawnOverride, entryDirection);
     this.spawnEnemies();
     this.spawnNPCs();
   }
@@ -458,12 +477,34 @@ export class GameplayScene {
     return names[idx] ?? "grass";
   }
 
-  private spawnPlayer(spawnOverride?: {x: number, y: number}): void {
+  private spawnPlayer(spawnOverride?: {x: number, y: number}, entryDirection?: string): void {
     const id = entities.createEntity();
     const size = PLAYER_DEF.size;
     const ts = CONFIG.TILE_SIZE;
 
-    const playerSpawn = spawnOverride ?? this.currentMap?.meta.player ?? { x: Math.floor((this.tileMap[0]?.length ?? 1) / 2), y: Math.floor((this.tileMap.length ?? 1) / 2) };
+    let playerSpawn = spawnOverride ?? this.currentMap?.meta.player ?? { x: Math.floor((this.tileMap[0]?.length ?? 1) / 2), y: Math.floor((this.tileMap.length ?? 1) / 2) };
+
+    // Offset spawn inward when entering via portal to avoid edge walls
+    if (entryDirection && spawnOverride) {
+      const maxC = (this.tileMap[0]?.length ?? 1) - 1;
+      const maxR = this.tileMap.length - 1;
+      // Direction vector: move away from the edge the player entered from
+      const dir = entryDirection === "down"  ? { x: 0, y: 1 }
+                : entryDirection === "up"    ? { x: 0, y: -1 }
+                : entryDirection === "right" ? { x: 1, y: 0 }
+                :                              { x: -1, y: 0 };
+      // Try offsets 1..3 to find a walkable tile
+      for (let off = 1; off <= 3; off++) {
+        const cx = Math.max(1, Math.min(maxC - 1, playerSpawn.x + dir.x * off));
+        const cy = Math.max(1, Math.min(maxR - 1, playerSpawn.y + dir.y * off));
+        const tile = this.tileMap[cy]?.[cx];
+        if (tile !== undefined && tile !== 2 && tile !== 3 && tile !== 5) {
+          playerSpawn = { x: cx, y: cy };
+          break;
+        }
+      }
+    }
+
     const x = playerSpawn.x * ts;
     const y = playerSpawn.y * ts;
 
@@ -682,7 +723,7 @@ export class GameplayScene {
     for (const portal of portals) {
       if (pcx === portal.x && pcy === portal.y) {
         this.portalCooldownUntil = this.now + 0.5;
-        this.loadMap(portal.targetMap, { x: portal.targetX, y: portal.targetY });
+        this.loadMap(portal.targetMap, { x: portal.targetX, y: portal.targetY }, t.facing);
         return;
       }
     }

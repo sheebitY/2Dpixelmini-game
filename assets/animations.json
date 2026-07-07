@@ -6,7 +6,7 @@
         "down": {
           "folder": "assets/sprites/warrior/idle/down/",
           "prefix": "down",
-          "frameCount": 10
+          "frameCount": 5
         },
         "up": {
           "folder": "assets/sprites/warrior/idle/up/",
@@ -14,15 +14,14 @@
           "frameCount": 5
         },
         "left": {
-          "folder": "assets/sprites/warrior/idle/left/",
+          "folder": "assets/sprites/warrior/walk/left/",
           "prefix": "left",
-          "frameCount": 5
+          "frameCount": 4
         },
         "right": {
-          "folder": "assets/sprites/warrior/idle/left/",
-          "prefix": "left",
-          "frameCount": 5,
-          "mirrorX": true
+          "folder": "assets/sprites/warrior/walk/right/",
+          "prefix": "right",
+          "frameCount": 4
         }
       },
       "fps": 6,

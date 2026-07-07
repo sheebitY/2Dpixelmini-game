@@ -348,7 +348,6 @@
       transform: translateY(-10px);
     }
   </style>
-  <script type="module" crossorigin src="/assets/index-DX0Kz8gE.js"></script>
 </head>
 <body>
   <div id="game-container">
@@ -380,11 +379,7 @@
           <span id="inventory-title">?? Inventory</span>
           <span id="inventory-close-hint">[B] Close</span>
         </div>
-        <div id="inv-body">
-          <div id="equip-panel"></div>
-          <div id="inventory-grid"></div>
-          <div id="craft-panel"></div>
-        </div>
+        <div id="inventory-grid"></div>
       </div>
     </div>
 
@@ -406,5 +401,7 @@
     <div id="pickup-toast"></div>
   </div>
 
+  <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
+

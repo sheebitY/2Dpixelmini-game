@@ -1,0 +1,108 @@
+import { inventory } from "./inventory";
+import { getItem } from "./item-db";
+import { eventBus } from "../core/event-bus";
+
+export interface CraftingRecipe {
+  id: string;
+  name: string;
+  result: { itemId: string; quantity: number };
+  ingredients: { itemId: string; quantity: number }[];
+}
+
+export const RECIPES: CraftingRecipe[] = [
+  {
+    id: "craft_bone_helmet",
+    name: "Bone Helmet",
+    result: { itemId: "bone_helmet", quantity: 1 },
+    ingredients: [
+      { itemId: "bone_fragment", quantity: 5 },
+      { itemId: "slime_gel", quantity: 3 },
+    ],
+  },
+  {
+    id: "craft_slime_chestplate",
+    name: "Slime Chestplate",
+    result: { itemId: "slime_chestplate", quantity: 1 },
+    ingredients: [
+      { itemId: "slime_gel", quantity: 8 },
+      { itemId: "bone_fragment", quantity: 2 },
+    ],
+  },
+  {
+    id: "craft_bone_leggings",
+    name: "Bone Leggings",
+    result: { itemId: "bone_leggings", quantity: 1 },
+    ingredients: [
+      { itemId: "bone_fragment", quantity: 6 },
+      { itemId: "orc_tusk", quantity: 1 },
+    ],
+  },
+  {
+    id: "craft_eagle_boots",
+    name: "Eagle Boots",
+    result: { itemId: "eagle_boots", quantity: 1 },
+    ingredients: [
+      { itemId: "eagle_feather", quantity: 4 },
+      { itemId: "slime_gel", quantity: 2 },
+    ],
+  },
+  {
+    id: "craft_tusk_sword",
+    name: "Tusk Sword",
+    result: { itemId: "tusk_sword", quantity: 1 },
+    ingredients: [
+      { itemId: "orc_tusk", quantity: 3 },
+      { itemId: "bone_fragment", quantity: 4 },
+    ],
+  },
+  {
+    id: "craft_health_potion",
+    name: "Health Potion",
+    result: { itemId: "health_potion", quantity: 2 },
+    ingredients: [
+      { itemId: "slime_gel", quantity: 3 },
+    ],
+  },
+];
+
+class CraftingManager {
+  /** Check if player has all ingredients for a recipe. */
+  canCraft(recipe: CraftingRecipe): boolean {
+    for (const ing of recipe.ingredients) {
+      if (inventory.countItems(ing.itemId) < ing.quantity) return false;
+    }
+    return true;
+  }
+
+  /** Attempt to craft. Returns true if successful. */
+  craft(recipeId: string): boolean {
+    const recipe = RECIPES.find(r => r.id === recipeId);
+    if (!recipe) return false;
+    if (!this.canCraft(recipe)) return false;
+
+    // Check if result fits in inventory
+    const overflow = inventory.addItem(recipe.result.itemId, recipe.result.quantity);
+    if (overflow > 0) return false; // inventory full
+
+    // Consume ingredients
+    for (const ing of recipe.ingredients) {
+      this.consumeItems(ing.itemId, ing.quantity);
+    }
+
+    eventBus.emit("item_crafted", { recipeId, itemId: recipe.result.itemId });
+    return true;
+  }
+
+  private consumeItems(itemId: string, quantity: number): void {
+    let remaining = quantity;
+    for (let i = 0; i < inventory.size && remaining > 0; i++) {
+      const slot = inventory.getSlot(i);
+      if (!slot || slot.itemId !== itemId) continue;
+      const take = Math.min(remaining, slot.quantity);
+      inventory.removeFromSlot(i, take);
+      remaining -= take;
+    }
+  }
+}
+
+export const crafting = new CraftingManager();
