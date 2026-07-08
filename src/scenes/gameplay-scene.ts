@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+﻿import * as PIXI from "pixi.js";
 import { CONFIG } from "../config";
 import { entities } from "../ecs/entity-manager";
 import { eventBus } from "../core/event-bus";
@@ -68,6 +68,10 @@ interface EnemyDef {
   deathAnim?: string;
   hurtDuration?: number;
   colliderSize?: number;
+  colliderOffsetX?: number;
+  colliderOffsetY?: number;
+  colliderWidth?: number;
+  colliderHeight?: number;
   detectRange?: number;
   attackRange?: number;
   attackCooldown?: number;
@@ -85,16 +89,18 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     animFps: { idle: 6 },
     attackDuration: 0.3, damageFrameRatio: 0.4,
     detectRange: 250, attackRange: 55, attackCooldown: 1.4,
+    colliderWidth: 48, colliderHeight: 48, colliderOffsetX: 12, colliderOffsetY: 16,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
   goblin1: {
-    hp: 35, atk: 8, def: 2, speed: 60, exp: 15,
-    animKey: "idle", size: 80,
+    hp: 50, atk: 10, def: 3, speed: 60, exp: 15,
+    animKey: "idle", size: 120,
     anims: { idle: "idle", patrol: "walk", chase: "walk", attack: "attack" },
     animFps: { idle: 8, walk: 10, attack: 16 },
     hurtAnim: "hurt", deathAnim: "die",
     attackDuration: 0.5, damageFrameRatio: 0.4,
-    detectRange: 280, attackRange: 55, attackCooldown: 1.2,
+    detectRange: 200, attackRange: 55, attackCooldown: 1.2,
+    colliderWidth: 50, colliderHeight: 50, colliderOffsetX: 35, colliderOffsetY: 50,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
   // === Tier 2 - Forest Path (Lv 3-5) ===
@@ -104,6 +110,7 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     animFps: { idle: 8 },
     attackDuration: 0.3, damageFrameRatio: 0.4,
     detectRange: 300, attackRange: 60, attackCooldown: 1.2,
+    colliderWidth: 48, colliderHeight: 48, colliderOffsetX: 12, colliderOffsetY: 16,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
   goblin2: {
@@ -114,6 +121,7 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     hurtAnim: "hurt", deathAnim: "die",
     attackDuration: 0.6, damageFrameRatio: 0.5,
     detectRange: 320, attackRange: 60, attackCooldown: 1.3,
+    colliderWidth: 50, colliderHeight: 68, colliderOffsetX: 23, colliderOffsetY: 22,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
   eagle: {
@@ -123,6 +131,7 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     attackDuration: 0.4, damageFrameRatio: 0.4,
     detectRange: 400, attackRange: 70, attackCooldown: 1.0,
     canFly: true,
+    colliderWidth: 56, colliderHeight: 40, colliderOffsetX: 20, colliderOffsetY: 28,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
   // === Tier 3 - Lakeside Camp (Lv 5-7) ===
@@ -134,6 +143,7 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     hurtAnim: "hurt", deathAnim: "die",
     attackDuration: 0.4, damageFrameRatio: 0.4,
     detectRange: 350, attackRange: 55, attackCooldown: 1.1,
+    colliderWidth: 44, colliderHeight: 56, colliderOffsetX: 18, colliderOffsetY: 16,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
   skeleton: {
@@ -144,6 +154,7 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     deathAnim: "death",
     attackDuration: 0.8, damageFrameRatio: 0.5,
     detectRange: 350, attackRange: 75, attackCooldown: 1.4,
+    colliderWidth: 48, colliderHeight: 72, colliderOffsetX: 24, colliderOffsetY: 18,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
   // === Tier 4 - Desert Outpost (Lv 7-9) ===
@@ -154,7 +165,7 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     animFps: { idle: 6, walk: 10, attack: 16 },
     attackDuration: 0.8, damageFrameRatio: 0.5,
     deathAnim: "die",
-    colliderSize: 80,
+    colliderWidth: 56, colliderHeight: 68, colliderOffsetX: 20, colliderOffsetY: 20,
     detectRange: 350, attackRange: 65, attackCooldown: 1.4,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
@@ -164,7 +175,7 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     anims: { idle: "idle", patrol: "move", chase: "move", attack: "attack" },
     animFps: { idle: 6, move: 10, attack: 6 },
     attackDuration: 0.8, damageFrameRatio: 0.5,
-    colliderSize: 100,
+    colliderWidth: 80, colliderHeight: 90, colliderOffsetX: 88, colliderOffsetY: 130,
     detectRange: 380, attackRange: 65, attackCooldown: 1.3,
     anchorOffsetX: 0, anchorOffsetY: -20,
   },
@@ -178,6 +189,8 @@ interface NPCDef {
   size: number;
   animFps?: Record<string, number>;
   colliderSize?: number;
+  colliderWidth?: number;
+  colliderHeight?: number;
   colliderOffsetX?: number;
   colliderOffsetY?: number;
   interactionRange?: number;
@@ -195,9 +208,9 @@ const NPC_DEFS: Record<string, NPCDef> = {
     animKey: "sweep",
     animFps: { sweep: 10 },
     size: 96,
-    colliderSize: 80,        // 姣旀樉绀哄昂瀵稿皬涓€鐐癸紝閬垮厤鍗′汉
-    colliderOffsetX: 0,
-    colliderOffsetY: 0,
+    colliderWidth: 60, colliderHeight: 80,
+    colliderOffsetX: 18,
+    colliderOffsetY: 12,
     interactionRange: 128,
   },
   blacksmith: {
@@ -210,9 +223,9 @@ const NPC_DEFS: Record<string, NPCDef> = {
     animKey: "idle",
     animFps: { idle: 6 },
     size: 96,
-    colliderSize: 80,
-    colliderOffsetX: 0,
-    colliderOffsetY: 0,
+    colliderWidth: 65, colliderHeight: 80,
+    colliderOffsetX: 16,
+    colliderOffsetY: 12,
     interactionRange: 128,
   },
   merchant: {
@@ -225,9 +238,9 @@ const NPC_DEFS: Record<string, NPCDef> = {
     animKey: "idle",
     animFps: { idle: 6 },
     size: 96,
-    colliderSize: 80,
-    colliderOffsetX: 0,
-    colliderOffsetY: 0,
+    colliderWidth: 55, colliderHeight: 75,
+    colliderOffsetX: 20,
+    colliderOffsetY: 14,
     interactionRange: 128,
   },
   feibi: {
@@ -236,9 +249,9 @@ const NPC_DEFS: Record<string, NPCDef> = {
     animKey: "idle",
     animFps: { idle: 8 },
     size: 160,
-    colliderSize: 100,
-    colliderOffsetX: 0,
-    colliderOffsetY: 0,
+    colliderWidth: 70, colliderHeight: 80,
+    colliderOffsetX: 45,
+    colliderOffsetY: 50,
     interactionRange: 128,
   },
 };
@@ -971,10 +984,13 @@ isStatic: false, layer: "player", useForMovement: true,
         attackProgress: 0,
         hurtUntil: 0,
       });
+      const cw = def.colliderWidth ?? def.colliderSize ?? size;
+      const ch = def.colliderHeight ?? def.colliderSize ?? size;
+      const cox = def.colliderOffsetX ?? Math.floor((size - cw) / 2);
+      const coy = def.colliderOffsetY ?? Math.floor((size - ch) / 2);
       entities.addComponent(id, "collider", {
-        offsetX: 0, offsetY: 0,
-        width: def.colliderSize ?? size,
-        height: def.colliderSize ?? size,
+        offsetX: cox, offsetY: coy,
+        width: cw, height: ch,
         isStatic: false, layer: "enemy", useForMovement: true,
       });
       entities.addComponent(id, "lootDrop", { exp: def.exp, enemyType: s.type });
@@ -1028,8 +1044,8 @@ isStatic: false, layer: "player", useForMovement: true,
       entities.addComponent(id, "stats", { atk: 0, def: 0, speed: 0, exp: 0 });
       entities.addComponent(id, "npc", { npcKey: s.npcKey });
 
-      const cW = def.colliderSize ?? size;
-      const cH = def.colliderSize ?? size;
+      const cW = def.colliderWidth ?? def.colliderSize ?? size;
+      const cH = def.colliderHeight ?? def.colliderSize ?? size;
       entities.addComponent(id, "collider", {
         offsetX: def.colliderOffsetX ?? 0,
         offsetY: def.colliderOffsetY ?? 0,
