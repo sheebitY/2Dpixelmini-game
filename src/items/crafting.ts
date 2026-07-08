@@ -10,6 +10,7 @@ export interface CraftingRecipe {
 }
 
 export const RECIPES: CraftingRecipe[] = [
+  // --- Starter tier ---
   {
     id: "craft_bone_helmet",
     name: "Bone Helmet",
@@ -53,124 +54,29 @@ export const RECIPES: CraftingRecipe[] = [
     ingredients: [
       { itemId: "orc_tusk", quantity: 3 },
       { itemId: "bone_fragment", quantity: 4 },
+      { itemId: "metal_scrap", quantity: 2 },
     ],
   },
-  {
-    id: "craft_iron_sword",
-    name: "Iron Sword",
-    result: { itemId: "iron_sword", quantity: 1 },
-    ingredients: [
-      { itemId: "bone_fragment", quantity: 8 },
-      { itemId: "slime_gel", quantity: 4 },
-    ],
-  },
-  {
-    id: "craft_flame_blade",
-    name: "Flame Blade",
-    result: { itemId: "flame_blade", quantity: 1 },
-    ingredients: [
-      { itemId: "orc_tusk", quantity: 5 },
-      { itemId: "eagle_feather", quantity: 3 },
-      { itemId: "bone_fragment", quantity: 6 },
-    ],
-  },
+  // --- Dragon tier (uses gem + rare materials) ---
   {
     id: "craft_dragon_slayer",
     name: "Dragon Slayer",
     result: { itemId: "dragon_slayer", quantity: 1 },
     ingredients: [
+      { itemId: "diamond", quantity: 1 },
+      { itemId: "gem", quantity: 3 },
       { itemId: "orc_tusk", quantity: 8 },
-      { itemId: "eagle_feather", quantity: 6 },
-      { itemId: "bone_fragment", quantity: 10 },
+      { itemId: "metal_scrap", quantity: 10 },
     ],
   },
-  // --- Iron tier ---
-  {
-    id: "craft_iron_helmet",
-    name: "Iron Helmet",
-    result: { itemId: "iron_helmet", quantity: 1 },
-    ingredients: [
-      { itemId: "bone_fragment", quantity: 6 },
-      { itemId: "slime_gel", quantity: 3 },
-    ],
-  },
-  {
-    id: "craft_iron_chestplate",
-    name: "Iron Chestplate",
-    result: { itemId: "iron_chestplate", quantity: 1 },
-    ingredients: [
-      { itemId: "bone_fragment", quantity: 10 },
-      { itemId: "slime_gel", quantity: 5 },
-    ],
-  },
-  {
-    id: "craft_iron_leggings",
-    name: "Iron Leggings",
-    result: { itemId: "iron_leggings", quantity: 1 },
-    ingredients: [
-      { itemId: "bone_fragment", quantity: 8 },
-      { itemId: "slime_gel", quantity: 4 },
-    ],
-  },
-  {
-    id: "craft_iron_boots",
-    name: "Iron Boots",
-    result: { itemId: "iron_boots", quantity: 1 },
-    ingredients: [
-      { itemId: "bone_fragment", quantity: 5 },
-      { itemId: "slime_gel", quantity: 3 },
-    ],
-  },
-  // --- Steel tier ---
-  {
-    id: "craft_steel_helmet",
-    name: "Steel Helmet",
-    result: { itemId: "steel_helmet", quantity: 1 },
-    ingredients: [
-      { itemId: "orc_tusk", quantity: 3 },
-      { itemId: "bone_fragment", quantity: 8 },
-      { itemId: "eagle_feather", quantity: 2 },
-    ],
-  },
-  {
-    id: "craft_steel_chestplate",
-    name: "Steel Chestplate",
-    result: { itemId: "steel_chestplate", quantity: 1 },
-    ingredients: [
-      { itemId: "orc_tusk", quantity: 5 },
-      { itemId: "bone_fragment", quantity: 12 },
-      { itemId: "eagle_feather", quantity: 3 },
-    ],
-  },
-  {
-    id: "craft_steel_leggings",
-    name: "Steel Leggings",
-    result: { itemId: "steel_leggings", quantity: 1 },
-    ingredients: [
-      { itemId: "orc_tusk", quantity: 4 },
-      { itemId: "bone_fragment", quantity: 10 },
-      { itemId: "eagle_feather", quantity: 2 },
-    ],
-  },
-  {
-    id: "craft_steel_boots",
-    name: "Steel Boots",
-    result: { itemId: "steel_boots", quantity: 1 },
-    ingredients: [
-      { itemId: "orc_tusk", quantity: 3 },
-      { itemId: "bone_fragment", quantity: 7 },
-      { itemId: "eagle_feather", quantity: 2 },
-    ],
-  },
-  // --- Dragon tier ---
   {
     id: "craft_dragon_helmet",
     name: "Dragon Helmet",
     result: { itemId: "dragon_helmet", quantity: 1 },
     ingredients: [
-      { itemId: "orc_tusk", quantity: 6 },
-      { itemId: "eagle_feather", quantity: 5 },
-      { itemId: "bone_fragment", quantity: 12 },
+      { itemId: "gem", quantity: 2 },
+      { itemId: "orc_tusk", quantity: 5 },
+      { itemId: "metal_scrap", quantity: 6 },
     ],
   },
   {
@@ -178,9 +84,10 @@ export const RECIPES: CraftingRecipe[] = [
     name: "Dragon Chestplate",
     result: { itemId: "dragon_chestplate", quantity: 1 },
     ingredients: [
-      { itemId: "orc_tusk", quantity: 10 },
-      { itemId: "eagle_feather", quantity: 8 },
-      { itemId: "bone_fragment", quantity: 15 },
+      { itemId: "gem", quantity: 3 },
+      { itemId: "diamond", quantity: 1 },
+      { itemId: "orc_tusk", quantity: 8 },
+      { itemId: "metal_scrap", quantity: 8 },
     ],
   },
   {
@@ -188,9 +95,9 @@ export const RECIPES: CraftingRecipe[] = [
     name: "Dragon Leggings",
     result: { itemId: "dragon_leggings", quantity: 1 },
     ingredients: [
-      { itemId: "orc_tusk", quantity: 8 },
-      { itemId: "eagle_feather", quantity: 6 },
-      { itemId: "bone_fragment", quantity: 13 },
+      { itemId: "gem", quantity: 2 },
+      { itemId: "orc_tusk", quantity: 6 },
+      { itemId: "metal_scrap", quantity: 6 },
     ],
   },
   {
@@ -198,17 +105,27 @@ export const RECIPES: CraftingRecipe[] = [
     name: "Dragon Boots",
     result: { itemId: "dragon_boots", quantity: 1 },
     ingredients: [
-      { itemId: "orc_tusk", quantity: 5 },
+      { itemId: "gem", quantity: 2 },
       { itemId: "eagle_feather", quantity: 4 },
-      { itemId: "bone_fragment", quantity: 10 },
+      { itemId: "metal_scrap", quantity: 5 },
     ],
   },
+  // --- Consumables ---
   {
     id: "craft_health_potion",
     name: "Health Potion",
     result: { itemId: "health_potion", quantity: 2 },
     ingredients: [
       { itemId: "slime_gel", quantity: 3 },
+    ],
+  },
+  {
+    id: "craft_coffee",
+    name: "Coffee",
+    result: { itemId: "coffee", quantity: 1 },
+    ingredients: [
+      { itemId: "wood", quantity: 3 },
+      { itemId: "slime_gel", quantity: 2 },
     ],
   },
 ];

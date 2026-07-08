@@ -10,6 +10,7 @@ import { HUD } from "../ui/hud";
 import { DialogBox } from "../ui/dialog-box";
 import { InventoryUI } from "../ui/inventory-ui";
 import { Hotbar } from "../ui/hotbar";
+import { ShopUI, type ShopItem } from "../ui/shop-ui";
 import { inventory } from "../items/inventory";
 import { ENEMY_LOOT_TABLE } from "../items/item-db";
 import { equipment } from "../items/equipment";
@@ -72,7 +73,9 @@ interface EnemyDef {
   attackCooldown?: number;
   anchorOffsetX?: number;
   anchorOffsetY?: number;
+  canFly?: boolean;
 }
+  
 
 const ENEMY_DEFS: Record<string, EnemyDef> = {
   slime: {
@@ -97,6 +100,7 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     animFps: { fly: 12 },
     attackDuration: 0.4, damageFrameRatio: 0.4,
     detectRange: 500, attackRange: 80, attackCooldown: 0.8,
+    canFly: true,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
   skeleton: {
@@ -195,9 +199,9 @@ const NPC_DEFS: Record<string, NPCDef> = {
   blacksmith: {
     name: "Blacksmith",
     dialog: [
-      "Welcome! I forge the finest weapons in the village.",
-      "Need something sharpened? I can help with that.",
-      "Be careful out there - the dungeon is dangerous.",
+      "Welcome to my forge! I craft the finest gear in the village.",
+      "I can forge you iron and steel equipment - just bring materials.",
+      "Take a look at my wares!",
     ],
     animKey: "idle",
     animFps: { idle: 6 },
@@ -210,9 +214,9 @@ const NPC_DEFS: Record<string, NPCDef> = {
   merchant: {
     name: "Merchant",
     dialog: [
-      "Welcome! I have all sorts of goods for sale.",
-      "Potions, scrolls, equipment... take your pick!",
-      "Come back anytime you need supplies.",
+      "Welcome, traveler! I sell potions, food, and supplies.",
+      "Everything is priced in gold coins.",
+      "Take a look at my wares!",
     ],
     animKey: "idle",
     animFps: { idle: 6 },
@@ -222,7 +226,43 @@ const NPC_DEFS: Record<string, NPCDef> = {
     colliderOffsetY: 0,
     interactionRange: 128,
   },
+  feibi: {
+    name: "Feibi",
+    dialog: ["菲比啾比！"],
+    animKey: "idle",
+    animFps: { idle: 8 },
+    size: 160,
+    colliderSize: 100,
+    colliderOffsetX: 0,
+    colliderOffsetY: 0,
+    interactionRange: 128,
+  },
 };
+
+// Blacksmith shop inventory
+const BLACKSMITH_SHOP: ShopItem[] = [
+  { itemId: "iron_sword",     currency: "bone_fragment", currencyQty: 8 },
+  { itemId: "iron_helmet",    currency: "bone_fragment", currencyQty: 6 },
+  { itemId: "iron_chestplate",currency: "bone_fragment", currencyQty: 10 },
+  { itemId: "iron_leggings",  currency: "bone_fragment", currencyQty: 8 },
+  { itemId: "iron_boots",     currency: "bone_fragment", currencyQty: 5 },
+  { itemId: "flame_blade",    currency: "orc_tusk",      currencyQty: 5 },
+  { itemId: "steel_helmet",   currency: "orc_tusk",      currencyQty: 3 },
+  { itemId: "steel_chestplate",currency: "orc_tusk",     currencyQty: 5 },
+  { itemId: "steel_leggings", currency: "orc_tusk",      currencyQty: 4 },
+  { itemId: "steel_boots",    currency: "orc_tusk",      currencyQty: 3 },
+];
+
+// Merchant shop inventory
+const MERCHANT_SHOP: ShopItem[] = [
+  { itemId: "apple",              currency: "coin", currencyQty: 5 },
+  { itemId: "small_health_potion",currency: "coin", currencyQty: 10 },
+  { itemId: "health_potion",      currency: "coin", currencyQty: 25 },
+  { itemId: "chicken",            currency: "coin", currencyQty: 30 },
+  { itemId: "coffee",             currency: "coin", currencyQty: 40 },
+  { itemId: "atk_scroll",         currency: "coin", currencyQty: 50 },
+  { itemId: "def_scroll",         currency: "coin", currencyQty: 50 },
+];
 
 interface NPCSpawnConfig {
   mapId: string;
@@ -238,6 +278,7 @@ const NPC_SPAWN_SET: NPCSpawnConfig[] = [
   { mapId: "meadow_village", npcKey: "sweeper", type: "sweeper", baseX: 15, baseY: 10 },
   { mapId: "meadow_village", npcKey: "blacksmith", type: "blacksmith", baseX: 8, baseY: 6 },
   { mapId: "meadow_village", npcKey: "merchant", type: "merchant", baseX: 16, baseY: 6 },
+  { mapId: "meadow_village", npcKey: "feibi", type: "feibi", baseX: 10, baseY: 6 },
   // 鍚庣画鍔燦PC灏辩户缁線杩欓噷杩藉姞�?  // { mapId: "forest_path", npcKey: "hermit", type: "hermit", baseX: 12, baseY: 6 },
 ];
 
@@ -252,6 +293,7 @@ export class GameplayScene {
   private dialogBox: DialogBox;
   private inventoryUI: InventoryUI;
   private hotbar: Hotbar;
+  private shopUI: ShopUI;
   private playerTextures: Record<string, PlayerAnimSet> = {};
   private enemyTextures: Map<string, Record<string, PIXI.Texture[]>> = new Map();
   private npcTextures: Map<string, Record<string, PIXI.Texture[]>> = new Map();
@@ -275,6 +317,8 @@ export class GameplayScene {
   private buffAtkUntil = 0;
   private buffDef = 0;
   private buffDefUntil = 0;
+  private buffSpeed = 0;
+  private buffSpeedUntil = 0;
   private baseAtk = PLAYER_DEF.atk;
   private baseDef = PLAYER_DEF.def;
 
@@ -290,8 +334,7 @@ export class GameplayScene {
     this.app.stage.addChild(this.hud.container);
     this.hud.setWorldContainer(this.entityContainer);
 
-    this.dialogBox = new DialogBox(app.screen.width, app.screen.height);
-    this.app.stage.addChild(this.dialogBox.container);
+    this.dialogBox = new DialogBox();
 
     // Inventory UI
     this.inventoryUI = new InventoryUI();
@@ -300,6 +343,9 @@ export class GameplayScene {
     // Hotbar
     this.hotbar = new Hotbar();
     this.hotbar.onUse((slotIndex) => this.useInventoryItem(slotIndex));
+
+    // Shop UI
+    this.shopUI = new ShopUI();
 
     // In-game settings button
     const settingsBtn = document.getElementById("settings-btn-ingame");
@@ -311,12 +357,39 @@ export class GameplayScene {
       });
     }
 
+    // Respawn button - return to current map spawn point
+    const respawnBtn = document.getElementById("settings-respawn");
+    if (respawnBtn) {
+      respawnBtn.addEventListener("click", () => {
+        const overlay = document.getElementById("settings-overlay")!;
+        overlay.classList.remove("visible");
+        setTimeout(() => { overlay.style.display = "none"; }, 300);
+        if (this.currentMap) {
+          this.loadMap(this.currentMap.id);
+        }
+      });
+    }
+
     eventBus.on("equipment_changed", () => this.applyEquipmentBonus());
 
     // Expose player state to save manager
     setPlayerStateGetter(() => this.getPlayerState());
 
     eventBus.on("player_died", () => {
+      // Check for undead_totem in inventory �� auto-revive if found
+      if (inventory.countItems("undead_totem") > 0) {
+        inventory.removeFromSlot(
+          inventory.getAllSlots().findIndex((s) => s !== null && s.itemId === "undead_totem"),
+          1
+        );
+        const playerIds = entities.query("health", "stats").filter((id) => !entities.hasComponent(id, "ai"));
+        if (playerIds.length > 0) {
+          const hp = entities.getComponent(playerIds[0], "health")!;
+          hp.current = hp.max;
+          hp.invincibleUntil = this.now + 2.0;
+        }
+        return;
+      }
       this.gameOver = true;
     });
     eventBus.on("player_attacked", () => {
@@ -353,6 +426,12 @@ export class GameplayScene {
         const stats = entities.getComponent(pid, "stats")!;
         stats.def += amount;
       },
+      boostSpeed: (amount, duration) => {
+        this.buffSpeed = amount;
+        this.buffSpeedUntil = this.now + duration;
+        const stats = entities.getComponent(pid, "stats")!;
+        stats.speed += amount;
+      },
     });
   }
 
@@ -366,6 +445,7 @@ export class GameplayScene {
     const bonus = equipment.getBonus();
     stats.atk = this.baseAtk + bonus.atk + this.buffAtk;
     stats.def = this.baseDef + bonus.def + this.buffDef;
+    stats.speed = 240 + (bonus.speed ?? 0) + this.buffSpeed; // 240 is PLAYER_SPEED
     if (hp) {
       hp.max = PLAYER_DEF.hp + bonus.hp;
       hp.current = Math.min(hp.current, hp.max);
@@ -407,7 +487,7 @@ export class GameplayScene {
 
     // If saved map differs from current, load it
     if (save.player.mapId && save.player.mapId !== this.currentMap?.id) {
-      await this.loadMap(save.player.mapId, { x: save.player.x, y: save.player.y });
+      await this.loadMap(save.player.mapId); // spawn at default point
     }
 
     // Restore inventory
@@ -444,6 +524,31 @@ export class GameplayScene {
     initAutoSave();
   }
 
+  private isTileBlocked(col: number, row: number): boolean {
+    const tile = this.tileMap[row]?.[col];
+    if (tile === undefined) return true;
+    // WALL=2, WATER=3, TREE=5 are blocked
+    return tile === 2 || tile === 3 || tile === 5;
+  }
+
+  private findNearestWalkable(startX: number, startY: number): { x: number; y: number } | null {
+    const maxR = this.tileMap.length;
+    const maxC = (this.tileMap[0]?.length ?? 0);
+    // Search in expanding squares
+    for (let radius = 1; radius <= 10; radius++) {
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          if (Math.abs(dx) !== radius && Math.abs(dy) !== radius) continue; // only perimeter
+          const nx = startX + dx;
+          const ny = startY + dy;
+          if (nx < 1 || nx >= maxC - 1 || ny < 1 || ny >= maxR - 1) continue;
+          if (!this.isTileBlocked(nx, ny)) return { x: nx, y: ny };
+        }
+      }
+    }
+    return null;
+  }
+
   private rollLoot(enemyType: string, x: number, y: number): void {
     const table = ENEMY_LOOT_TABLE[enemyType];
     if (!table) return;
@@ -477,7 +582,7 @@ export class GameplayScene {
   }
 
   async loadAssets(): Promise<void> {
-    const [playerTex, slimeTex, redSlimeTex, eagleTex, skeletonTex, orcTex, goblin1Tex, goblin2Tex, goblin3Tex, goblin4Tex, sweeperTex, blacksmithTex, merchantTex, tiles] =
+    const [playerTex, slimeTex, redSlimeTex, eagleTex, skeletonTex, orcTex, goblin1Tex, goblin2Tex, goblin3Tex, goblin4Tex, sweeperTex, blacksmithTex, merchantTex, feibiTex, tiles] =
       await Promise.all([
         loadPlayerTextures(),
         loadEnemyTextures("slime"),
@@ -492,6 +597,7 @@ export class GameplayScene {
         loadNPCTextures("sweeper"),
         loadNPCTextures("blacksmith"),
         loadNPCTextures("merchant"),
+        loadNPCTextures("feibi"),
         loadTileset(),
       ]);
 
@@ -518,6 +624,7 @@ export class GameplayScene {
     this.npcTextures.set("sweeper", sweeperTex);
     this.npcTextures.set("blacksmith", blacksmithTex);
     this.npcTextures.set("merchant", merchantTex);
+    this.npcTextures.set("feibi", feibiTex);
     this.tileTextures = tiles;
 
     await this.loadMap(mapManager.currentId ?? mapManager.mapIds[0] ?? "meadow_village");
@@ -604,6 +711,7 @@ export class GameplayScene {
     // Inventory toggle (always processed, even in game-over)
     this.inventoryUI.update();
     this.hotbar.update();
+    this.shopUI.update();
 
     if (this.gameOver) {
       if (!this.gameOverText) {
@@ -628,7 +736,7 @@ export class GameplayScene {
     this.now += dt;
 
     // Block gameplay input when inventory or dialog is open
-    if (this.inventoryUI.visible) {
+    if (this.inventoryUI.visible || this.shopUI.visible) {
       input.clearJustPressed();
       return;
     }
@@ -731,6 +839,12 @@ export class GameplayScene {
       }
     }
 
+    // Safety: if spawn tile is blocked, find nearest walkable tile
+    if (this.isTileBlocked(playerSpawn.x, playerSpawn.y)) {
+      const safe = this.findNearestWalkable(playerSpawn.x, playerSpawn.y);
+      if (safe) playerSpawn = safe;
+    }
+
     const x = playerSpawn.x * ts;
     const y = playerSpawn.y * ts;
 
@@ -812,6 +926,7 @@ isStatic: false, layer: "player", useForMovement: true,
         patrolTarget: null,
         attackCooldown: 0,
         attackCooldownDuration: def.attackCooldown ?? CONFIG.ENEMY_ATTACK_COOLDOWN,
+        canFly: def.canFly ?? false,
         anchorOffsetX: def.anchorOffsetX ?? 0,
         anchorOffsetY: def.anchorOffsetY ?? 0,
         detectRange: def.detectRange ?? CONFIG.ENEMY_DETECT_RANGE,
@@ -961,7 +1076,7 @@ isStatic: false, layer: "player", useForMovement: true,
   }
 
 private handleInteractions(): void {
-  if (input.isKeyJustPressed("KeyE")) {
+  if (input.isKeyJustPressed("KeyF")) {
     const playerIds = entities.query("collider").filter((id) => {
       const c = entities.getComponent(id, "collider");
       return c && c.layer === "player" && c.useForMovement;
@@ -985,7 +1100,14 @@ private handleInteractions(): void {
       if (dx < range && dy < range) {
         if (def) {
           this.dialogActive = true;
-          this.dialogBox.open(def.name, def.dialog);
+          this.dialogBox.open(def.name, def.dialog, () => {
+            // After dialog ends, open shop for blacksmith/merchant
+            if (npc.npcKey === "blacksmith") {
+              this.shopUI.open("Blacksmith", BLACKSMITH_SHOP);
+            } else if (npc.npcKey === "merchant") {
+              this.shopUI.open("Merchant", MERCHANT_SHOP);
+            }
+          });
           return;
         }
       }
@@ -1116,8 +1238,8 @@ private handleInteractions(): void {
         sprite.x = transform.x + transform.width / 2;
         sprite.y = transform.y + transform.height / 2;
         const nNatW = sprite.texture?.orig?.width || transform.width;
-        const nNatH = sprite.texture?.orig?.height || transform.height;
-        sprite.scale.set(transform.width / nNatW, transform.height / nNatH);
+        const uniScaleN = transform.width / nNatW;
+        sprite.scale.set(uniScaleN, uniScaleN);
         continue;
       }
 
@@ -1183,7 +1305,7 @@ private handleInteractions(): void {
 
   resize(width: number, height: number): void {
     this.app.renderer.resize(width, height);
-    this.dialogBox.resize(width, height);
+
   }
 }
 

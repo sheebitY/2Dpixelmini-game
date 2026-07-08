@@ -76,7 +76,7 @@ class Inventory {
   }
 
   /** Use an item from a slot. Returns true if the item was consumed. */
-  useSlot(slotIndex: number, ctx: { heal: (n: number) => void; boostAtk: (n: number, d: number) => void; boostDef: (n: number, d: number) => void }): boolean {
+  useSlot(slotIndex: number, ctx: { heal: (n: number) => void; boostAtk: (n: number, d: number) => void; boostDef: (n: number, d: number) => void; boostSpeed: (n: number, d: number) => void }): boolean {
     const slot = this.slots[slotIndex];
     if (!slot) return false;
     const def = getItem(slot.itemId);

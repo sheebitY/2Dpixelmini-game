@@ -18,8 +18,10 @@ export function movementSystem(dt: number, collisionMap: number[][]): void {
     // Player velocity comes from input; enemy velocity is set by aiSystem.
     if (isPlayer) {
       const dir = input.getDirection();
-      velocity.vx = dir.dx * CONFIG.PLAYER_SPEED;
-      velocity.vy = dir.dy * CONFIG.PLAYER_SPEED;
+      const stats = entities.getComponent(id, "stats");
+      const speed = stats?.speed ?? CONFIG.PLAYER_SPEED;
+      velocity.vx = dir.dx * speed;
+      velocity.vy = dir.dy * speed;
 
       if (dir.dx < 0) transform.facing = "left";
       else if (dir.dx > 0) transform.facing = "right";
@@ -49,13 +51,15 @@ export function movementSystem(dt: number, collisionMap: number[][]): void {
       return false;
     };
 
-    if (canMoveTo(collisionMap, newX + cxOff, transform.y + cyOff, cw, ch) && !blockedByEntity(newX + cxOff, transform.y + cyOff, cw, ch)) {
+    const ai = entities.getComponent(id, "ai");
+    const canFly = ai?.canFly ?? false;
+    if ((canMoveTo(collisionMap, newX + cxOff, transform.y + cyOff, cw, ch) || canFly) && !blockedByEntity(newX + cxOff, transform.y + cyOff, cw, ch)) {
       transform.x = newX;
     } else {
       velocity.vx = 0;
     }
 
-    if (canMoveTo(collisionMap, transform.x + cxOff, newY + cyOff, cw, ch) && !blockedByEntity(transform.x + cxOff, newY + cyOff, cw, ch)) {
+    if ((canMoveTo(collisionMap, transform.x + cxOff, newY + cyOff, cw, ch) || canFly) && !blockedByEntity(transform.x + cxOff, newY + cyOff, cw, ch)) {
       transform.y = newY;
     } else {
       velocity.vy = 0;

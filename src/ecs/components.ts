@@ -62,6 +62,7 @@ export interface AI {
   attackCooldownDuration: number;
   anchorOffsetX: number;
   anchorOffsetY: number;
+  canFly: boolean;
   detectRange: number;
   attackRange: number;
   targetId: number;

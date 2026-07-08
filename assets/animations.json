@@ -256,8 +256,7 @@
       "fps": 8,
       "loop": false,
       "startFrame": 0
-    }
-    ,
+    },
     "die": {
       "folder": "assets/sprites/enemies/goblin1/die/",
       "prefix": "die_",
@@ -299,8 +298,7 @@
       "fps": 20,
       "loop": false,
       "startFrame": 0
-    }
-    ,
+    },
     "die": {
       "folder": "assets/sprites/enemies/goblin2/die/",
       "prefix": "die_",
@@ -362,8 +360,7 @@
       "fps": 14,
       "loop": false,
       "startFrame": 0
-    }
-    ,
+    },
     "die": {
       "folder": "assets/sprites/enemies/goblin3/die/",
       "prefix": "die_",
@@ -458,6 +455,18 @@
       "frameCount": 4,
       "fps": 6,
       "loop": true
+    }
+    },
+  "feibi": {
+    "idle": {
+      "folder": "assets/sprites/npcs/feibi/",
+      "prefix": "feibi_",
+      "frameCount": 34,
+      "frameWidth": 64,
+      "frameHeight": 64,
+      "fps": 8,
+      "loop": true,
+      "startFrame": 1
     }
   }
 }

@@ -660,6 +660,108 @@
       border-color: rgba(255,215,0,0.7);
     }
 
+    /* Dialog Box */
+    #dialog-box {
+      position: absolute; bottom: 110px; left: 50%; transform: translateX(-50%);
+      z-index: 260; pointer-events: auto;
+      width: min(80%, 600px);
+      background: rgba(10,10,30,0.95);
+      border: 2px solid rgba(255,215,0,0.4);
+      border-radius: 10px; padding: 14px 18px;
+      font-family: Courier New, monospace;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.7);
+      display: none;
+    }
+    #dialog-box.visible { display: block; }
+    #dialog-speaker {
+      font-size: 14px; font-weight: bold; color: #ffd700;
+      margin-bottom: 8px;
+    }
+    #dialog-body {
+      font-size: 13px; color: #eee; line-height: 1.5;
+      min-height: 36px;
+    }
+    #dialog-hint {
+      font-size: 11px; color: #666; text-align: right;
+      margin-top: 8px; padding-top: 6px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* Shop UI */
+    #shop-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.6);
+      font-family: Courier New, monospace;
+      opacity: 0; transition: opacity 0.3s ease;
+    }
+    #shop-overlay.visible { opacity: 1; }
+    #shop-panel {
+      width: 520px; max-height: 70vh;
+      background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+      border: 2px solid rgba(255,215,0,0.3);
+      border-radius: 14px; padding: 20px 24px;
+      box-shadow: 0 0 50px rgba(0,0,0,0.7);
+      overflow-y: auto;
+    }
+    #shop-title {
+      font-size: 18px; font-weight: bold; color: #ffd700;
+      text-align: center; letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 16px; padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,215,0,0.15);
+    }
+    #shop-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+      justify-items: center;
+    }
+    .shop-slot {
+      width: 100px; padding: 12px 8px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      position: relative; transition: all 0.2s ease;
+    }
+    .shop-slot:hover {
+      border-color: rgba(255,215,0,0.5);
+      background: rgba(255,215,0,0.05);
+      transform: translateY(-2px);
+    }
+    .shop-slot-icon {
+      font-size: 28px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .shop-slot-name {
+      font-size: 11px; font-weight: bold; text-align: center;
+      line-height: 1.2;
+    }
+    .shop-slot-price {
+      font-size: 10px; color: #ffd700;
+    }
+    .shop-slot-rarity {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 3px; border-radius: 0 0 7px 7px;
+    }
+    #shop-hint {
+      text-align: center; font-size: 11px; color: #888;
+      margin-top: 12px; padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    #shop-tooltip {
+      display: none; position: fixed;
+      background: rgba(8,8,24,0.97);
+      border: 1px solid rgba(255,215,0,0.25);
+      border-radius: 8px; padding: 10px 14px;
+      min-width: 180px; max-width: 250px;
+      z-index: 600; pointer-events: none;
+      font-family: Courier New, monospace;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    }
+    #shop-tooltip.show { display: block; }
+    #shop-tooltip-name { font-size: 13px; font-weight: bold; margin-bottom: 5px; }
+    #shop-tooltip-desc { font-size: 11px; color: #999; line-height: 1.4; }
+    #shop-tooltip-price { font-size: 11px; color: #ffd700; margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 5px; }
+
     .settings-keybind {
       display: inline-block;
       padding: 2px 8px;
@@ -692,6 +794,20 @@
       <div id="title-loading-bar"></div>
     </div>
     <div id="title-loading-hint">Preparing game world...</div>
+  </div>
+
+  <!-- Shop UI -->
+  <div id="shop-overlay">
+    <div id="shop-panel">
+      <div id="shop-title">Shop</div>
+      <div id="shop-grid"></div>
+      <div id="shop-hint">Click to buy | [F/Esc] Close</div>
+    </div>
+  </div>
+  <div id="shop-tooltip">
+    <div id="shop-tooltip-name"></div>
+    <div id="shop-tooltip-desc"></div>
+    <div id="shop-tooltip-price"></div>
   </div>
 
   <!-- Settings Panel -->
@@ -727,6 +843,13 @@
         <div class="settings-row">
           <span class="settings-label">Use Hotbar Item</span>
           <span class="settings-value"><span class="settings-keybind">1</span> - <span class="settings-keybind">5</span></span>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Gameplay</div>
+        <div class="settings-btn-row">
+          <button class="settings-btn" id="settings-respawn">Return to Spawn</button>
         </div>
       </div>
 
@@ -769,7 +892,7 @@
     </div>
 
     <!-- Inventory toggle hint -->
-    <div id="controls-hint">Move: WASD/Arrows | Attack: Space/Z | Inventory: B | Items: 1-5</div>
+    <div id="controls-hint">Move: WASD/Arrows | Attack: Space/Z | Inventory: B | Items: 1-5 | NPC: F</div>
 
     <!-- Inventory panel -->
     <div id="inventory-overlay">
@@ -796,6 +919,13 @@
       <div id="inv-tooltip-action"></div>
     </div>
 
+
+    <!-- Dialog Box -->
+    <div id="dialog-box">
+      <div id="dialog-speaker"></div>
+      <div id="dialog-body"></div>
+      <div id="dialog-hint">[Space/Z] Next</div>
+    </div>
 
     <!-- Hotbar -->
     <div id="hotbar"></div>

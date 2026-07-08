@@ -23,6 +23,7 @@ export interface EquipBonus {
   atk: number;
   def: number;
   hp: number;
+  speed: number;
 }
 
 class EquipmentManager {
@@ -57,7 +58,7 @@ class EquipmentManager {
 
   /** Calculate total stat bonus from all equipped items. */
   getBonus(): EquipBonus {
-    let atk = 0, def = 0, hp = 0;
+    let atk = 0, def = 0, hp = 0, speed = 0;
     for (const key of Object.keys(this.equipped) as EquipSlot[]) {
       const itemId = this.equipped[key];
       if (!itemId) continue;
@@ -66,8 +67,9 @@ class EquipmentManager {
       atk += def_.equipStats.atk ?? 0;
       def += def_.equipStats.def ?? 0;
       hp  += def_.equipStats.hp  ?? 0;
+      speed += def_.equipStats.speed ?? 0;
     }
-    return { atk, def, hp };
+    return { atk, def, hp, speed };
   }
 
   clear(): void {
