@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && xcopy /E /I /Y assets dist\\assets",
+    "build": "vite build && node copy-assets.cjs",
     "preview": "vite preview",
     "check": "tsc --noEmit"
   },
