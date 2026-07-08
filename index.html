@@ -173,6 +173,43 @@
       height: 3px; border-radius: 0 0 6px 6px;
     }
 
+    /* Stats preview (below equipment) */
+    .stats-divider {
+      margin: 8px 0 6px;
+      border: none;
+      border-top: 1px solid rgba(255,215,0,0.1);
+    }
+    .stats-title {
+      font-size: 11px; color: #ffd700; text-align: center;
+      margin-bottom: 6px; font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .stats-body {
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .stat-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 10px; padding: 2px 4px;
+      border-radius: 3px;
+    }
+    .stat-label {
+      color: #fff;
+      font-weight: bold;
+    }
+    .stat-value {
+      color: #fff;
+      font-size: 10px;
+    }
+    .stat-bonus {
+      color: #66bb6a;
+      font-size: 9px;
+      margin-left: 2px;
+    }
+    .stat-value-col {
+      display: flex; align-items: center; gap: 2px;
+    }
+
     /* ���� Inventory grid (center) ���� */
     #inv-center {
       flex: 1; min-width: 0;

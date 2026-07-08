@@ -8,7 +8,7 @@ import { aiSystem } from "../ecs/systems/ai-system";
 import { combatSystem } from "../ecs/systems/combat-system";
 import { HUD } from "../ui/hud";
 import { DialogBox } from "../ui/dialog-box";
-import { InventoryUI } from "../ui/inventory-ui";
+import { InventoryUI, type PlayerStatsInfo } from "../ui/inventory-ui";
 import { Hotbar } from "../ui/hotbar";
 import { ShopUI, type ShopItem } from "../ui/shop-ui";
 import { inventory } from "../items/inventory";
@@ -78,91 +78,95 @@ interface EnemyDef {
   
 
 const ENEMY_DEFS: Record<string, EnemyDef> = {
+  // === Tier 1 - Meadow Village (Lv 1-3) ===
   slime: {
-    hp: 30, atk: 8, def: 2, speed: 50, exp: 15,
+    hp: 25, atk: 6, def: 1, speed: 50, exp: 10,
     animKey: "idle", size: 72,
     animFps: { idle: 6 },
+    attackDuration: 0.3, damageFrameRatio: 0.4,
+    detectRange: 250, attackRange: 55, attackCooldown: 1.4,
+    anchorOffsetX: 0, anchorOffsetY: 0,
+  },
+  goblin1: {
+    hp: 35, atk: 8, def: 2, speed: 60, exp: 15,
+    animKey: "idle", size: 80,
+    anims: { idle: "idle", patrol: "walk", chase: "walk", attack: "attack" },
+    animFps: { idle: 8, walk: 10, attack: 16 },
+    hurtAnim: "hurt", deathAnim: "die",
+    attackDuration: 0.5, damageFrameRatio: 0.4,
+    detectRange: 280, attackRange: 55, attackCooldown: 1.2,
+    anchorOffsetX: 0, anchorOffsetY: 0,
+  },
+  // === Tier 2 - Forest Path (Lv 3-5) ===
+  red_slime: {
+    hp: 50, atk: 10, def: 3, speed: 55, exp: 22,
+    animKey: "idle", size: 72,
+    animFps: { idle: 8 },
     attackDuration: 0.3, damageFrameRatio: 0.4,
     detectRange: 300, attackRange: 60, attackCooldown: 1.2,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
-  red_slime: {
-    hp: 60, atk: 12, def: 4, speed: 60, exp: 25,
-    animKey: "idle", size: 72,
-    animFps: { idle: 8 },
-    attackDuration: 0.3, damageFrameRatio: 0.4,
-    detectRange: 350, attackRange: 70, attackCooldown: 1.0,
-    anchorOffsetX: 0, anchorOffsetY: 0,
-  },
-  eagle: {
-    hp: 50, atk: 14, def: 3, speed: 80, exp: 30,
-    animKey: "fly", size: 96,
-    animFps: { fly: 12 },
-    attackDuration: 0.4, damageFrameRatio: 0.4,
-    detectRange: 500, attackRange: 80, attackCooldown: 0.8,
-    canFly: true,
-    anchorOffsetX: 0, anchorOffsetY: 0,
-  },
-  skeleton: {
-    hp: 80, atk: 16, def: 6, speed: 55, exp: 40,
-    animKey: "idle", size: 96,
-    anims: { idle: "idle", patrol: "move", chase: "move", attack: "attack" },
-    animFps: { idle: 10, move: 12, attack: 22 },
-    deathAnim: "death",
-    attackDuration: 1.0, damageFrameRatio: 0.5,
-    detectRange: 400, attackRange: 90, attackCooldown: 1.5,
-    anchorOffsetX: 0, anchorOffsetY: 0,
-  },
-  orc: {
-    hp: 100, atk: 18, def: 8, speed: 45, exp: 50,
-    animKey: "idle", size: 256,
-    anims: { idle: "idle", patrol: "move", chase: "move", attack: "attack" },
-    animFps: { idle: 6, move: 10, attack: 6 },
-    attackDuration: 0.8, damageFrameRatio: 0.5,
-    colliderSize: 100,
-    detectRange: 450, attackRange: 70, attackCooldown: 1.2,
-    anchorOffsetX: 0, anchorOffsetY: -20,
-  },
-  goblin1: {
-    hp: 40, atk: 10, def: 3, speed: 70, exp: 20,
-    animKey: "idle", size: 80,
-    anims: { idle: "idle", patrol: "walk", chase: "walk", attack: "attack" },
-    animFps: { idle: 8, walk: 10, attack: 16 },
-    hurtAnim: "hurt",
-    deathAnim: "die",
-    attackDuration: 0.5, damageFrameRatio: 0.4,
-    detectRange: 350, attackRange: 60, attackCooldown: 1.0,
-    anchorOffsetX: 0, anchorOffsetY: 0,
-  },
   goblin2: {
-    hp: 65, atk: 14, def: 5, speed: 55, exp: 35,
+    hp: 55, atk: 11, def: 3, speed: 55, exp: 25,
     animKey: "idle", size: 96,
     anims: { idle: "idle", patrol: "walk", chase: "walk", attack: "attack" },
     animFps: { idle: 8, walk: 10, attack: 20 },
     hurtAnim: "hurt", deathAnim: "die",
-    attackDuration: 0.7, damageFrameRatio: 0.5,
-    detectRange: 400, attackRange: 70, attackCooldown: 1.3,
+    attackDuration: 0.6, damageFrameRatio: 0.5,
+    detectRange: 320, attackRange: 60, attackCooldown: 1.3,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
+  eagle: {
+    hp: 45, atk: 12, def: 2, speed: 85, exp: 28,
+    animKey: "fly", size: 96,
+    animFps: { fly: 12 },
+    attackDuration: 0.4, damageFrameRatio: 0.4,
+    detectRange: 400, attackRange: 70, attackCooldown: 1.0,
+    canFly: true,
+    anchorOffsetX: 0, anchorOffsetY: 0,
+  },
+  // === Tier 3 - Lakeside Camp (Lv 5-7) ===
   goblin3: {
-    hp: 50, atk: 12, def: 4, speed: 90, exp: 30,
+    hp: 65, atk: 13, def: 4, speed: 75, exp: 35,
     animKey: "idle", size: 80,
     anims: { idle: "idle", patrol: "run", chase: "run", attack: "attack" },
     animFps: { idle: 8, run: 12, attack: 14 },
     hurtAnim: "hurt", deathAnim: "die",
     attackDuration: 0.4, damageFrameRatio: 0.4,
+    detectRange: 350, attackRange: 55, attackCooldown: 1.1,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
+  skeleton: {
+    hp: 75, atk: 15, def: 5, speed: 50, exp: 40,
+    animKey: "idle", size: 96,
+    anims: { idle: "idle", patrol: "move", chase: "move", attack: "attack" },
+    animFps: { idle: 10, move: 12, attack: 22 },
+    deathAnim: "death",
+    attackDuration: 0.8, damageFrameRatio: 0.5,
+    detectRange: 350, attackRange: 75, attackCooldown: 1.4,
+    anchorOffsetX: 0, anchorOffsetY: 0,
+  },
+  // === Tier 4 - Desert Outpost (Lv 7-9) ===
   goblin4: {
-    hp: 90, atk: 16, def: 7, speed: 40, exp: 45,
+    hp: 90, atk: 18, def: 7, speed: 40, exp: 48,
     animKey: "idle", size: 96,
     anims: { idle: "idle", patrol: "walk", chase: "walk", attack: "attack" },
     animFps: { idle: 6, walk: 10, attack: 16 },
-    attackDuration: 0.9, damageFrameRatio: 0.5,
+    attackDuration: 0.8, damageFrameRatio: 0.5,
     deathAnim: "die",
     colliderSize: 80,
-    detectRange: 400, attackRange: 75, attackCooldown: 1.4,
+    detectRange: 350, attackRange: 65, attackCooldown: 1.4,
     anchorOffsetX: 0, anchorOffsetY: 0,
+  },
+  orc: {
+    hp: 110, atk: 20, def: 8, speed: 45, exp: 55,
+    animKey: "idle", size: 256,
+    anims: { idle: "idle", patrol: "move", chase: "move", attack: "attack" },
+    animFps: { idle: 6, move: 10, attack: 6 },
+    attackDuration: 0.8, damageFrameRatio: 0.5,
+    colliderSize: 100,
+    detectRange: 380, attackRange: 65, attackCooldown: 1.3,
+    anchorOffsetX: 0, anchorOffsetY: -20,
   },
 };
 
@@ -241,27 +245,27 @@ const NPC_DEFS: Record<string, NPCDef> = {
 
 // Blacksmith shop inventory
 const BLACKSMITH_SHOP: ShopItem[] = [
-  { itemId: "iron_sword",     currency: "bone_fragment", currencyQty: 8 },
-  { itemId: "iron_helmet",    currency: "bone_fragment", currencyQty: 6 },
-  { itemId: "iron_chestplate",currency: "bone_fragment", currencyQty: 10 },
-  { itemId: "iron_leggings",  currency: "bone_fragment", currencyQty: 8 },
-  { itemId: "iron_boots",     currency: "bone_fragment", currencyQty: 5 },
-  { itemId: "flame_blade",    currency: "orc_tusk",      currencyQty: 5 },
+  { itemId: "iron_sword",     currency: "bone_fragment", currencyQty: 5 },
+  { itemId: "iron_helmet",    currency: "bone_fragment", currencyQty: 4 },
+  { itemId: "iron_chestplate",currency: "bone_fragment", currencyQty: 6 },
+  { itemId: "iron_leggings",  currency: "bone_fragment", currencyQty: 5 },
+  { itemId: "iron_boots",     currency: "bone_fragment", currencyQty: 3 },
+  { itemId: "flame_blade",    currency: "orc_tusk",      currencyQty: 4 },
   { itemId: "steel_helmet",   currency: "orc_tusk",      currencyQty: 3 },
-  { itemId: "steel_chestplate",currency: "orc_tusk",     currencyQty: 5 },
-  { itemId: "steel_leggings", currency: "orc_tusk",      currencyQty: 4 },
-  { itemId: "steel_boots",    currency: "orc_tusk",      currencyQty: 3 },
+  { itemId: "steel_chestplate",currency: "orc_tusk",     currencyQty: 4 },
+  { itemId: "steel_leggings", currency: "orc_tusk",      currencyQty: 3 },
+  { itemId: "steel_boots",    currency: "orc_tusk",      currencyQty: 2 },
 ];
 
 // Merchant shop inventory
 const MERCHANT_SHOP: ShopItem[] = [
-  { itemId: "apple",              currency: "coin", currencyQty: 5 },
-  { itemId: "small_health_potion",currency: "coin", currencyQty: 10 },
-  { itemId: "health_potion",      currency: "coin", currencyQty: 25 },
-  { itemId: "chicken",            currency: "coin", currencyQty: 30 },
-  { itemId: "coffee",             currency: "coin", currencyQty: 40 },
-  { itemId: "atk_scroll",         currency: "coin", currencyQty: 50 },
-  { itemId: "def_scroll",         currency: "coin", currencyQty: 50 },
+  { itemId: "apple",              currency: "coin", currencyQty: 3 },
+  { itemId: "small_health_potion",currency: "coin", currencyQty: 8 },
+  { itemId: "health_potion",      currency: "coin", currencyQty: 20 },
+  { itemId: "chicken",            currency: "coin", currencyQty: 25 },
+  { itemId: "coffee",             currency: "coin", currencyQty: 35 },
+  { itemId: "atk_scroll",         currency: "coin", currencyQty: 45 },
+  { itemId: "def_scroll",         currency: "coin", currencyQty: 45 },
 ];
 
 interface NPCSpawnConfig {
@@ -339,6 +343,31 @@ export class GameplayScene {
     // Inventory UI
     this.inventoryUI = new InventoryUI();
     this.inventoryUI.onUse((slotIndex) => this.useInventoryItem(slotIndex));
+
+    this.inventoryUI.setStatsProvider(() => {
+      const playerIds = entities.query("health", "stats").filter((id) => !entities.hasComponent(id, "ai"));
+      if (playerIds.length === 0) {
+        return { level: 1, exp: 0, expToLevel: 50, hp: 100, maxHp: 100, atk: 15, def: 5, speed: 240, bonusAtk: 0, bonusDef: 0, bonusHp: 0, bonusSpeed: 0 };
+      }
+      const pid = playerIds[0];
+      const hp = entities.getComponent(pid, "health")!;
+      const stats = entities.getComponent(pid, "stats")!;
+      const bonus = equipment.getBonus();
+      return {
+        level: this.hud.level,
+        exp: this.hud.exp,
+        expToLevel: this.hud.expToLevel,
+        hp: Math.ceil(hp.current),
+        maxHp: hp.max,
+        atk: stats.atk,
+        def: stats.def,
+        speed: stats.speed,
+        bonusAtk: bonus.atk,
+        bonusDef: bonus.def,
+        bonusHp: bonus.hp,
+        bonusSpeed: bonus.speed,
+      };
+    });
 
     // Hotbar
     this.hotbar = new Hotbar();
@@ -443,11 +472,15 @@ export class GameplayScene {
     const stats = entities.getComponent(playerIds[0], "stats")!;
     const hp = entities.getComponent(playerIds[0], "health")!;
     const bonus = equipment.getBonus();
-    stats.atk = this.baseAtk + bonus.atk + this.buffAtk;
-    stats.def = this.baseDef + bonus.def + this.buffDef;
+    const level = this.hud.level;
+    const levelAtk = (level - 1) * CONFIG.LEVEL_UP_ATK_BONUS;
+    const levelDef = (level - 1) * CONFIG.LEVEL_UP_DEF_BONUS;
+    const levelHp  = (level - 1) * CONFIG.LEVEL_UP_HP_BONUS;
+    stats.atk = this.baseAtk + levelAtk + bonus.atk + this.buffAtk;
+    stats.def = this.baseDef + levelDef + bonus.def + this.buffDef;
     stats.speed = 240 + (bonus.speed ?? 0) + this.buffSpeed; // 240 is PLAYER_SPEED
     if (hp) {
-      hp.max = PLAYER_DEF.hp + bonus.hp;
+      hp.max = PLAYER_DEF.hp + levelHp + bonus.hp;
       hp.current = Math.min(hp.current, hp.max);
     }
   }
@@ -508,16 +541,17 @@ export class GameplayScene {
     // Restore HUD level/exp
     this.hud.restoreLevel(save.player.level, save.player.exp, save.player.expToLevel);
 
-    // Restore player stats (fallback to PLAYER_DEF if save has 0)
-    this.baseAtk = save.player.baseAtk || PLAYER_DEF.atk;
-    this.baseDef = save.player.baseDef || PLAYER_DEF.def;
+    // Always use PLAYER_DEF as base — ATK/DEF are computed dynamically from base + level + equipment + buff
+    this.baseAtk = PLAYER_DEF.atk;
+    this.baseDef = PLAYER_DEF.def;
     this.applyEquipmentBonus();
 
     // Restore HP
     const playerIds = entities.query("health").filter((id) => !entities.hasComponent(id, "ai"));
     if (playerIds.length > 0) {
       const hp = entities.getComponent(playerIds[0], "health")!;
-      hp.max = save.player.maxHp;
+      const eqBonus = equipment.getBonus();
+      hp.max = PLAYER_DEF.hp + ((save.player.level - 1) * CONFIG.LEVEL_UP_HP_BONUS) + eqBonus.hp;
       hp.current = Math.min(save.player.hp, hp.max);
     }
 
@@ -662,8 +696,7 @@ export class GameplayScene {
       savedExp = this.hud.exp;
       savedLevel = this.hud.level;
       savedExpToLevel = this.hud.expToLevel;
-      this.baseAtk = stats.atk - this.buffAtk - equipment.getBonus().atk;
-      this.baseDef = stats.def - this.buffDef - equipment.getBonus().def;
+
     }
     entities.clear();
     // Note: inventory is NOT cleared on map change
@@ -691,7 +724,7 @@ export class GameplayScene {
     if (newPlayerIds.length > 0) {
       const hp = entities.getComponent(newPlayerIds[0], "health")!;
       const bonus = equipment.getBonus();
-      hp.max = PLAYER_DEF.hp + bonus.hp;
+      hp.max = PLAYER_DEF.hp + ((savedLevel - 1) * CONFIG.LEVEL_UP_HP_BONUS) + bonus.hp;
       if (savedMaxHp > 0) {
         hp.current = Math.min(savedHp, hp.max);
       } else {

@@ -5,6 +5,21 @@ import { crafting, RECIPES } from "../items/crafting";
 import { eventBus } from "../core/event-bus";
 import { input } from "../core/input-manager";
 
+export interface PlayerStatsInfo {
+  level: number;
+  exp: number;
+  expToLevel: number;
+  hp: number;
+  maxHp: number;
+  atk: number;
+  def: number;
+  speed: number;
+  bonusAtk: number;
+  bonusDef: number;
+  bonusHp: number;
+  bonusSpeed: number;
+}
+
 export class InventoryUI {
   private overlay: HTMLElement;
   private grid: HTMLElement;
@@ -15,6 +30,8 @@ export class InventoryUI {
   private tooltipDesc: HTMLElement;
   private tooltipAction: HTMLElement;
   private pickupToast: HTMLElement;
+  private statsPanel: HTMLElement | null = null;
+  private statsProvider: (() => PlayerStatsInfo) | null = null;
 
   private isOpen = false;
   private hoveredSlot = -1;
@@ -44,12 +61,16 @@ export class InventoryUI {
     });
 
     eventBus.on("equipment_changed", () => {
-      if (this.isOpen) this.renderEquipSlots();
+      if (this.isOpen) { this.renderEquipSlots(); this.renderStatsPanel(); }
     });
   }
 
   onUse(cb: (slotIndex: number) => void): void {
     this.useCallback = cb;
+  }
+
+  setStatsProvider(fn: () => PlayerStatsInfo): void {
+    this.statsProvider = fn;
   }
 
   get visible(): boolean { return this.isOpen; }
@@ -67,6 +88,7 @@ export class InventoryUI {
     this.renderSlots();
     this.renderEquipSlots();
     this.renderCraftPanel();
+    this.renderStatsPanel();
   }
 
   close(): void {
@@ -136,6 +158,45 @@ export class InventoryUI {
       }
       body.appendChild(row);
     }
+
+    // Stats preview section
+    const divider = document.createElement("hr");
+    divider.className = "stats-divider";
+    this.equipPanel.appendChild(divider);
+
+    const statsTitle = document.createElement("div");
+    statsTitle.className = "stats-title";
+    statsTitle.textContent = "Stats";
+    this.equipPanel.appendChild(statsTitle);
+
+    const statsBody = document.createElement("div");
+    statsBody.className = "stats-body";
+
+    const statRows = [
+      { label: "Lv", key: "level" },
+      { label: "HP", key: "hp" },
+      { label: "ATK", key: "atk" },
+      { label: "DEF", key: "def" },
+      { label: "SPD", key: "spd" },
+      { label: "EXP", key: "exp" },
+    ];
+
+    for (const s of statRows) {
+      const row = document.createElement("div");
+      row.className = "stat-row";
+      const label = document.createElement("span");
+      label.className = "stat-label";
+      label.textContent = s.label;
+      const value = document.createElement("div");
+      value.className = "stat-value-col";
+      value.dataset.stat = s.key;
+      row.appendChild(label);
+      row.appendChild(value);
+      statsBody.appendChild(row);
+    }
+
+    this.equipPanel.appendChild(statsBody);
+    this.statsPanel = statsBody;
   }
 
   private handleEquipDrop(slot: EquipSlot, invIdx: number): void {
@@ -289,6 +350,22 @@ export class InventoryUI {
   }
 
   // �T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T
+
+  private renderStatsPanel(): void {
+    if (!this.statsPanel || !this.statsProvider) return;
+    const s = this.statsProvider();
+    const set = (key: string, html: string) => {
+      const el = this.statsPanel!.querySelector(`[data-stat="${key}"]`) as HTMLElement | null;
+      if (el) el.innerHTML = html;
+    };
+    set("level", String(s.level));
+    set("hp", s.hp + " / " + s.maxHp);
+    set("atk", s.atk + (s.bonusAtk > 0 ? ' <span class="stat-bonus">(+'+s.bonusAtk+')</span>' : ""));
+    set("def", s.def + (s.bonusDef > 0 ? ' <span class="stat-bonus">(+'+s.bonusDef+')</span>' : ""));
+    set("spd", s.speed + (s.bonusSpeed > 0 ? ' <span class="stat-bonus">(+'+s.bonusSpeed+')</span>' : ""));
+    set("exp", s.exp + " / " + s.expToLevel);
+  }
+
   //  Crafting panel (right side)
   // �T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T
 

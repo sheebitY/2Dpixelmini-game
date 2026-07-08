@@ -20,6 +20,11 @@ export const CONFIG = {
   PLAYER_ATTACK_COOLDOWN: 0.4,
   PLAYER_INVINCIBLE_TIME: 0.5,
 
+  // Level-up bonuses (per level)
+  LEVEL_UP_HP_BONUS: 8,
+  LEVEL_UP_ATK_BONUS: 1,
+  LEVEL_UP_DEF_BONUS: 1,
+
   // Enemy
   ENEMY_SPEED: 50,
   ENEMY_DETECT_RANGE: 450,
