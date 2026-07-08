@@ -1,5 +1,5 @@
 ﻿import * as PIXI from "pixi.js";
-import animConfig from "../../assets/animations.json";
+import animConfig from "../animations.json";
 
 interface AnimDef {
   file?: string;
