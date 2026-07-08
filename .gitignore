@@ -1,2 +1,26 @@
-/docs
+﻿# Dependencies
+node_modules/
 
+# Build output
+dist/
+
+# Cache
+.npm-cache/
+.vite-temp/
+
+# Backup files
+*.bak
+
+# Dev utility scripts (not part of the game)
+_collider.cjs
+_collider2.cjs
+_rebalance.cjs
+scripts/
+
+# Docs / generated map copies
+docs/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
