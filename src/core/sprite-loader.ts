@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+﻿import * as PIXI from "pixi.js";
 import animConfig from "../../assets/animations.json";
 
 interface AnimDef {
@@ -137,7 +137,7 @@ export async function loadPlayerTextures(): Promise<Record<string, PlayerAnimSet
         const dm = def.directionMap[dir];
         if (dm) {
           result[`${action}_${dir}`] = {
-            textures: await loadIndividualFrames(dm.folder, dm.prefix, dm.frameCount, dm.startFrame ?? 1),
+            textures: await resolveFrames(dm as AnimDef),
             fps,
             loop,
             mirrorX: dm.mirrorX ?? false,

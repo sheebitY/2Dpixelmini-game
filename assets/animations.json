@@ -4,24 +4,36 @@
     "idle": {
       "directionMap": {
         "down": {
-          "folder": "assets/sprites/warrior/idle/down/",
-          "prefix": "down",
-          "frameCount": 5
+          "file": "assets/sprites/warrior/player_idle_down_sheet.png",
+          "frameWidth": 64,
+          "frameHeight": 49,
+          "startFrame": 0,
+          "frameCount": 5,
+          "mirrorX": false
         },
         "up": {
-          "folder": "assets/sprites/warrior/idle/up/",
-          "prefix": "up",
-          "frameCount": 5
+          "file": "assets/sprites/warrior/player_idle_up_sheet.png",
+          "frameWidth": 64,
+          "frameHeight": 49,
+          "startFrame": 0,
+          "frameCount": 5,
+          "mirrorX": false
         },
         "left": {
-          "folder": "assets/sprites/warrior/walk/left/",
-          "prefix": "left",
-          "frameCount": 1
+          "file": "assets/sprites/warrior/player_idle_left_sheet.png",
+          "frameWidth": 64,
+          "frameHeight": 49,
+          "startFrame": 0,
+          "frameCount": 1,
+          "mirrorX": false
         },
         "right": {
-          "folder": "assets/sprites/warrior/walk/right/",
-          "prefix": "right",
-          "frameCount": 1
+          "file": "assets/sprites/warrior/player_idle_right_sheet.png",
+          "frameWidth": 64,
+          "frameHeight": 49,
+          "startFrame": 0,
+          "frameCount": 1,
+          "mirrorX": false
         }
       },
       "fps": 6,
@@ -30,24 +42,36 @@
     "run": {
       "directionMap": {
         "down": {
-          "folder": "assets/sprites/warrior/walk/down/",
-          "prefix": "down",
-          "frameCount": 4
+          "file": "assets/sprites/warrior/player_run_down_sheet.png",
+          "frameWidth": 64,
+          "frameHeight": 49,
+          "startFrame": 0,
+          "frameCount": 4,
+          "mirrorX": false
         },
         "up": {
-          "folder": "assets/sprites/warrior/walk/up/",
-          "prefix": "up",
-          "frameCount": 4
+          "file": "assets/sprites/warrior/player_run_up_sheet.png",
+          "frameWidth": 64,
+          "frameHeight": 49,
+          "startFrame": 0,
+          "frameCount": 4,
+          "mirrorX": false
         },
         "left": {
-          "folder": "assets/sprites/warrior/walk/left/",
-          "prefix": "left",
-          "frameCount": 4
+          "file": "assets/sprites/warrior/player_run_left_sheet.png",
+          "frameWidth": 64,
+          "frameHeight": 49,
+          "startFrame": 0,
+          "frameCount": 4,
+          "mirrorX": false
         },
         "right": {
-          "folder": "assets/sprites/warrior/walk/right/",
-          "prefix": "right",
-          "frameCount": 4
+          "file": "assets/sprites/warrior/player_run_right_sheet.png",
+          "frameWidth": 64,
+          "frameHeight": 49,
+          "startFrame": 0,
+          "frameCount": 4,
+          "mirrorX": false
         }
       },
       "fps": 10,
@@ -56,24 +80,34 @@
     "attack": {
       "directionMap": {
         "down": {
-          "folder": "assets/sprites/warrior/attack_down/",
-          "prefix": "attack_down",
-          "frameCount": 20
+          "file": "assets/sprites/warrior/player_attack_down_sheet.png",
+          "frameWidth": 64,
+          "frameHeight": 49,
+          "startFrame": 0,
+          "frameCount": 20,
+          "mirrorX": false
         },
         "up": {
-          "folder": "assets/sprites/warrior/attack_up/",
-          "prefix": "attack_up",
-          "frameCount": 20
+          "file": "assets/sprites/warrior/player_attack_up_sheet.png",
+          "frameWidth": 64,
+          "frameHeight": 49,
+          "startFrame": 0,
+          "frameCount": 20,
+          "mirrorX": false
         },
         "left": {
-          "folder": "assets/sprites/warrior/attack_left/",
-          "prefix": "attack_left",
+          "file": "assets/sprites/warrior/player_attack_left_sheet.png",
+          "frameWidth": 64,
+          "frameHeight": 49,
+          "startFrame": 0,
           "frameCount": 18,
           "mirrorX": true
         },
         "right": {
-          "folder": "assets/sprites/warrior/attack_right/",
-          "prefix": "attack_right",
+          "file": "assets/sprites/warrior/player_attack_right_sheet.png",
+          "frameWidth": 64,
+          "frameHeight": 49,
+          "startFrame": 0,
           "frameCount": 18,
           "mirrorX": true
         }
@@ -82,20 +116,22 @@
       "loop": false
     },
     "die": {
-      "folder": "assets/sprites/warrior/die/",
-      "prefix": "die",
+      "file": "assets/sprites/warrior/player_die_sheet.png",
+      "frameWidth": 73,
+      "frameHeight": 49,
+      "startFrame": 0,
       "frameCount": 10,
       "fps": 10,
-      "loop": false,
-      "nonDirectional": true
+      "loop": false
     },
     "hit": {
-      "folder": "assets/sprites/warrior/hit/",
-      "prefix": "hit",
+      "file": "assets/sprites/warrior/player_hit_sheet.png",
+      "frameWidth": 64,
+      "frameHeight": 49,
+      "startFrame": 0,
       "frameCount": 2,
       "fps": 12,
-      "loop": false,
-      "nonDirectional": true
+      "loop": false
     }
   },
   "slime": {
@@ -136,40 +172,40 @@
   },
   "eagle": {
     "fly": {
-      "folder": "assets/sprites/enemies/eagle/",
-      "prefix": "eagle_",
-      "frameCount": 17,
+      "file": "assets/sprites/enemies/eagle/eagle_fly_sheet.png",
       "frameWidth": 64,
       "frameHeight": 64,
+      "startFrame": 0,
+      "frameCount": 17,
       "fps": 12,
       "loop": true
     }
   },
   "skeleton": {
     "idle": {
-      "folder": "assets/sprites/enemies/skeleton/",
-      "prefix": "idle_",
-      "frameCount": 61,
+      "file": "assets/sprites/enemies/skeleton/skeleton_idle_sheet.png",
       "frameWidth": 64,
       "frameHeight": 64,
+      "startFrame": 0,
+      "frameCount": 61,
       "fps": 10,
       "loop": true
     },
     "move": {
-      "folder": "assets/sprites/enemies/skeleton/",
-      "prefix": "move_",
-      "frameCount": 61,
+      "file": "assets/sprites/enemies/skeleton/skeleton_move_sheet.png",
       "frameWidth": 64,
       "frameHeight": 64,
+      "startFrame": 0,
+      "frameCount": 61,
       "fps": 12,
       "loop": true
     },
     "attack": {
-      "folder": "assets/sprites/enemies/skeleton/",
-      "prefix": "attack_",
-      "frameCount": 20,
+      "file": "assets/sprites/enemies/skeleton/skeleton_attack_sheet.png",
       "frameWidth": 64,
       "frameHeight": 64,
+      "startFrame": 0,
+      "frameCount": 20,
       "fps": 22,
       "loop": false
     }
@@ -218,209 +254,190 @@
   },
   "goblin1": {
     "idle": {
-      "folder": "assets/sprites/enemies/goblin1/idle/",
-      "prefix": "idle_",
+      "file": "assets/sprites/enemies/goblin1/goblin1_idle_sheet.png",
+      "frameWidth": 150,
+      "frameHeight": 150,
+      "startFrame": 0,
       "frameCount": 11,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 8,
-      "loop": true,
-      "startFrame": 0
+      "loop": true
     },
     "walk": {
-      "folder": "assets/sprites/enemies/goblin1/walk/",
-      "prefix": "walk_",
+      "file": "assets/sprites/enemies/goblin1/goblin1_walk_sheet.png",
+      "frameWidth": 150,
+      "frameHeight": 150,
+      "startFrame": 0,
       "frameCount": 11,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 10,
-      "loop": true,
-      "startFrame": 0
+      "loop": true
     },
     "attack": {
-      "folder": "assets/sprites/enemies/goblin1/attack2/",
-      "prefix": "attack2_",
+      "file": "assets/sprites/enemies/goblin1/goblin1_attack_sheet.png",
+      "frameWidth": 150,
+      "frameHeight": 150,
+      "startFrame": 0,
       "frameCount": 16,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 16,
-      "loop": false,
-      "startFrame": 0
+      "loop": false
     },
     "hurt": {
-      "folder": "assets/sprites/enemies/goblin1/hurt/",
-      "prefix": "hurt_",
+      "file": "assets/sprites/enemies/goblin1/goblin1_hurt_sheet.png",
+      "frameWidth": 150,
+      "frameHeight": 150,
+      "startFrame": 0,
       "frameCount": 4,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 8,
-      "loop": false,
-      "startFrame": 0
+      "loop": false
     },
     "die": {
-      "folder": "assets/sprites/enemies/goblin1/die/",
-      "prefix": "die_",
+      "file": "assets/sprites/enemies/goblin1/goblin1_die_sheet.png",
+      "frameWidth": 150,
+      "frameHeight": 150,
+      "startFrame": 0,
       "frameCount": 14,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 10,
-      "loop": false,
-      "startFrame": 0
+      "loop": false
     }
   },
   "goblin2": {
     "idle": {
-      "folder": "assets/sprites/enemies/goblin2/idle/",
-      "prefix": "idle_",
+      "file": "assets/sprites/enemies/goblin2/goblin2_idle_sheet.png",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "startFrame": 0,
       "frameCount": 15,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 8,
-      "loop": true,
-      "startFrame": 0
+      "loop": true
     },
     "walk": {
-      "folder": "assets/sprites/enemies/goblin2/walk/",
-      "prefix": "walk_",
+      "file": "assets/sprites/enemies/goblin2/goblin2_walk_sheet.png",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "startFrame": 0,
       "frameCount": 11,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 10,
-      "loop": true,
-      "startFrame": 0
+      "loop": true
     },
     "attack": {
-      "folder": "assets/sprites/enemies/goblin2/smash/",
-      "prefix": "smash_",
+      "file": "assets/sprites/enemies/goblin2/goblin2_attack_sheet.png",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "startFrame": 0,
       "frameCount": 21,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 20,
-      "loop": false,
-      "startFrame": 0
+      "loop": false
     },
     "die": {
-      "folder": "assets/sprites/enemies/goblin2/die/",
-      "prefix": "die_",
+      "file": "assets/sprites/enemies/goblin2/goblin2_die_sheet.png",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "startFrame": 0,
       "frameCount": 21,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 10,
-      "loop": false,
-      "startFrame": 0
+      "loop": false
     },
     "hurt": {
-      "folder": "assets/sprites/enemies/goblin2/hurt/",
-      "prefix": "hurt_",
+      "file": "assets/sprites/enemies/goblin2/goblin2_hurt_sheet.png",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "startFrame": 0,
       "frameCount": 18,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 8,
-      "loop": false,
-      "startFrame": 0
+      "loop": false
     }
   },
   "goblin3": {
     "idle": {
-      "folder": "assets/sprites/enemies/goblin3/idle/",
-      "prefix": "idle_",
+      "file": "assets/sprites/enemies/goblin3/goblin3_idle_sheet.png",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "startFrame": 0,
       "frameCount": 9,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 8,
-      "loop": true,
-      "startFrame": 0
+      "loop": true
     },
     "walk": {
-      "folder": "assets/sprites/enemies/goblin3/walk/",
-      "prefix": "walk_",
+      "file": "assets/sprites/enemies/goblin3/goblin3_walk_sheet.png",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "startFrame": 0,
       "frameCount": 9,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 10,
-      "loop": true,
-      "startFrame": 0
+      "loop": true
     },
     "run": {
-      "folder": "assets/sprites/enemies/goblin3/run/",
-      "prefix": "run_",
+      "file": "assets/sprites/enemies/goblin3/goblin3_run_sheet.png",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "startFrame": 0,
       "frameCount": 9,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 12,
-      "loop": true,
-      "startFrame": 0
+      "loop": true
     },
     "attack": {
-      "folder": "assets/sprites/enemies/goblin3/attack1/",
-      "prefix": "attack1_",
+      "file": "assets/sprites/enemies/goblin3/goblin3_attack_sheet.png",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "startFrame": 0,
       "frameCount": 11,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 14,
-      "loop": false,
-      "startFrame": 0
+      "loop": false
     },
     "die": {
-      "folder": "assets/sprites/enemies/goblin3/die/",
-      "prefix": "die_",
+      "file": "assets/sprites/enemies/goblin3/goblin3_die_sheet.png",
+      "frameWidth": 200,
+      "frameHeight": 200,
+      "startFrame": 0,
       "frameCount": 11,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 10,
-      "loop": false,
-      "startFrame": 0
+      "loop": false
     }
   },
   "goblin4": {
     "idle": {
-      "folder": "assets/sprites/enemies/goblin4/idle/",
-      "prefix": "idle_",
+      "file": "assets/sprites/enemies/goblin4/goblin4_idle_sheet.png",
+      "frameWidth": 150,
+      "frameHeight": 150,
+      "startFrame": 0,
       "frameCount": 6,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 6,
-      "loop": true,
-      "startFrame": 0
+      "loop": true
     },
     "walk": {
-      "folder": "assets/sprites/enemies/goblin4/walk1/",
-      "prefix": "walk1_",
+      "file": "assets/sprites/enemies/goblin4/goblin4_walk_sheet.png",
+      "frameWidth": 150,
+      "frameHeight": 150,
+      "startFrame": 0,
       "frameCount": 10,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 10,
-      "loop": true,
-      "startFrame": 0
+      "loop": true
     },
     "attack": {
-      "folder": "assets/sprites/enemies/goblin4/attack1/",
-      "prefix": "attack1_",
+      "file": "assets/sprites/enemies/goblin4/goblin4_attack_sheet.png",
+      "frameWidth": 250,
+      "frameHeight": 250,
+      "startFrame": 0,
       "frameCount": 20,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 16,
-      "loop": false,
-      "startFrame": 0
+      "loop": false
     },
     "die": {
-      "folder": "assets/sprites/enemies/goblin4/die/",
-      "prefix": "die_",
+      "file": "assets/sprites/enemies/goblin4/goblin4_die_sheet.png",
+      "frameWidth": 250,
+      "frameHeight": 250,
+      "startFrame": 0,
       "frameCount": 11,
-      "frameWidth": 64,
-      "frameHeight": 64,
       "fps": 10,
-      "loop": false,
-      "startFrame": 0
+      "loop": false
     }
   },
   "sweeper": {
     "sweep": {
-      "folder": "assets/sprites/npcs/sweeper/",
-      "prefix": "sweeper_",
-      "frameCount": 61,
+      "file": "assets/sprites/npcs/sweeper/sweeper_sweep_sheet.png",
       "frameWidth": 64,
       "frameHeight": 64,
+      "startFrame": 0,
+      "frameCount": 61,
       "fps": 10,
       "loop": true
     }
@@ -448,25 +465,24 @@
   },
   "merchant": {
     "idle": {
-      "file": "assets/sprites/npcs/merchant/character.png",
-      "frameWidth": 56,
+      "file": "assets/sprites/npcs/merchant/merchant_idle_sheet.png",
+      "frameWidth": 32,
       "frameHeight": 32,
-      "startFrame": 4,
-      "frameCount": 4,
+      "startFrame": 0,
+      "frameCount": 12,
       "fps": 6,
       "loop": true
     }
-    },
+  },
   "feibi": {
     "idle": {
-      "folder": "assets/sprites/npcs/feibi/",
-      "prefix": "feibi_",
-      "frameCount": 34,
-      "frameWidth": 64,
+      "file": "assets/sprites/npcs/feibi/feibi_idle_sheet.png",
+      "frameWidth": 48,
       "frameHeight": 64,
+      "startFrame": 0,
+      "frameCount": 34,
       "fps": 8,
-      "loop": true,
-      "startFrame": 1
+      "loop": true
     }
   }
 }

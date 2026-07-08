@@ -248,10 +248,10 @@ const NPC_DEFS: Record<string, NPCDef> = {
     dialog: ["菲比啾比！"],
     animKey: "idle",
     animFps: { idle: 8 },
-    size: 160,
-    colliderWidth: 70, colliderHeight: 80,
-    colliderOffsetX: 45,
-    colliderOffsetY: 50,
+    size: 48,
+    colliderWidth: 32, colliderHeight: 40,
+    colliderOffsetX: 8,
+    colliderOffsetY: 16,
     interactionRange: 128,
   },
 };
@@ -1357,7 +1357,6 @@ private handleInteractions(): void {
 
   }
 }
-
 
 
 
