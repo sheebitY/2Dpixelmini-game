@@ -12,30 +12,32 @@ export interface CraftingRecipe {
 export const RECIPES: CraftingRecipe[] = [
   // --- Starter tier ---
   {
-    id: "craft_bone_helmet",
-    name: "Bone Helmet",
-    result: { itemId: "bone_helmet", quantity: 1 },
+    id: "craft_metal_helmet",
+    name: "Metal Helmet",
+    result: { itemId: "metal_helmet", quantity: 1 },
     ingredients: [
-      { itemId: "bone_fragment", quantity: 5 },
+      { itemId: "metal_scrap", quantity: 3 },
       { itemId: "slime_gel", quantity: 3 },
     ],
   },
   {
-    id: "craft_slime_chestplate",
-    name: "Slime Chestplate",
-    result: { itemId: "slime_chestplate", quantity: 1 },
+    id: "craft_metal_chestplate",
+    name: "Metal Chestplate",
+    result: { itemId: "metal_chestplate", quantity: 1 },
     ingredients: [
-      { itemId: "slime_gel", quantity: 8 },
-      { itemId: "bone_fragment", quantity: 2 },
+      { itemId: "metal_scrap", quantity: 6 },
+      { itemId: "bone_fragment", quantity: 3 },
+      { itemId: "slime_gel", quantity: 2 },
     ],
   },
   {
-    id: "craft_bone_leggings",
-    name: "Bone Leggings",
-    result: { itemId: "bone_leggings", quantity: 1 },
+    id: "craft_metal_leggings",
+    name: "Metal Leggings",
+    result: { itemId: "metal_leggings", quantity: 1 },
     ingredients: [
-      { itemId: "bone_fragment", quantity: 6 },
-      { itemId: "orc_tusk", quantity: 1 },
+      { itemId: "metal_scrap", quantity: 5 },
+      { itemId: "bone_fragment", quantity: 2 },
+      { itemId: "slime_gel", quantity: 2 },
     ],
   },
   {
@@ -52,8 +54,9 @@ export const RECIPES: CraftingRecipe[] = [
     name: "Tusk Sword",
     result: { itemId: "tusk_sword", quantity: 1 },
     ingredients: [
-      { itemId: "orc_tusk", quantity: 3 },
+      { itemId: "orc_tusk", quantity: 1 },
       { itemId: "bone_fragment", quantity: 4 },
+      { itemId: "eagle_feather", quantity: 2 },
       { itemId: "metal_scrap", quantity: 2 },
     ],
   },
@@ -65,8 +68,8 @@ export const RECIPES: CraftingRecipe[] = [
     ingredients: [
       { itemId: "diamond", quantity: 1 },
       { itemId: "gem", quantity: 3 },
-      { itemId: "orc_tusk", quantity: 8 },
-      { itemId: "metal_scrap", quantity: 10 },
+      { itemId: "orc_tusk", quantity: 4 },
+      { itemId: "metal_scrap", quantity: 6 },
     ],
   },
   {
@@ -75,8 +78,9 @@ export const RECIPES: CraftingRecipe[] = [
     result: { itemId: "dragon_helmet", quantity: 1 },
     ingredients: [
       { itemId: "gem", quantity: 2 },
-      { itemId: "orc_tusk", quantity: 5 },
-      { itemId: "metal_scrap", quantity: 6 },
+      { itemId: "orc_tusk", quantity: 3 },
+      { itemId: "metal_scrap", quantity: 3 },
+      { itemId: "eagle_feather", quantity: 2 },
     ],
   },
   {
@@ -86,7 +90,7 @@ export const RECIPES: CraftingRecipe[] = [
     ingredients: [
       { itemId: "gem", quantity: 3 },
       { itemId: "diamond", quantity: 1 },
-      { itemId: "orc_tusk", quantity: 8 },
+      { itemId: "orc_tusk", quantity: 6 },
       { itemId: "metal_scrap", quantity: 8 },
     ],
   },
@@ -97,7 +101,7 @@ export const RECIPES: CraftingRecipe[] = [
     ingredients: [
       { itemId: "gem", quantity: 2 },
       { itemId: "orc_tusk", quantity: 6 },
-      { itemId: "metal_scrap", quantity: 6 },
+      { itemId: "metal_scrap", quantity: 5 },
     ],
   },
   {
@@ -107,7 +111,7 @@ export const RECIPES: CraftingRecipe[] = [
     ingredients: [
       { itemId: "gem", quantity: 2 },
       { itemId: "eagle_feather", quantity: 4 },
-      { itemId: "metal_scrap", quantity: 5 },
+      { itemId: "metal_scrap", quantity: 4 },
     ],
   },
   // --- Consumables ---

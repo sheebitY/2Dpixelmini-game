@@ -432,10 +432,10 @@
 
     /* Item pickup toast */
     #pickup-toast {
-      position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%);
+      position: absolute; bottom: 100px; left: 16px;
       z-index: 150; pointer-events: none;
       font-family: 'Courier New', monospace;
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
     }
     .pickup-msg {
       font-size: 13px; color: #fff;
@@ -471,6 +471,22 @@
       opacity: 1; transform: scale(1.1);
     }
     #blog-link img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      border-radius: 4px;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.7));
+    }
+    #github-link {
+      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px;
+      opacity: 0.5;
+      transition: opacity 0.2s, transform 0.2s;
+      text-decoration: none;
+    }
+    #github-link:hover {
+      opacity: 1; transform: scale(1.1);
+    }
+    #github-link img {
       width: 100%; height: 100%;
       object-fit: contain;
       border-radius: 4px;
@@ -598,7 +614,7 @@
     #settings-overlay.visible { opacity: 1; }
 
     #settings-panel {
-      width: 480px; max-height: 80vh;
+      width: 500px; max-height: 80vh;
       background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
       border: 2px solid rgba(255,215,0,0.3);
       border-radius: 14px;
@@ -820,10 +836,9 @@
       <div id="title-subtitle">Adventure Awaits</div>
       <button class="title-btn" id="title-start-btn">Start Game</button>
       <button class="title-btn secondary" id="title-settings-btn">Settings</button>
-      <div id="title-hint">Cover image: assets/ui/cover.png</div>
     </div>
   </div>
-
+  <!--请原谅我不会给游戏取名... -->
   <!-- Loading overlay -->
   <div id="title-loading-overlay">
     <div id="title-loading-text">Loading assets...</div>
@@ -857,8 +872,8 @@
         <div class="settings-row">
           <span class="settings-label">Master Volume</span>
           <div class="settings-slider-wrap">
-            <input type="range" class="settings-slider" id="settings-volume" min="0" max="100" value="80">
-            <span class="settings-slider-val" id="settings-volume-val">80%</span>
+            <input type="range" class="settings-slider" id="settings-volume" min="0" max="100" value="10">
+            <span class="settings-slider-val" id="settings-volume-val">10%</span>
           </div>
         </div>
       </div>
@@ -903,17 +918,18 @@
       <button id="settings-close">Back</button>
     </div>
   </div>
-
   <div class="top-right-bar">
     <a id="blog-link" href="https://blog-ehl.pages.dev/" target="_blank" rel="noopener noreferrer" title="Author Blog"><img src="/assets/ui/blog-icon.ico" alt="Blog"></a>
+    <a id="github-link" href="https://github.com/sheebitY/2Dpixelmini-game" target="_blank" rel="noopener noreferrer" title="GitHub"><img src="/assets/ui/github.png" alt="GitHub"></a>
     <div id="settings-btn-ingame"><img src="/assets/ui/settings.png" alt="Settings"></div>
   </div>
+
   <div id="map-name"></div>
   <div id="game-container">
     <!-- HUD (always visible) -->
     <div id="hud-overlay">
       <div class="hud-hp-section">
-        <span class="hud-heart">??</span>
+        <span class="hud-heart">❤️</span>
         <div class="hud-bar-wrap">
           <div class="hud-bar-fill" id="hp-bar" style="width:100%"></div>
         </div>
@@ -935,7 +951,7 @@
     <div id="inventory-overlay">
       <div id="inventory-panel">
         <div id="inventory-header">
-          <span id="inventory-title">?? Inventory</span>
+          <span id="inventory-title">Inventory</span>
           <span id="inventory-close-hint">[B] Close</span>
         </div>
         <div id="inv-body">

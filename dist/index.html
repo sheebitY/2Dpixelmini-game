@@ -432,10 +432,10 @@
 
     /* Item pickup toast */
     #pickup-toast {
-      position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%);
+      position: absolute; bottom: 100px; left: 16px;
       z-index: 150; pointer-events: none;
       font-family: 'Courier New', monospace;
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
     }
     .pickup-msg {
       font-size: 13px; color: #fff;
@@ -476,6 +476,22 @@
       border-radius: 4px;
       filter: drop-shadow(0 1px 3px rgba(0,0,0,0.7));
     }
+    #github-link {
+      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px;
+      opacity: 0.5;
+      transition: opacity 0.2s, transform 0.2s;
+      text-decoration: none;
+    }
+    #github-link:hover {
+      opacity: 1; transform: scale(1.1);
+    }
+    #github-link img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      border-radius: 4px;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.7));
+    }
     #settings-btn-ingame:hover {
       opacity: 1; transform: rotate(30deg);
     }
@@ -510,7 +526,7 @@
 
     #title-cover {
       position: absolute; inset: 0;
-      background: url(/assets/ui/cover.png) center center / cover no-repeat;
+      background: url(/assets/cover-B_Q5wOlV.png) center center / cover no-repeat;
       filter: brightness(0.45);
     }
     #title-cover-fallback {
@@ -598,7 +614,7 @@
     #settings-overlay.visible { opacity: 1; }
 
     #settings-panel {
-      width: 480px; max-height: 80vh;
+      width: 500px; max-height: 80vh;
       background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
       border: 2px solid rgba(255,215,0,0.3);
       border-radius: 14px;
@@ -808,7 +824,7 @@
       font-size: 11px; color: rgba(255,255,255,0.6);
     }
   </style>
-  <script type="module" crossorigin src="/assets/index-ImQcos8q.js"></script>
+  <script type="module" crossorigin src="/assets/index-DDQaK1If.js"></script>
 </head>
 <body>
 
@@ -821,10 +837,9 @@
       <div id="title-subtitle">Adventure Awaits</div>
       <button class="title-btn" id="title-start-btn">Start Game</button>
       <button class="title-btn secondary" id="title-settings-btn">Settings</button>
-      <div id="title-hint">Cover image: assets/ui/cover.png</div>
     </div>
   </div>
-
+  <!--请原谅我不会给游戏取名... -->
   <!-- Loading overlay -->
   <div id="title-loading-overlay">
     <div id="title-loading-text">Loading assets...</div>
@@ -858,8 +873,8 @@
         <div class="settings-row">
           <span class="settings-label">Master Volume</span>
           <div class="settings-slider-wrap">
-            <input type="range" class="settings-slider" id="settings-volume" min="0" max="100" value="80">
-            <span class="settings-slider-val" id="settings-volume-val">80%</span>
+            <input type="range" class="settings-slider" id="settings-volume" min="0" max="100" value="10">
+            <span class="settings-slider-val" id="settings-volume-val">10%</span>
           </div>
         </div>
       </div>
@@ -904,17 +919,18 @@
       <button id="settings-close">Back</button>
     </div>
   </div>
-
   <div class="top-right-bar">
     <a id="blog-link" href="https://blog-ehl.pages.dev/" target="_blank" rel="noopener noreferrer" title="Author Blog"><img src="/assets/blog-icon-yrcqEXdi.ico" alt="Blog"></a>
+    <a id="github-link" href="https://github.com/sheebitY/2Dpixelmini-game" target="_blank" rel="noopener noreferrer" title="GitHub"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAEqUlEQVRYha1XW2hcVRRd69w7kwdp2phXodNkJjNt7wyZaUV8VCg+KooftSiiiIJ++aeooNIildZiQUWwKogIQov+SEUQ32CrP1qKj87UyYy5mUzTqH3ENo1Jm8zMvduPZMpt7kkzaWd/zdlr773WPpw5+1yiRguHw41mw7ItQj5AwoJIhwAdAEBgDOSYCAYEOOBOT3xRLBana6nLxQIikf5uFVS7QTxKoqmWogJcALCP5Qs7bNs+c3UCEolg1DFeAvE8ycZaiPVCZM/QQGYPAKdmAassq70Rga9I3ng1xD4hgoNSmry/UCicX1RAeG3SMgx+TaC3HuSXRACDMlO5q1DIjiwoIBLp7zYa1C8gVtWT3CuiPCU3j4xkzlV9RvVHZyLR0mSogyDXeHIOu4L9JJYBWLkkMpEMgQ8FLJOIYLbbdhXApuUtzR+Pj49XAEBVE1rF3A1yvbeIK7K3kEtvtwfS14uLzQKxPQwTIpIWkSMCjHu6PO6Ie89QLpOyc5ltQnnDW5PkrWZj64uX1gAQtqywyUAeYNAb7DjOhuE//zhaXYfD4UazuTlemjSK3m0EgFgs1uqohojhzgzbtj1R9fesSfYFTQ7N259JlC/22bZ9xgQAg8FdAIKYZ4Ypyrueu1x+0235HOnR+X5DMeCPZgvMpm0AnlOhUKiJIg/pirquEdf5l2IGsE7nF+IJAIYKtqy4F2SDLwByyp02vrxWAdNTZ78TQXG+n2Bb39rERkXwPm2m4OVi8fdxLbYEGx0dvSjAdh1Gw9iiSFoarDKhnI+ulbxqBVU5IIKLGqhfie7/LTh1JpudrJcAZLMlUob9POxREHT5AEpNo3RpRl1DqxUI8QkD2+vOL9Lhk0QxFASnfQCwoqcn2VYv7lAo1ARytV8UTitA/tElmc28s14CAi0rNgHwXUhC/qVIHNYlKchT9RKgyBf0iPykBPKjFiNvi1r91ywiaiWfJLhZCzo4pCbPqm9F4HupzGpQe/us5A7v2F6CmXO572lRkX+d0n8HjampU+X2jq4ukBsxO4LfBfABiA0El5O8o62z+/H2js6mZZ3tQ+fHxq54P8RiqVBbd9fT13V271PkVpLaZ58LvjVs579hNUlMGSTZODvn+TAq+BUBHCYRvlw5Prdz6a2zo38euZX8BOSDi22NABccVqLFbPakAgDbTo9C8DoAgGwl5TOg0uqKuxWQyzp24L6jIwcAKOfVxcgBgCKvFLPZk/C+iGamzu0RYHBORAMDxvbh/LE0BHdDsBOCna6LZ4zK9A8LVi6Vsot2LzhmK+fNS2K8YCQe71Uwfya4EpCSK/JIIXfs01q6qlosnioDMLXkwHGHlVuq3fsEAEAslkjANA+B6ET1cUkcgfAEANi59C4A7kIColbS1R08gZwoV3D7yGCm4PVrT2g0moghaHxP+K9PeyAdAFBZSEAsnvKfD5HcjJQ2n8jn/54PKV8wgKGhrF2ewnoReV9E9AdOazdcdt2KwBGRt8eldJOOHLV8nPZZyaQCngX5GCBiD2SaF/rOA8BoPDVJIADIfsfla8P5dL72Bq5g0Wiqq3ddKrJYXO+6VCQS6e+ute7/mL7WaX3uC2QAAAAASUVORK5CYII=" alt="GitHub"></a>
     <div id="settings-btn-ingame"><img src="data:image/png;base64,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" alt="Settings"></div>
   </div>
+
   <div id="map-name"></div>
   <div id="game-container">
     <!-- HUD (always visible) -->
     <div id="hud-overlay">
       <div class="hud-hp-section">
-        <span class="hud-heart">??</span>
+        <span class="hud-heart">❤️</span>
         <div class="hud-bar-wrap">
           <div class="hud-bar-fill" id="hp-bar" style="width:100%"></div>
         </div>
@@ -936,7 +952,7 @@
     <div id="inventory-overlay">
       <div id="inventory-panel">
         <div id="inventory-header">
-          <span id="inventory-title">?? Inventory</span>
+          <span id="inventory-title">Inventory</span>
           <span id="inventory-close-hint">[B] Close</span>
         </div>
         <div id="inv-body">

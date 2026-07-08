@@ -9,7 +9,7 @@
   "enemies": [
     {
       "type": "slime",
-      "x": 5,
+      "x": 10,
       "y": 4
     },
     {

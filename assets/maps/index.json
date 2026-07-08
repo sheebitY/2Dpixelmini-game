@@ -18,5 +18,17 @@
   {
     "id": "dungeon_lair",
     "file": "maps/dungeon_lair.json"
+  },
+  {
+    "id": "forest_clearing",
+    "file": "maps/forest_clearing.json"
+  },
+  {
+    "id": "mountain_pass",
+    "file": "maps/mountain_pass.json"
+  },
+  {
+    "id": "ancient_ruins",
+    "file": "maps/ancient_ruins.json"
   }
 ]

@@ -45,10 +45,10 @@ interface PlayerDef {
 const PLAYER_DEF: PlayerDef = {
   hp: 100, atk: 15, def: 5, speed: 240,
   size: 128,
-  attackRange: 120, attackCooldown: 0.4, invincibleTime: 0.5,
+  attackRange: 80, attackCooldown: 0.4, invincibleTime: 0.5,
   anchorOffsetX: 0, anchorOffsetY: 0,
   colliderOffsetX: 34, colliderOffsetY: 54,
-  colliderWidth: 55, colliderHeight: 55,
+  colliderWidth: 50, colliderHeight: 50,
 };
 
 // Enemy type definitions
@@ -84,7 +84,7 @@ interface EnemyDef {
 const ENEMY_DEFS: Record<string, EnemyDef> = {
   // === Tier 1 - Meadow Village (Lv 1-3) ===
   slime: {
-    hp: 25, atk: 6, def: 1, speed: 50, exp: 10,
+    hp: 50, atk: 10, def: 5, speed: 50, exp: 10,
     animKey: "idle", size: 72,
     animFps: { idle: 6 },
     attackDuration: 0.3, damageFrameRatio: 0.4,
@@ -93,19 +93,19 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
   goblin1: {
-    hp: 50, atk: 10, def: 3, speed: 60, exp: 15,
+    hp: 80, atk: 20, def: 8, speed: 60, exp: 15,
     animKey: "idle", size: 120,
     anims: { idle: "idle", patrol: "walk", chase: "walk", attack: "attack" },
     animFps: { idle: 8, walk: 10, attack: 16 },
     hurtAnim: "hurt", deathAnim: "die",
     attackDuration: 0.5, damageFrameRatio: 0.4,
-    detectRange: 200, attackRange: 55, attackCooldown: 1.2,
+    detectRange: 280, attackRange: 55, attackCooldown: 1.2,
     colliderWidth: 50, colliderHeight: 50, colliderOffsetX: 35, colliderOffsetY: 50,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
   // === Tier 2 - Forest Path (Lv 3-5) ===
   red_slime: {
-    hp: 50, atk: 10, def: 3, speed: 55, exp: 22,
+    hp: 100, atk: 25, def: 10, speed: 55, exp: 22,
     animKey: "idle", size: 72,
     animFps: { idle: 8 },
     attackDuration: 0.3, damageFrameRatio: 0.4,
@@ -114,18 +114,18 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
   goblin2: {
-    hp: 55, atk: 11, def: 3, speed: 55, exp: 25,
-    animKey: "idle", size: 96,
+    hp: 120, atk: 22, def: 10, speed: 55, exp: 25,
+    animKey: "idle", size: 140,
     anims: { idle: "idle", patrol: "walk", chase: "walk", attack: "attack" },
     animFps: { idle: 8, walk: 10, attack: 20 },
     hurtAnim: "hurt", deathAnim: "die",
     attackDuration: 0.6, damageFrameRatio: 0.5,
     detectRange: 320, attackRange: 60, attackCooldown: 1.3,
-    colliderWidth: 50, colliderHeight: 68, colliderOffsetX: 23, colliderOffsetY: 22,
+    colliderWidth: 60, colliderHeight: 88, colliderOffsetX: 23, colliderOffsetY: 22,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
   eagle: {
-    hp: 45, atk: 12, def: 2, speed: 85, exp: 28,
+    hp: 70, atk: 20, def: 2, speed: 100, exp: 28,
     animKey: "fly", size: 96,
     animFps: { fly: 12 },
     attackDuration: 0.4, damageFrameRatio: 0.4,
@@ -136,18 +136,18 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
   },
   // === Tier 3 - Lakeside Camp (Lv 5-7) ===
   goblin3: {
-    hp: 65, atk: 13, def: 4, speed: 75, exp: 35,
-    animKey: "idle", size: 80,
+    hp: 80, atk: 25, def: 4, speed: 120, exp: 50,
+    animKey: "idle", size: 120,
     anims: { idle: "idle", patrol: "run", chase: "run", attack: "attack" },
     animFps: { idle: 8, run: 12, attack: 14 },
     hurtAnim: "hurt", deathAnim: "die",
     attackDuration: 0.4, damageFrameRatio: 0.4,
     detectRange: 350, attackRange: 55, attackCooldown: 1.1,
-    colliderWidth: 44, colliderHeight: 56, colliderOffsetX: 18, colliderOffsetY: 16,
+    colliderWidth: 44, colliderHeight: 56, colliderOffsetX: 34, colliderOffsetY: 40,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
   skeleton: {
-    hp: 75, atk: 15, def: 5, speed: 50, exp: 40,
+    hp: 120, atk: 20, def: 4, speed: 50, exp: 50,
     animKey: "idle", size: 96,
     anims: { idle: "idle", patrol: "move", chase: "move", attack: "attack" },
     animFps: { idle: 10, move: 12, attack: 22 },
@@ -159,23 +159,23 @@ const ENEMY_DEFS: Record<string, EnemyDef> = {
   },
   // === Tier 4 - Desert Outpost (Lv 7-9) ===
   goblin4: {
-    hp: 90, atk: 18, def: 7, speed: 40, exp: 48,
-    animKey: "idle", size: 96,
+    hp: 250, atk: 40, def: 15, speed: 40, exp: 70,
+    animKey: "idle", size: 180,
     anims: { idle: "idle", patrol: "walk", chase: "walk", attack: "attack" },
-    animFps: { idle: 6, walk: 10, attack: 16 },
-    attackDuration: 0.8, damageFrameRatio: 0.5,
+    animFps: { idle: 6, walk: 10, attack: 20 },
+    attackDuration: 1, damageFrameRatio: 0.5,
     deathAnim: "die",
-    colliderWidth: 56, colliderHeight: 68, colliderOffsetX: 20, colliderOffsetY: 20,
-    detectRange: 350, attackRange: 65, attackCooldown: 1.4,
+    colliderWidth: 100, colliderHeight: 150, colliderOffsetX: 20, colliderOffsetY: 20,
+    detectRange: 350, attackRange: 100, attackCooldown: 1.4,
     anchorOffsetX: 0, anchorOffsetY: 0,
   },
   orc: {
-    hp: 110, atk: 20, def: 8, speed: 45, exp: 55,
+    hp: 170, atk: 30, def: 10, speed: 45, exp: 65,
     animKey: "idle", size: 256,
     anims: { idle: "idle", patrol: "move", chase: "move", attack: "attack" },
     animFps: { idle: 6, move: 10, attack: 6 },
     attackDuration: 0.8, damageFrameRatio: 0.5,
-    colliderWidth: 80, colliderHeight: 90, colliderOffsetX: 88, colliderOffsetY: 130,
+    colliderWidth: 60, colliderHeight: 70, colliderOffsetX: 108, colliderOffsetY: 90,
     detectRange: 380, attackRange: 65, attackCooldown: 1.3,
     anchorOffsetX: 0, anchorOffsetY: -20,
   },
@@ -200,10 +200,10 @@ const NPC_DEFS: Record<string, NPCDef> = {
   sweeper: {
     name: "Old Sweeper",
     dialog: [
-      "Ah, a young adventurer... This village was once peaceful.",
-      "But monsters have appeared from the dungeon to the east.",
-      "If you can clear them out, the villagers would be grateful.",
-      "Be careful of the eagles - they are fast and fierce!",
+      "啊，年轻的冒险者……这个村庄曾经和平安宁。",
+      "但来自东边地牢的怪物已经出现了。" ,
+      "如果你能将它们清除，村民们会非常感激。" ,
+      "小心那些鹰——它们又快又凶！"
     ],
     animKey: "sweep",
     animFps: { sweep: 10 },
@@ -216,69 +216,69 @@ const NPC_DEFS: Record<string, NPCDef> = {
   blacksmith: {
     name: "Blacksmith",
     dialog: [
-      "Welcome to my forge! I craft the finest gear in the village.",
-      "I can forge you iron and steel equipment - just bring materials.",
-      "Take a look at my wares!",
+      "欢迎来到我的铁匠铺！我为村庄打造最精良的装备。",  
+      "我可以为你锻造铁器和钢制装备——只需带上材料即可。",
+      "来看看我的商品吧！"
     ],
     animKey: "idle",
     animFps: { idle: 6 },
-    size: 96,
-    colliderWidth: 65, colliderHeight: 80,
+    size: 124,
+    colliderWidth: 65, colliderHeight: 70,
     colliderOffsetX: 16,
-    colliderOffsetY: 12,
+    colliderOffsetY: 45,
     interactionRange: 128,
   },
   merchant: {
     name: "Merchant",
     dialog: [
-      "Welcome, traveler! I sell potions, food, and supplies.",
-      "Everything is priced in gold coins.",
-      "Take a look at my wares!",
+      "欢迎，旅行者！我出售药水、食物和补给品。",  
+      "所有商品均以金币计价。",  
+      "来看看我的货物吧！"
     ],
     animKey: "idle",
     animFps: { idle: 6 },
-    size: 96,
-    colliderWidth: 55, colliderHeight: 75,
-    colliderOffsetX: 20,
-    colliderOffsetY: 14,
+    size: 80,
+    colliderWidth: 45, colliderHeight: 70,
+    colliderOffsetX: 13,
+    colliderOffsetY: 10,
     interactionRange: 128,
   },
   feibi: {
-    name: "Feibi",
+    name: "圆头帽叠",
     dialog: ["菲比啾比！"],
     animKey: "idle",
     animFps: { idle: 8 },
     size: 48,
-    colliderWidth: 32, colliderHeight: 40,
+    colliderWidth: 32, colliderHeight: 42,
     colliderOffsetX: 8,
-    colliderOffsetY: 16,
+    colliderOffsetY: 5,
     interactionRange: 128,
   },
 };
 
 // Blacksmith shop inventory
 const BLACKSMITH_SHOP: ShopItem[] = [
-  { itemId: "iron_sword",     currency: "bone_fragment", currencyQty: 5 },
-  { itemId: "iron_helmet",    currency: "bone_fragment", currencyQty: 4 },
-  { itemId: "iron_chestplate",currency: "bone_fragment", currencyQty: 6 },
-  { itemId: "iron_leggings",  currency: "bone_fragment", currencyQty: 5 },
-  { itemId: "iron_boots",     currency: "bone_fragment", currencyQty: 3 },
-  { itemId: "flame_blade",    currency: "orc_tusk",      currencyQty: 4 },
-  { itemId: "steel_helmet",   currency: "orc_tusk",      currencyQty: 3 },
-  { itemId: "steel_chestplate",currency: "orc_tusk",     currencyQty: 4 },
-  { itemId: "steel_leggings", currency: "orc_tusk",      currencyQty: 3 },
-  { itemId: "steel_boots",    currency: "orc_tusk",      currencyQty: 2 },
+  { itemId: "iron_sword",      currency: "coin", currencyQty: 20 },
+  { itemId: "iron_helmet",     currency: "coin", currencyQty: 15 },
+  { itemId: "iron_chestplate", currency: "coin", currencyQty: 25 },
+  { itemId: "iron_leggings",   currency: "coin", currencyQty: 20 },
+  { itemId: "iron_boots",      currency: "coin", currencyQty: 10 },
+  { itemId: "flame_blade",     currency: "coin", currencyQty: 50 },
+  { itemId: "steel_helmet",    currency: "coin", currencyQty: 45 },
+  { itemId: "steel_chestplate",currency: "coin", currencyQty: 50 },
+  { itemId: "steel_leggings",  currency: "coin", currencyQty: 35 },
+  { itemId: "steel_boots",     currency: "coin", currencyQty: 25 },
 ];
 
 // Merchant shop inventory
 const MERCHANT_SHOP: ShopItem[] = [
   { itemId: "apple",              currency: "coin", currencyQty: 3 },
   { itemId: "small_health_potion",currency: "coin", currencyQty: 8 },
-  { itemId: "health_potion",      currency: "coin", currencyQty: 20 },
-  { itemId: "chicken",            currency: "coin", currencyQty: 25 },
-  { itemId: "coffee",             currency: "coin", currencyQty: 35 },
-  { itemId: "atk_scroll",         currency: "coin", currencyQty: 45 },
-  { itemId: "def_scroll",         currency: "coin", currencyQty: 45 },
+  { itemId: "health_potion",      currency: "coin", currencyQty: 10 },
+  { itemId: "chicken",            currency: "coin", currencyQty: 15 },
+  { itemId: "coffee",             currency: "coin", currencyQty: 25 },
+  { itemId: "atk_scroll",         currency: "coin", currencyQty: 15 },
+  { itemId: "def_scroll",         currency: "coin", currencyQty: 15 },
 ];
 
 interface NPCSpawnConfig {
@@ -291,12 +291,13 @@ interface NPCSpawnConfig {
 }
 
 const NPC_SPAWN_SET: NPCSpawnConfig[] = [
-  // 鍙�?meadow_village �?sweeper锛屽苟缁欎竴涓槑纭潗鏍囷紙涓嶈鍐嶇�?mapCols/mapRows 浜嗭�?
+  // Meadow Village NPCs
   { mapId: "meadow_village", npcKey: "sweeper", type: "sweeper", baseX: 15, baseY: 10 },
   { mapId: "meadow_village", npcKey: "blacksmith", type: "blacksmith", baseX: 8, baseY: 6 },
-  { mapId: "meadow_village", npcKey: "merchant", type: "merchant", baseX: 16, baseY: 6 },
-  { mapId: "meadow_village", npcKey: "feibi", type: "feibi", baseX: 10, baseY: 6 },
-  // 鍚庣画鍔燦PC灏辩户缁線杩欓噷杩藉姞�?  // { mapId: "forest_path", npcKey: "hermit", type: "hermit", baseX: 12, baseY: 6 },
+  { mapId: "meadow_village", npcKey: "merchant", type: "merchant", baseX: 14, baseY: 6 },
+  { mapId: "dungeon_lair", npcKey: "feibi", type: "feibi", baseX: 20, baseY: 14 },
+  // Forest Path NPCs
+  // { mapId: "forest_path", npcKey: "hermit", type: "hermit", baseX: 12, baseY: 6 },
 ];
 
 export class GameplayScene {
@@ -434,6 +435,7 @@ export class GameplayScene {
       }
       this.gameOver = true;
     });
+    eventBus.on("player_leveled_up", () => this.applyEquipmentBonus());
     eventBus.on("player_attacked", () => {
       this.playerAttackUntil = this.now + PLAYER_DEF.attackCooldown;
     });
@@ -663,8 +665,9 @@ export class GameplayScene {
       const animKey = def?.anims?.idle ?? def?.animKey ?? "idle";
       const frames = texSet[animKey];
       if (frames && frames.length > 0) {
-        const ow = frames[0].orig?.width ?? def?.size ?? 96;
-        const oh = frames[0].orig?.height ?? def?.size ?? 96;
+        const fr = frames[0].frame;
+        const ow = (fr ? fr.width : frames[0].orig?.width) ?? def?.size ?? 96;
+        const oh = (fr ? fr.height : frames[0].orig?.height) ?? def?.size ?? 96;
         this.enemyBaseSize.set(key, { w: ow, h: oh });
       }
     }
@@ -738,10 +741,10 @@ export class GameplayScene {
       const hp = entities.getComponent(newPlayerIds[0], "health")!;
       const bonus = equipment.getBonus();
       hp.max = PLAYER_DEF.hp + ((savedLevel - 1) * CONFIG.LEVEL_UP_HP_BONUS) + bonus.hp;
-      if (savedMaxHp > 0) {
+      if (savedMaxHp > 0 && savedHp > 0) {
         hp.current = Math.min(savedHp, hp.max);
       } else {
-        hp.current = hp.max;
+        hp.current = Math.floor(hp.max / 2);
       }
       this.applyEquipmentBonus();
       this.hud.restoreLevel(savedLevel, savedExp, savedExpToLevel);
@@ -1181,7 +1184,6 @@ private handleInteractions(): void {
         continue;
       }
 
-      // 鈹€鈹€ Enemy (AI entity) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
       if (ai && this.entityEnemyType.has(id)) {
         const enemyType = this.entityEnemyType.get(id)!;
         const def = ENEMY_DEFS[enemyType];
@@ -1282,7 +1284,6 @@ private handleInteractions(): void {
         continue;
       }
 
-      // 鈹€鈹€ NPC 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
       if (this.npcEntities.has(id)) {
         sprite.x = transform.x + transform.width / 2;
         sprite.y = transform.y + transform.height / 2;
@@ -1299,6 +1300,7 @@ private handleInteractions(): void {
       let animKey: string;
       if (health && health.current <= 0) {
         animKey = "die";
+
       } else if (this.now < this.playerHitUntil) {
         animKey = "hit";
       } else if (this.now < this.playerAttackUntil) {
@@ -1310,19 +1312,20 @@ private handleInteractions(): void {
       const anim = this.playerTextures[animKey];
       if (anim) {
         const as = sprite as PIXI.AnimatedSprite;
-        if (as.textures !== anim.textures) {
+        const alreadyPlaying = as.textures === anim.textures && as.playing;
+        if (!alreadyPlaying) {
+
           as.textures = anim.textures;
           as.animationSpeed = anim.fps / 60;
           as.loop = anim.loop;
-          as.gotoAndPlay(0);
-        } else if (!as.playing) {
           as.gotoAndPlay(0);
         }
       }
 
       const firstFrame = anim?.textures?.[0];
-      const natW = firstFrame?.orig?.width || firstFrame?.baseTexture?.width || transform.width;
-      const natH = firstFrame?.orig?.height || firstFrame?.baseTexture?.height || transform.height;
+      const frameRect = firstFrame?.frame;
+      const natW = (frameRect ? frameRect.width : firstFrame?.orig?.width) || firstFrame?.baseTexture?.width || transform.width;
+      const natH = (frameRect ? frameRect.height : firstFrame?.orig?.height) || firstFrame?.baseTexture?.height || transform.height;
       const uniScale = transform.width / natW;
       sprite.scale.set(uniScale, uniScale);
 
@@ -1332,6 +1335,16 @@ private handleInteractions(): void {
 
       sprite.x = transform.x + transform.width / 2;
       sprite.y = transform.y + transform.height - (natH * uniScale) / 2;
+
+      // Hide sprite after death animation finishes
+      if (health && health.current <= 0) {
+        const as2 = sprite as PIXI.AnimatedSprite;
+        if (!as2.playing) {
+          sprite.visible = false;
+        }
+      } else {
+        sprite.visible = true;
+      }
     }
   }
 

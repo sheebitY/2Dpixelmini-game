@@ -9,28 +9,18 @@
   "enemies": [
     {
       "type": "red_slime",
-      "x": 6,
-      "y": 5
-    },
-    {
-      "type": "eagle",
-      "x": 18,
-      "y": 4
+      "x": 5,
+      "y": 14
     },
     {
       "type": "goblin2",
-      "x": 10,
-      "y": 12
-    },
-    {
-      "type": "goblin3",
-      "x": 20,
-      "y": 10
+      "x": 18,
+      "y": 6
     },
     {
       "type": "skeleton",
-      "x": 6,
-      "y": 16
+      "x": 12,
+      "y": 10
     }
   ],
   "grid": [
@@ -562,6 +552,13 @@
       "targetMap": "desert_outpost",
       "targetX": 12,
       "targetY": 1
+    },
+    {
+      "x": 24,
+      "y": 5,
+      "targetMap": "mountain_pass",
+      "targetX": 3,
+      "targetY": 9
     }
   ]
 }

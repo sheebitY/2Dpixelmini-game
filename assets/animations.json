@@ -122,7 +122,8 @@
       "startFrame": 0,
       "frameCount": 10,
       "fps": 10,
-      "loop": false
+      "loop": false,
+      "nonDirectional": true
     },
     "hit": {
       "file": "assets/sprites/warrior/player_hit_sheet.png",
@@ -131,7 +132,8 @@
       "startFrame": 0,
       "frameCount": 2,
       "fps": 12,
-      "loop": false
+      "loop": false,
+      "nonDirectional": true
     }
   },
   "slime": {

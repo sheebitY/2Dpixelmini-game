@@ -7,21 +7,6 @@
     "y": 8
   },
   "enemies": [
-    {
-      "type": "slime",
-      "x": 5,
-      "y": 4
-    },
-    {
-      "type": "slime",
-      "x": 18,
-      "y": 14
-    },
-    {
-      "type": "goblin1",
-      "x": 3,
-      "y": 8
-    }
   ],
   "grid": [
     [

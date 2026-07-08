@@ -2,6 +2,7 @@ import * as PIXI from "pixi.js";
 import { CONFIG } from "./config";
 import { GameplayScene } from "./scenes/gameplay-scene";
 import { TitleScreen } from "./ui/title-screen";
+import { audioManager } from "./core/audio-manager";
 
 async function main() {
   const app = new PIXI.Application({
@@ -66,6 +67,8 @@ function startGame(app: PIXI.Application, scene: GameplayScene) {
   onResize();
 
   // Game loop
+  audioManager.playBGM();
+
   app.ticker.maxFPS = 60;
   app.ticker.add(() => {
     const dt = Math.min(app.ticker.deltaMS / 1000, 0.05);

@@ -8,28 +8,33 @@
   },
   "enemies": [
     {
-      "type": "eagle",
-      "x": 14,
-      "y": 5
-    },
-    {
-      "type": "skeleton",
-      "x": 8,
-      "y": 10
-    },
-    {
       "type": "goblin3",
-      "x": 16,
-      "y": 12
-    },
-    {
-      "type": "goblin4",
-      "x": 20,
+      "x": 3,
       "y": 6
     },
     {
+      "type": "goblin2",
+      "x": 15,
+      "y": 10
+    },
+    {
       "type": "orc",
-      "x": 10,
+      "x": 20,
+      "y": 14
+    },
+    {
+      "type": "goblin3",
+      "x": 22,
+      "y": 5
+    },
+    {
+      "type": "eagle",
+      "x": 3,
+      "y": 14
+    },
+    {
+      "type": "orc",
+      "x": 3,
       "y": 15
     }
   ],
@@ -302,7 +307,7 @@
       1,
       1,
       1,
-      2
+      1
     ],
     [
       2,
@@ -562,6 +567,13 @@
       "targetMap": "dungeon_lair",
       "targetX": 6,
       "targetY": 12
+    },
+    {
+      "x": 24,
+      "y": 9,
+      "targetMap": "ancient_ruins",
+      "targetX": 1,
+      "targetY": 8
     }
   ]
 }

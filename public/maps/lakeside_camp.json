@@ -4,33 +4,38 @@
   "rows": 19,
   "player": {
     "x": 8,
-    "y": 6
+    "y": 5
   },
   "enemies": [
     {
       "type": "red_slime",
-      "x": 6,
-      "y": 5
+      "x": 5,
+      "y": 14
     },
     {
-      "type": "eagle",
+      "type": "red_slime",
+      "x": 5,
+      "y": 3
+    },
+    {
+      "type": "goblin2",
       "x": 18,
       "y": 4
     },
     {
-      "type": "goblin2",
-      "x": 10,
-      "y": 12
-    },
-    {
-      "type": "goblin3",
-      "x": 20,
+      "type": "goblin1",
+      "x": 18,
       "y": 10
     },
     {
-      "type": "skeleton",
-      "x": 6,
+      "type": "goblin1",
+      "x": 21,
       "y": 16
+    },
+    {
+      "type": "skeleton",
+      "x": 12,
+      "y": 14
     }
   ],
   "grid": [
@@ -221,7 +226,7 @@
       1,
       1,
       1,
-      2
+      1
     ],
     [
       2,
@@ -554,7 +559,7 @@
       "y": 9,
       "targetMap": "forest_path",
       "targetX": 23,
-      "targetY": 9
+      "targetY": 6
     },
     {
       "x": 12,
@@ -562,6 +567,13 @@
       "targetMap": "desert_outpost",
       "targetX": 12,
       "targetY": 1
+    },
+    {
+      "x": 24,
+      "y": 6,
+      "targetMap": "mountain_pass",
+      "targetX": 5,
+      "targetY": 9
     }
   ]
 }

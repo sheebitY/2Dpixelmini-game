@@ -9,28 +9,23 @@
   "enemies": [
     {
       "type": "slime",
-      "x": 4,
-      "y": 5
+      "x": 18,
+      "y": 14
     },
     {
       "type": "red_slime",
-      "x": 14,
-      "y": 8
+      "x": 8,
+      "y": 6
     },
     {
       "type": "goblin1",
-      "x": 8,
-      "y": 12
+      "x": 15,
+      "y": 10
     },
     {
       "type": "goblin2",
       "x": 20,
-      "y": 6
-    },
-    {
-      "type": "eagle",
-      "x": 12,
-      "y": 14
+      "y": 4
     }
   ],
   "grid": [
@@ -562,6 +557,13 @@
       "targetMap": "lakeside_camp",
       "targetX": 1,
       "targetY": 9
+    },
+    {
+      "x": 6,
+      "y": 9,
+      "targetMap": "forest_clearing",
+      "targetX": 12,
+      "targetY": 17
     }
   ]
 }

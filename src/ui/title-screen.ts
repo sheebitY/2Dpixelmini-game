@@ -1,4 +1,5 @@
 import { exportSaveToFile, importSaveFromFile, deleteSave } from "../core/save-manager";
+import { audioManager } from "../core/audio-manager";
 
 export type LoadStatus = "idle" | "loading" | "done";
 
@@ -126,6 +127,7 @@ export class TitleScreen {
   private initSettings(): void {
     // Volume slider
     this.settingsVolume.addEventListener("input", () => {
+      audioManager.volume = parseInt(this.settingsVolume.value) / 100;
       this.settingsVolumeVal.textContent = this.settingsVolume.value + "%";
     });
 

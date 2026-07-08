@@ -1,4 +1,4 @@
-// ���� Item definitions ����
+// 锟斤拷锟斤拷 Item definitions 锟斤拷锟斤拷
 
 export type ItemRarity = "common" | "uncommon" | "rare" | "epic";
 
@@ -38,13 +38,13 @@ export function rarityColor(r: ItemRarity): string {
   return RARITY_COLORS[r];
 }
 
-// ���� Item registry ����
+// 锟斤拷锟斤拷 Item registry 锟斤拷锟斤拷
 
 const ITEMS: Record<string, ItemDef> = {
   health_potion: {
     id: "health_potion",
-    name: "Health Potion",
-    description: "Restores 40 HP.",
+    name: "生命药水",
+    description: "恢复40点生命值。",
     icon: "/assets/ui/items/medium-health-potion.png",
     category: "consumable",
     rarity: "common",
@@ -54,8 +54,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   greater_health_potion: {
     id: "greater_health_potion",
-    name: "Greater Health Potion",
-    description: "Restores 70 HP.",
+    name: "强效生命药水",
+    description: "恢复70点生命值。",
     icon: "/assets/ui/items/large-health-potion.png",
     category: "consumable",
     rarity: "uncommon",
@@ -65,8 +65,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   atk_scroll: {
     id: "atk_scroll",
-    name: "Attack Scroll",
-    description: "Boosts ATK by 6 for 12 seconds.",
+    name: "攻击卷轴",
+    description: "12秒内攻击力+6。",
     icon: "/assets/ui/items/Attack Scroll.png",
     category: "consumable",
     rarity: "rare",
@@ -76,8 +76,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   def_scroll: {
     id: "def_scroll",
-    name: "Defense Scroll",
-    description: "Boosts DEF by 5 for 12 seconds.",
+    name: "防御卷轴",
+    description: "12秒内防御力+5。",
     icon: "/assets/ui/items/Defense Scroll.png",
     category: "consumable",
     rarity: "rare",
@@ -87,8 +87,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   slime_gel: {
     id: "slime_gel",
-    name: "Slime Gel",
-    description: "A sticky blob dropped by slimes. Can be sold.",
+    name: "史莱姆凝胶",
+    description: "史莱姆掉落的粘性物质，可出售。",
     icon: "/assets/ui/loot/slime gel.png",
     category: "material",
     rarity: "common",
@@ -97,8 +97,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   bone_fragment: {
     id: "bone_fragment",
-    name: "Bone Fragment",
-    description: "Dropped by skeletons. Used in crafting.",
+    name: "骨碎片",
+    description: "骷髅掉落的碎片，可用于制作。",
     icon: "/assets/ui/loot/bone.png",
     category: "material",
     rarity: "common",
@@ -107,8 +107,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   eagle_feather: {
     id: "eagle_feather",
-    name: "Eagle Feather",
-    description: "A light feather from a fierce eagle.",
+    name: "鹰羽",
+    description: "凶猛老鹰掉落的轻盈羽毛。",
     icon: "/assets/ui/loot/feather.png",
     category: "material",
     rarity: "uncommon",
@@ -117,8 +117,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   orc_tusk: {
     id: "orc_tusk",
-    name: "Orc Tusk",
-    description: "A trophy from a defeated orc.",
+    name: "兽牙",
+    description: "击败兽人获得的战利品。",
     icon: "/assets/ui/loot/metal2.png",
     category: "material",
     rarity: "uncommon",
@@ -127,8 +127,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   bone_helmet: {
     id: "bone_helmet",
-    name: "Bone Helmet",
-    description: "A sturdy helmet crafted from bone fragments. DEF +3, HP +10.",
+    name: "骨盔",
+    description: "用骨碎片制作的坚固头盔。防御+3，生命值+10。",
     icon: "/assets/ui/ArmourSets/helmet-common.png",
     category: "equipment",
     rarity: "uncommon",
@@ -139,8 +139,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   slime_chestplate: {
     id: "slime_chestplate",
-    name: "Slime Chestplate",
-    description: "A gooey chestplate made from slime gel. DEF +5, HP +15.",
+    name: "史莱姆胸甲",
+    description: "用史莱姆凝胶制作的粘稠胸甲。防御+5，生命值+15。",
     icon: "/assets/ui/ArmourSets/breastplate-common.png",
     category: "equipment",
     rarity: "uncommon",
@@ -151,8 +151,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   bone_leggings: {
     id: "bone_leggings",
-    name: "Bone Leggings",
-    description: "Leg armor reinforced with bones and orc tusks. DEF +4, HP +8.",
+    name: "骨制护腿",
+    description: "用骨头和兽牙强化的护腿。防御+4，生命值+8。",
     icon: "/assets/ui/ArmourSets/cuish-common.png",
     category: "equipment",
     rarity: "uncommon",
@@ -163,8 +163,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   eagle_boots: {
     id: "eagle_boots",
-    name: "Eagle Boots",
-    description: "Lightweight boots crafted from eagle feathers. DEF +2, SPD +20.",
+    name: "鹰羽靴",
+    description: "用鹰羽制作的轻便靴子。防御+2，速度+20。",
     icon: "/assets/ui/ArmourSets/boot-common.png",
     category: "equipment",
     rarity: "uncommon",
@@ -174,10 +174,46 @@ const ITEMS: Record<string, ItemDef> = {
     equipStats: { def: 2, speed: 30 },
     speedBonus: 30,
   },
+  metal_helmet: {
+    id: "metal_helmet",
+    name: "铁盔",
+    description: "用金属碎片锻造的坚固头盔。防御+5，生命值+15。",
+    icon: "/assets/ui/ArmourSets/helmet-rare.png",
+    category: "equipment",
+    rarity: "rare",
+    stackable: false,
+    maxStack: 1,
+    equipSlot: "helmet",
+    equipStats: { def: 5, hp: 15 },
+  },
+  metal_chestplate: {
+    id: "metal_chestplate",
+    name: "铁甲",
+    description: "用熔炼金属碎片打造的重型胸甲。防御+8，生命值+20。",
+    icon: "/assets/ui/ArmourSets/breastplate-rare.png",
+    category: "equipment",
+    rarity: "rare",
+    stackable: false,
+    maxStack: 1,
+    equipSlot: "chestplate",
+    equipStats: { def: 8, hp: 20 },
+  },
+  metal_leggings: {
+    id: "metal_leggings",
+    name: "铁护腿",
+    description: "用金属锻造的强化护腿。防御+6，生命值+12。",
+    icon: "/assets/ui/ArmourSets/cuish-rare.png",
+    category: "equipment",
+    rarity: "rare",
+    stackable: false,
+    maxStack: 1,
+    equipSlot: "leggings",
+    equipStats: { def: 6, hp: 12 },
+  },
   tusk_sword: {
     id: "tusk_sword",
-    name: "Tusk Sword",
-    description: "A crude but powerful sword forged from orc tusks. ATK +6.",
+    name: "兽牙剑",
+    description: "用兽牙锻造的粗犷但强力的剑。攻击力+6。",
     icon: "/assets/ui/weapon/sword-common.png",
     category: "equipment",
     rarity: "rare",
@@ -188,8 +224,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   iron_sword: {
     id: "iron_sword",
-    name: "Iron Sword",
-    description: "A sturdy iron blade. ATK +3.",
+    name: "铁剑",
+    description: "坚固的铁剑。攻击力+3。",
     icon: "/assets/ui/weapon/sword-common.png",
     category: "equipment",
     rarity: "common",
@@ -200,8 +236,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   flame_blade: {
     id: "flame_blade",
-    name: "Flame Blade",
-    description: "A blade imbued with fire. ATK +7, DEF +1.",
+    name: "炎之刃",
+    description: "蕴含火焰之力的剑刃。攻击力+7，防御力+1。",
     icon: "/assets/ui/weapon/sword-epic.png",
     category: "equipment",
     rarity: "epic",
@@ -212,8 +248,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   dragon_slayer: {
     id: "dragon_slayer",
-    name: "Dragon Slayer",
-    description: "A legendary blade forged to fell dragons. ATK +12, HP +20.",
+    name: "屠龙剑",
+    description: "为屠龙而锻造的传奇剑刃。攻击力+12，生命值+20。",
     icon: "/assets/ui/weapon/sword-legendary.png",
     category: "equipment",
     rarity: "epic",
@@ -225,8 +261,8 @@ const ITEMS: Record<string, ItemDef> = {
   // --- Helmets ---
   iron_helmet: {
     id: "iron_helmet",
-    name: "Iron Helmet",
-    description: "A solid iron helmet. DEF +3, HP +8.",
+    name: "铁制头盔",
+    description: "坚固的铁制头盔。防御+3，生命值+8。",
     icon: "/assets/ui/ArmourSets/helmet-common.png",
     category: "equipment",
     rarity: "common",
@@ -237,8 +273,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   steel_helmet: {
     id: "steel_helmet",
-    name: "Steel Helmet",
-    description: "A reinforced steel helmet. DEF +6, HP +18.",
+    name: "钢制头盔",
+    description: "强化钢制头盔。防御+6，生命值+18。",
     icon: "/assets/ui/ArmourSets/helmet-rare.png",
     category: "equipment",
     rarity: "rare",
@@ -249,8 +285,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   dragon_helmet: {
     id: "dragon_helmet",
-    name: "Dragon Helmet",
-    description: "Forged from dragon scales. DEF +10, HP +30.",
+    name: "龙鳞头盔",
+    description: "由龙鳞锻造而成。防御+10，生命值+30。",
     icon: "/assets/ui/ArmourSets/helmet-epic.png",
     category: "equipment",
     rarity: "epic",
@@ -262,8 +298,8 @@ const ITEMS: Record<string, ItemDef> = {
   // --- Chestplates ---
   iron_chestplate: {
     id: "iron_chestplate",
-    name: "Iron Chestplate",
-    description: "A sturdy iron chestplate. DEF +5, HP +15.",
+    name: "铁制胸甲",
+    description: "坚固的铁制胸甲。防御+5，生命值+15。",
     icon: "/assets/ui/ArmourSets/breastplate-common.png",
     category: "equipment",
     rarity: "common",
@@ -274,8 +310,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   steel_chestplate: {
     id: "steel_chestplate",
-    name: "Steel Chestplate",
-    description: "Reinforced steel plating. DEF +9, HP +25.",
+    name: "钢制胸甲",
+    description: "强化钢制胸甲。防御+9，生命值+25。",
     icon: "/assets/ui/ArmourSets/breastplate-rare.png",
     category: "equipment",
     rarity: "rare",
@@ -286,8 +322,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   dragon_chestplate: {
     id: "dragon_chestplate",
-    name: "Dragon Chestplate",
-    description: "Forged from dragon scales. DEF +14, HP +40.",
+    name: "龙鳞胸甲",
+    description: "由龙鳞锻造而成。防御+14，生命值+40。",
     icon: "/assets/ui/ArmourSets/breastplate-epic.png",
     category: "equipment",
     rarity: "epic",
@@ -299,8 +335,8 @@ const ITEMS: Record<string, ItemDef> = {
   // --- Leggings ---
   iron_leggings: {
     id: "iron_leggings",
-    name: "Iron Leggings",
-    description: "Sturdy iron leg armor. DEF +4, HP +10.",
+    name: "铁制护腿",
+    description: "坚固的铁制护腿。防御+4，生命值+10。",
     icon: "/assets/ui/ArmourSets/cuish-common.png",
     category: "equipment",
     rarity: "common",
@@ -311,8 +347,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   steel_leggings: {
     id: "steel_leggings",
-    name: "Steel Leggings",
-    description: "Reinforced steel leg armor. DEF +7, HP +15.",
+    name: "钢制护腿",
+    description: "强化钢制护腿。防御+7，生命值+15。",
     icon: "/assets/ui/ArmourSets/cuish-rare.png",
     category: "equipment",
     rarity: "rare",
@@ -323,8 +359,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   dragon_leggings: {
     id: "dragon_leggings",
-    name: "Dragon Leggings",
-    description: "Forged from dragon scales. DEF +11, HP +25.",
+    name: "龙鳞护腿",
+    description: "由龙鳞锻造而成。防御+11，生命值+25。",
     icon: "/assets/ui/ArmourSets/cuish-epic.png",
     category: "equipment",
     rarity: "epic",
@@ -336,8 +372,8 @@ const ITEMS: Record<string, ItemDef> = {
   // --- Boots ---
   iron_boots: {
     id: "iron_boots",
-    name: "Iron Boots",
-    description: "Heavy but protective iron boots. DEF +2, HP +5.",
+    name: "铁靴",
+    description: "厚重但防护力强的铁靴。防御+2，生命值+5。",
     icon: "/assets/ui/ArmourSets/boot-common.png",
     category: "equipment",
     rarity: "common",
@@ -348,8 +384,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   steel_boots: {
     id: "steel_boots",
-    name: "Steel Boots",
-    description: "Reinforced steel boots. DEF +5, HP +10, SPD +25.",
+    name: "钢靴",
+    description: "精钢靴。防御+5，生命值+10，速度+25。",
     icon: "/assets/ui/ArmourSets/boot-rare.png",
     category: "equipment",
     rarity: "rare",
@@ -361,8 +397,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   dragon_boots: {
     id: "dragon_boots",
-    name: "Dragon Boots",
-    description: "Forged from dragon scales. DEF +8, HP +18, SPD +40.",
+    name: "龙鳞靴",
+    description: "由龙鳞锻造而成。防御+8，生命值+18，速度+40。",
     icon: "/assets/ui/ArmourSets/boot-epic.png",
     category: "equipment",
     rarity: "epic",
@@ -374,8 +410,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   coin: {
       id: "coin",
-      name: "Gold Coin",
-      description: "Shiny gold coin. Used as currency.",
+      name: "金币",
+    description: "闪闪发光的金币，可用于购买物品。",
       icon: "/assets/ui/loot/coin.png",
       category: "material",
       rarity: "common",
@@ -384,8 +420,8 @@ const ITEMS: Record<string, ItemDef> = {
     },
     small_health_potion: {
       id: "small_health_potion",
-      name: "Small Health Potion",
-      description: "Restores 20 HP.",
+      name: "小型生命药水",
+    description: "恢复20点生命值。",
       icon: "/assets/ui/items/small-health-potion.png",
       category: "consumable",
       rarity: "common",
@@ -395,8 +431,8 @@ const ITEMS: Record<string, ItemDef> = {
     },
     apple: {
       id: "apple",
-      name: "Apple",
-      description: "A fresh apple. Restores 8 HP.",
+      name: "苹果",
+    description: "一个新鲜的苹果，恢复8点生命值。",
       icon: "/assets/ui/items/apple.png",
       category: "consumable",
       rarity: "common",
@@ -406,8 +442,8 @@ const ITEMS: Record<string, ItemDef> = {
     },
     chicken: {
       id: "chicken",
-      name: "Roast Chicken",
-      description: "A hearty meal. Restores 50 HP.",
+      name: "烤鸡",
+    description: "一顿丰盛的餐食，恢复50点生命值。",
       icon: "/assets/ui/items/chicken.png",
       category: "consumable",
       rarity: "uncommon",
@@ -417,8 +453,8 @@ const ITEMS: Record<string, ItemDef> = {
     },
     coffee: {
       id: "coffee",
-      name: "Coffee",
-      description: "Boosts movement speed by 30% for 15 seconds.",
+      name: "咖啡",
+    description: "15秒内移动速度+30%。",
       icon: "/assets/ui/items/coffee.png",
       category: "consumable",
       rarity: "uncommon",
@@ -426,11 +462,11 @@ const ITEMS: Record<string, ItemDef> = {
       maxStack: 10,
       onUse: (ctx) => { ctx.boostSpeed(30, 15); return true; },
     },
-    // �T�T�T New materials �T�T�T
+    // 锟絋锟絋锟絋 New materials 锟絋锟絋锟絋
     wood: {
       id: "wood",
-      name: "Wood",
-      description: "A piece of sturdy wood. Used in crafting.",
+      name: "木材",
+    description: "一块木材，可用于制作。",
       icon: "/assets/ui/loot/wood.png",
       category: "material",
       rarity: "common",
@@ -439,8 +475,8 @@ const ITEMS: Record<string, ItemDef> = {
     },
     metal_scrap: {
       id: "metal_scrap",
-      name: "Metal Scrap",
-      description: "Salvaged metal pieces. Used in crafting.",
+      name: "金属碎片",
+    description: "金属碎片，可用于制作装备。",
       icon: "/assets/ui/loot/metal1.png",
       category: "material",
       rarity: "common",
@@ -449,8 +485,8 @@ const ITEMS: Record<string, ItemDef> = {
     },
     gem: {
       id: "gem",
-      name: "Gem",
-      description: "A precious gemstone. Valuable and rare.",
+      name: "宝石",
+    description: "珍贵的宝石，可用于制作高级装备。",
       icon: "/assets/ui/loot/gem.png",
       category: "material",
       rarity: "rare",
@@ -459,8 +495,8 @@ const ITEMS: Record<string, ItemDef> = {
     },
     diamond: {
       id: "diamond",
-      name: "Diamond",
-      description: "An extremely rare diamond.",
+      name: "钻石",
+    description: "稀有的钻石。",
       icon: "/assets/ui/loot/diamond.png",
       category: "material",
       rarity: "epic",
@@ -469,8 +505,8 @@ const ITEMS: Record<string, ItemDef> = {
     },
     undead_totem: {
       id: "undead_totem",
-      name: "Undead Totem",
-      description: "A dark totem dropped by undead creatures.",
+      name: "亡灵图腾",
+    description: "似乎来自亡者的世界……蕴含着神秘的力量。",
       icon: "/assets/ui/items/Undead Totem.png",
       category: "material",
       rarity: "rare",
@@ -482,14 +518,14 @@ const ITEMS: Record<string, ItemDef> = {
 /** Enemy possible loot table (itemId, drop chance 0-1) */
 export const ENEMY_LOOT_TABLE: Record<string, { itemId: string; chance: number }[]> = {
   slime:       [{ itemId: "slime_gel", chance: 0.6 }, { itemId: "coin", chance: 0.5 }, { itemId: "small_health_potion", chance: 0.2 }],
-  red_slime:   [{ itemId: "slime_gel", chance: 0.7 }, { itemId: "coin", chance: 0.6 }, { itemId: "health_potion", chance: 0.3 }],
+  red_slime:   [{ itemId: "slime_gel", chance: 0.7 }, { itemId: "coin", chance: 0.6 }, { itemId: "health_potion", chance: 0.3 }, { itemId: "gem", chance: 0.1 }, { itemId: "diamond", chance: 0.05 }],
   eagle:       [{ itemId: "eagle_feather", chance: 0.5 }, { itemId: "coin", chance: 0.4 }, { itemId: "atk_scroll", chance: 0.1 }],
   skeleton:    [{ itemId: "bone_fragment", chance: 0.6 }, { itemId: "coin", chance: 0.5 }, { itemId: "undead_totem", chance: 0.1 }, { itemId: "def_scroll", chance: 0.1 }],
-  orc:         [{ itemId: "orc_tusk", chance: 0.5 }, { itemId: "coin", chance: 0.7 }, { itemId: "greater_health_potion", chance: 0.2 }, { itemId: "metal_scrap", chance: 0.3 }],
-  goblin1:     [{ itemId: "metal_scrap", chance: 0.5 }, { itemId: "coin", chance: 0.5 }, { itemId: "wood", chance: 0.4 }, { itemId: "small_health_potion", chance: 0.15 }],
-  goblin2:     [{ itemId: "metal_scrap", chance: 0.6 }, { itemId: "coin", chance: 0.6 }, { itemId: "bone_fragment", chance: 0.3 }, { itemId: "health_potion", chance: 0.2 }],
-  goblin3:     [{ itemId: "eagle_feather", chance: 0.4 }, { itemId: "coin", chance: 0.5 }, { itemId: "coffee", chance: 0.15 }, { itemId: "gem", chance: 0.08 }],
-  goblin4:     [{ itemId: "gem", chance: 0.3 }, { itemId: "coin", chance: 0.8 }, { itemId: "diamond", chance: 0.1 }, { itemId: "greater_health_potion", chance: 0.25 }, { itemId: "undead_totem", chance: 0.15 }],
+  orc:         [{ itemId: "orc_tusk", chance: 0.7 }, { itemId: "coin", chance: 0.7 }, { itemId: "greater_health_potion", chance: 0.2 }, { itemId: "metal_scrap", chance: 0.3 },{ itemId: "diamond", chance: 0.1 }],
+  goblin1:     [{ itemId: "metal_scrap", chance: 0.6 }, { itemId: "coin", chance: 0.5 }, { itemId: "wood", chance: 0.4 }, { itemId: "small_health_potion", chance: 0.15 }],
+  goblin2:     [{ itemId: "metal_scrap", chance: 0.7 }, { itemId: "coin", chance: 0.6 }, { itemId: "bone_fragment", chance: 0.3 }, { itemId: "health_potion", chance: 0.2 }, { itemId: "gem", chance: 0.1 }],
+  goblin3:     [{ itemId: "metal_scrap", chance: 0.9 },{ itemId: "eagle_feather", chance: 0.4 }, { itemId: "coin", chance: 0.5 }, { itemId: "coffee", chance: 0.15 }, { itemId: "gem", chance: 0.3 }],
+  goblin4:     [{ itemId: "gem", chance: 0.7 }, { itemId: "coin", chance: 0.8 }, { itemId: "diamond", chance: 0.6 }, { itemId: "greater_health_potion", chance: 0.25 }, { itemId: "undead_totem", chance: 0.15 }],
 };
 
 export function isImageIcon(icon: string): boolean {
