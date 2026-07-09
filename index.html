@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pixel RPG</title>
+  <link rel="icon" type="image/png" href="/assets/ui/favicon.png">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1a2e; }
@@ -601,6 +602,67 @@
     }
 
     /* Settings Panel */
+
+    /* Tutorial overlay */
+    #tutorial-overlay {
+      position: fixed; inset: 0;
+      z-index: 10002;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.7);
+      font-family: 'Courier New', monospace;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    #tutorial-overlay.visible { opacity: 1; }
+    #tutorial-panel {
+      background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      border: 2px solid rgba(255,215,0,0.4);
+      border-radius: 14px;
+      padding: 20px 24px 16px;
+      width: 520px; max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 0 60px rgba(0,0,0,0.7), 0 0 20px rgba(255,215,0,0.05);
+    }
+    #tutorial-panel::-webkit-scrollbar { width: 4px; }
+    #tutorial-panel::-webkit-scrollbar-track { background: transparent; }
+    #tutorial-panel::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.2); border-radius: 2px; }
+    #tutorial-title {
+      font-size: 18px; font-weight: bold; color: #ffd700;
+      text-align: center; margin-bottom: 16px;
+      letter-spacing: 3px;
+      text-shadow: 0 0 10px rgba(255,215,0,0.3);
+    }
+    .tutorial-section {
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+    }
+    .tutorial-section-title {
+      font-size: 13px; font-weight: bold; color: #ffd700;
+      margin-bottom: 8px; padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255,215,0,0.15);
+      letter-spacing: 1px;
+    }
+    .tutorial-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 4px 0; font-size: 12px; color: #ddd;
+    }
+    .tutorial-key { min-width: 180px; }
+    .tutorial-section p {
+      font-size: 12px; color: #bbb; line-height: 1.8;
+      margin: 0 0 4px 0;
+    }
+    #tutorial-close {
+      display: block; width: 100%; margin-top: 12px;
+      padding: 8px 0; background: rgba(255,215,0,0.1);
+      border: 1px solid rgba(255,215,0,0.3);
+      border-radius: 8px; color: #ffd700;
+      font-family: 'Courier New', monospace; font-size: 13px;
+      cursor: pointer; transition: background 0.2s;
+    }
+    #tutorial-close:hover { background: rgba(255,215,0,0.2); }
+
     #settings-overlay {
       position: fixed; inset: 0;
       z-index: 10001;
@@ -833,9 +895,9 @@
     <div id="title-cover"></div>
     <div id="title-content">
       <div id="title-game-name">Pixel RPG</div>
-      <div id="title-subtitle">Adventure Awaits</div>
-      <button class="title-btn" id="title-start-btn">Start Game</button>
-      <button class="title-btn secondary" id="title-settings-btn">Settings</button>
+      <div id="title-subtitle">冒险在等待</div>
+      <button class="title-btn" id="title-start-btn">开始游戏</button>
+      <button class="title-btn secondary" id="title-settings-btn">设置</button>
     </div>
   </div>
   <!--请原谅我不会给游戏取名... -->
@@ -865,12 +927,12 @@
   <!-- Settings Panel -->
   <div id="settings-overlay">
     <div id="settings-panel">
-      <div id="settings-title">Settings</div>
+      <div id="settings-title">设置</div>
 
       <div class="settings-section">
-        <div class="settings-section-title">Audio</div>
+        <div class="settings-section-title">音频</div>
         <div class="settings-row">
-          <span class="settings-label">Master Volume</span>
+          <span class="settings-label">主音量</span>
           <div class="settings-slider-wrap">
             <input type="range" class="settings-slider" id="settings-volume" min="0" max="100" value="10">
             <span class="settings-slider-val" id="settings-volume-val">10%</span>
@@ -879,43 +941,50 @@
       </div>
 
       <div class="settings-section">
-        <div class="settings-section-title">Controls</div>
+        <div class="settings-section-title">操作</div>
         <div class="settings-row">
-          <span class="settings-label">Move</span>
-          <span class="settings-value"><span class="settings-keybind">W</span> <span class="settings-keybind">A</span> <span class="settings-keybind">S</span> <span class="settings-keybind">D</span> / Arrow Keys</span>
+          <span class="settings-label">移动</span>
+          <span class="settings-value"><span class="settings-keybind">W</span> <span class="settings-keybind">A</span> <span class="settings-keybind">S</span> <span class="settings-keybind">D</span> / 方向键</span>
         </div>
         <div class="settings-row">
-          <span class="settings-label">Attack</span>
+          <span class="settings-label">攻击</span>
           <span class="settings-value"><span class="settings-keybind">Space</span> / <span class="settings-keybind">Z</span></span>
         </div>
         <div class="settings-row">
-          <span class="settings-label">Inventory</span>
+          <span class="settings-label">背包</span>
           <span class="settings-value"><span class="settings-keybind">B</span></span>
         </div>
         <div class="settings-row">
-          <span class="settings-label">Use Hotbar Item</span>
+          <span class="settings-label">使用快捷栏物品</span>
           <span class="settings-value"><span class="settings-keybind">1</span> - <span class="settings-keybind">5</span></span>
         </div>
       </div>
 
       <div class="settings-section">
-        <div class="settings-section-title">Gameplay</div>
+        <div class="settings-section-title">游戏</div>
         <div class="settings-btn-row">
-          <button class="settings-btn" id="settings-respawn">Return to Spawn</button>
+          <button class="settings-btn" id="settings-respawn">返回出生点</button>
         </div>
       </div>
 
       <div class="settings-section">
-        <div class="settings-section-title">Save Data</div>
+        <div class="settings-section-title">帮助</div>
         <div class="settings-btn-row">
-          <button class="settings-btn" id="settings-export">Export Save</button>
-          <button class="settings-btn" id="settings-import">Import Save</button>
-          <button class="settings-btn danger" id="settings-delete">Delete Save</button>
+          <button class="settings-btn" id="settings-tutorial">游戏教程</button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">存档数据</div>
+        <div class="settings-btn-row">
+          <button class="settings-btn" id="settings-export">导出存档</button>
+          <button class="settings-btn" id="settings-import">导入存档</button>
+          <button class="settings-btn danger" id="settings-delete">删除存档</button>
         </div>
         <input type="file" id="settings-import-file" accept=".json,.sav" style="display:none">
       </div>
 
-      <button id="settings-close">Back</button>
+      <button id="settings-close">返回</button>
     </div>
   </div>
   <div class="top-right-bar">
@@ -924,6 +993,51 @@
     <div id="settings-btn-ingame"><img src="/assets/ui/settings.png" alt="Settings"></div>
   </div>
 
+
+  <!-- Tutorial Panel -->
+  <div id="tutorial-overlay">
+    <div id="tutorial-panel">
+      <div id="tutorial-title">游戏教程</div>
+
+      <div class="tutorial-section">
+        <div class="tutorial-section-title">基本操作</div>
+        <div class="tutorial-row"><span class="tutorial-key"><span class="settings-keybind">W</span> <span class="settings-keybind">A</span> <span class="settings-keybind">S</span> <span class="settings-keybind">D</span> / 方向键</span><span>移动角色</span></div>
+        <div class="tutorial-row"><span class="tutorial-key"><span class="settings-keybind">Space</span> / <span class="settings-keybind">Z</span></span><span>攻击 / 下一句对话</span></div>
+        <div class="tutorial-row"><span class="tutorial-key"><span class="settings-keybind">B</span></span><span>打开 / 关闭背包</span></div>
+        <div class="tutorial-row"><span class="tutorial-key"><span class="settings-keybind">1</span> - <span class="settings-keybind">5</span></span><span>使用快捷栏物品</span></div>
+        <div class="tutorial-row"><span class="tutorial-key"><span class="settings-keybind">F</span></span><span>与 NPC 互动</span></div>
+        <div class="tutorial-row"><span class="tutorial-key"><span class="settings-keybind">N</span></span><span>切换地图</span></div>
+      </div>
+
+      <div class="tutorial-section">
+        <div class="tutorial-section-title">背包系统</div>
+        <p>按 <span class="settings-keybind">B</span> 打开背包，左侧为装备栏，中间为物品栌，右侧为合成表。</p>
+        <p>点击消耗品可使用，拖拽装备到对应栏位可装备。</p>
+        <p>快捷栏物品可从背包拖拽放入，按 <span class="settings-keybind">1</span> - <span class="settings-keybind">5</span> 快速使用。</p>
+      </div>
+
+      <div class="tutorial-section">
+        <div class="tutorial-section-title">战斗与升级</div>
+        <p>推近怪物后按 <span class="settings-keybind">Space</span> 攻击，击杀怪物获得经验和掌落物。</p>
+        <p>升级后血量回满，属性提升：HP +8、ATK +1、DEF +1。</p>
+        <p>装备可提供额外的 ATK、DEF、HP 和速度加成。</p>
+      </div>
+
+      <div class="tutorial-section">
+        <div class="tutorial-section-title">商店与 NPC</div>
+        <p>靠近 NPC 后按 <span class="settings-keybind">F</span> 对话，铁匠和商人可购买装备和物品。</p>
+        <p>铁匠出售武器和护甲，商人出售药水和食物。</p>
+      </div>
+
+      <div class="tutorial-section">
+        <div class="tutorial-section-title">地图与探索</div>
+        <p>通过地图上的传送门可到达新区域，也可按 <span class="settings-keybind">N</span> 快速切换地图。</p>
+        <p>不同区域有不同等级的怪物，请量力而行！</p>
+      </div>
+
+      <button id="tutorial-close">返回</button>
+    </div>
+  </div>
   <div id="map-name"></div>
   <div id="game-container">
     <!-- HUD (always visible) -->

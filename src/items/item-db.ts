@@ -38,7 +38,7 @@ export function rarityColor(r: ItemRarity): string {
   return RARITY_COLORS[r];
 }
 
-// 锟斤拷锟斤拷 Item registry 锟斤拷锟斤拷
+// 锟斤拷锟斤拷 Item registry 锟斤拷锟斤拷 烫烫烫？烫不烫
 
 const ITEMS: Record<string, ItemDef> = {
   health_potion: {
@@ -88,7 +88,7 @@ const ITEMS: Record<string, ItemDef> = {
   slime_gel: {
     id: "slime_gel",
     name: "史莱姆凝胶",
-    description: "史莱姆掉落的粘性物质，可出售。",
+    description: "史莱姆掉落的粘性物质，可用于制作。",
     icon: "/assets/ui/loot/slime gel.png",
     category: "material",
     rarity: "common",
@@ -127,8 +127,8 @@ const ITEMS: Record<string, ItemDef> = {
   },
   bone_helmet: {
     id: "bone_helmet",
-    name: "骨盔",
-    description: "用骨碎片制作的坚固头盔。防御+3，生命值+10。",
+    name: "铁盔",
+    description: "用铁材料制作的坚固头盔。防御+3，生命值+10。",
     icon: "/assets/ui/ArmourSets/helmet-common.png",
     category: "equipment",
     rarity: "uncommon",
@@ -505,8 +505,8 @@ const ITEMS: Record<string, ItemDef> = {
     },
     undead_totem: {
       id: "undead_totem",
-      name: "亡灵图腾",
-    description: "似乎来自亡者的世界……蕴含着神秘的力量。",
+      name: "不死图腾",
+    description: "似乎来自某人的世界……蕴含着神秘的力量。",
       icon: "/assets/ui/items/Undead Totem.png",
       category: "material",
       rarity: "rare",
