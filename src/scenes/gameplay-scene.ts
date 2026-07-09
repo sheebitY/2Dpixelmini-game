@@ -198,7 +198,7 @@ interface NPCDef {
 
 const NPC_DEFS: Record<string, NPCDef> = {
   sweeper: {
-    name: "Old Sweeper",
+    name: "Sweeper",
     dialog: [
       "啊，年轻的冒险者……这个村庄曾经和平安宁。",
       "但来自东边地牢的怪物已经出现了。" ,
